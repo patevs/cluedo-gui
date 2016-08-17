@@ -4,12 +4,15 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -47,11 +50,17 @@ public class WelcomeDialog extends JDialog {
         // ensures the minimum size is enforced.
 		this.setMinimumSize(this.getSize());
         // set close operation
-        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         // set display position
         this.setLocationRelativeTo(getParent());
+        // handles the user closing the window dialog
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent evt){
+                confirmExit();
+            }
+        });
 	}
-	
+
 	/**
 	 * Displays the dialog and returns the result
 	 * @return number of players
@@ -114,5 +123,18 @@ public class WelcomeDialog extends JDialog {
 		
 		// display center window
 		add(header, BorderLayout.CENTER);	
+	}
+	
+	/**
+	 * Displays dialog asking if user wants to exit the game
+	 */
+	protected void confirmExit() {
+		String msg = "Are You Sure You Want to Exit the Game?" ;
+		int result = JOptionPane.showConfirmDialog(this, msg,
+		        "Alert", JOptionPane.OK_CANCEL_OPTION);
+		if(result==0){
+			dispose();
+			System.exit(0);
+		}
 	}
 }

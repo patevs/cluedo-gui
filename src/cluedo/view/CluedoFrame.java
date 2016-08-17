@@ -3,6 +3,8 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -34,11 +36,17 @@ public class CluedoFrame extends JFrame {
 		// set display location
 		setLocationRelativeTo(null);
 		// set close operation
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		// pack to minimum size
 		pack();
 		// enforce minimum size
 		setMinimumSize(getSize());
+		// handles the closing of the game
+		addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent evt){
+                confirmExit();
+            }
+        });
 	}
 
 	/**
@@ -108,14 +116,13 @@ public class CluedoFrame extends JFrame {
 	/**
 	 * Displays dialog asking if user wants to exit the game
 	 */
-	protected void confirmExit() {
+	private void confirmExit() {
 		String msg = "Are You Sure You Want to Exit the Game?" ;
-		JFrame exitPanel = new JFrame();
-		JPanel pnl = (JPanel) exitPanel.getContentPane();
-		int result = JOptionPane.showConfirmDialog(pnl, msg,
-		        "alert", JOptionPane.OK_CANCEL_OPTION);
+		int result = JOptionPane.showConfirmDialog(this, msg,
+		        "Alert", JOptionPane.OK_CANCEL_OPTION);
 		if(result==0){
 			System.exit(0);
+			dispose();
 		}
 	}
 
