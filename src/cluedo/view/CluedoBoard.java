@@ -20,6 +20,8 @@ import javax.swing.border.LineBorder;
  */
 public class CluedoBoard {
 	
+	private static final String IMAGE_PATH = "images/";
+	
 	// The board is made up of a 2D array of Jbuttons
 	private JButton[][] boardSquares = new JButton[22][22];
 	// field to store the board panel
@@ -48,8 +50,15 @@ public class CluedoBoard {
 				for(int width = 0; width < line.length; width++){
 					// read the text character	
 					char c = line[width];
-					// get the tile represented by the character
-					JButton b = getTile(c);
+					JButton b;
+					if(Character.isDigit(c)){
+						//TODO add character token images
+						b = new HallwayTile('H');
+						b.setIcon(new ImageIcon(IMAGE_PATH + "token.png"));
+					} else {
+						// get the tile represented by the character
+						b = getTile(c);
+					}
 					// set the tile on the board
 					boardSquares[width][height] = b;	
 				}
@@ -99,6 +108,9 @@ public class CluedoBoard {
 		case 'D':
 		case 'O':
 			b = new RoomTile(c);
+			break;
+		case 'd':
+			b = new DoorwayTile(c);
 			break;
 		case 'X':
 			b = new WallTile(c);
