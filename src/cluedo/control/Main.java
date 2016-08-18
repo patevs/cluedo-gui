@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cluedo.model.CharacterToken;
+import cluedo.model.CluedoGame;
+import cluedo.view.CluedoBoard;
 import cluedo.view.CluedoFrame;
 
 /**
@@ -46,19 +48,22 @@ public class Main {
 	 * initialises the cluedo game
 	 * @param parent frame
 	 */
-	protected static void initGame(CluedoFrame game) {
+	protected static void initGame(CluedoFrame frame) {
 		// Display welcome dialog
-		WelcomeDialog welcome = new WelcomeDialog(game);
+		WelcomeDialog welcome = new WelcomeDialog(frame);
 		welcome.setAlwaysOnTop(true);
 		int numOfPlayers = welcome.showDialog();
 		
 		// Getting player information
 		List<CharacterToken> players = new ArrayList<CharacterToken>();
 		for(int i = 1; i<=numOfPlayers; i++){
-			PlayerSetupDialog playerSetup = new PlayerSetupDialog(game, i, players);
+			PlayerSetupDialog playerSetup = new PlayerSetupDialog(frame, i, players);
 			playerSetup.setAlwaysOnTop(true);
 			players.add(playerSetup.showDialog());
 		}	
+		// TODO something with the players
+		CluedoBoard board = frame.getBoard();
+		CluedoGame game = new CluedoGame(board, players);
 	}
 	
 	/**

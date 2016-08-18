@@ -56,6 +56,7 @@ public class CluedoFrame extends JFrame {
 		JMenuBar menuBar = new JMenuBar();	
 		ImageIcon iconExit = new ImageIcon(IMAGE_PATH + "exit.png");
 		ImageIcon iconNew = new ImageIcon(IMAGE_PATH + "new.png");
+		ImageIcon iconHelp = new ImageIcon(IMAGE_PATH + "help.png");
 		// creating game and help menus
 		JMenu menu = new JMenu("Menu");
 		menu.setMnemonic(KeyEvent.VK_M);
@@ -63,7 +64,7 @@ public class CluedoFrame extends JFrame {
 		help.setMnemonic(KeyEvent.VK_H);
 		
 		// creating the view help menu item
-		JMenuItem hMenuItem = new JMenuItem("View Help");
+		JMenuItem hMenuItem = new JMenuItem("View Help", iconHelp);
 		hMenuItem.setMnemonic(KeyEvent.VK_H);
 		hMenuItem.setToolTipText("Click for Game Help");
 		hMenuItem.addActionListener(new ActionListener(){
