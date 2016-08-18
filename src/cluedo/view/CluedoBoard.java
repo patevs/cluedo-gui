@@ -51,10 +51,10 @@ public class CluedoBoard {
 					// read the text character	
 					char c = line[width];
 					JButton b;
+					// If character is a digit, then make tile a player starting location
 					if(Character.isDigit(c)){
-						//TODO add character token images
-						b = new HallwayTile('H');
-						b.setIcon(new ImageIcon(IMAGE_PATH + "token.png"));
+						// creating a character token in this tile
+						b = initCharacterToken(c);
 					} else {
 						// get the tile represented by the character
 						b = getTile(c);
@@ -69,6 +69,44 @@ public class CluedoBoard {
 		}
 	}
 	
+	/**
+	 * This method creates the character token images and
+	 *  sets the tool tip text.
+	 * @param c
+	 * @return board square jbutton
+	 */
+	private JButton initCharacterToken(char c) {
+		JButton b = new HallwayTile('H');
+		int playerID = Character.digit(c, 10);
+		switch(playerID){
+			case 1:
+				b.setIcon(new ImageIcon(IMAGE_PATH + "scarlett.png"));
+				b.setToolTipText("MISS SCARLETT");
+				break;
+			case 2:
+				b.setIcon(new ImageIcon(IMAGE_PATH + "mustard.png"));
+				b.setToolTipText("COLONEL MUSTARD");
+				break;
+			case 3:
+				b.setIcon(new ImageIcon(IMAGE_PATH + "green.png"));
+				b.setToolTipText("THE REVERENED GREEN");
+				break;
+			case 4:
+				b.setIcon(new ImageIcon(IMAGE_PATH + "peacock.png"));
+				b.setToolTipText("MRS PEACOCK");
+				break;
+			case 5:
+				b.setIcon(new ImageIcon(IMAGE_PATH + "plum.png"));
+				b.setToolTipText("PROFESSOR PLUM");
+				break;
+			case 6:
+				b.setIcon(new ImageIcon(IMAGE_PATH + "white.png"));
+				b.setToolTipText("MRS WHITE");
+				break;
+		}
+		return b;
+	}
+
 	/**
 	 * Initlises the cluedo board and adds it to
 	 * 	the parnet board frame
