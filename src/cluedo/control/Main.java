@@ -15,7 +15,7 @@ import cluedo.view.CluedoFrame;
  *
  */
 public class Main {
-	
+
 	/**
 	 * Method used for checking the program arguments
 	 * @param args
@@ -41,11 +41,11 @@ public class Main {
 		if (!boardName.toLowerCase().endsWith(".txt")) {
 			System.out.println("Only .txt file is accepted.");
 			System.exit(3);
-		}	
+		}
 	}
-	
+
 	/**
-	 * initialises the cluedo game
+	 * Initialises the Cluedo game
 	 * @param parent frame
 	 */
 	protected static void initGame(CluedoFrame frame) {
@@ -53,19 +53,19 @@ public class Main {
 		WelcomeDialog welcome = new WelcomeDialog(frame);
 		welcome.setAlwaysOnTop(true);
 		int numOfPlayers = welcome.showDialog();
-		
+
 		// Getting player information
 		List<CharacterToken> players = new ArrayList<CharacterToken>();
 		for(int i = 1; i<=numOfPlayers; i++){
 			PlayerSetupDialog playerSetup = new PlayerSetupDialog(frame, i, players);
 			playerSetup.setAlwaysOnTop(true);
 			players.add(playerSetup.showDialog());
-		}	
+		}
 		// TODO something with the players
 		CluedoBoard board = frame.getBoard();
 		CluedoGame game = new CluedoGame(board, players);
 	}
-	
+
 	/**
 	 * Main run method for the Cluedo game program
 	 * @param args
@@ -77,8 +77,8 @@ public class Main {
 			public void run() {
 				CluedoFrame game = new CluedoFrame(args[0]);
 				game.setVisible(true);
-				initGame(game);	
-			}		
-		});	
+				initGame(game);
+			}
+		});
 	}
 }

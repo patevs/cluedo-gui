@@ -29,7 +29,7 @@ import cluedo.view.CluedoFrame;
 
 /**
  * This Class creates a custom JDialog which gets
- * 	the player infomation for the Cluedo game from the users.
+ * 	the player information for the Cluedo game from the users.
  *
  * @author Patrick
  *

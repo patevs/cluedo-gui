@@ -1,34 +1,48 @@
 package cluedo.view;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 @SuppressWarnings("serial")
 public class CluedoFrame extends JFrame {
-	
+
 	private static final String IMAGE_PATH = "images/";
-	
+
 	private final JPanel gui = new JPanel(new BorderLayout(3, 3));
 	private CluedoBoard board;
-	
+
 	public CluedoFrame(String boardFile){
 		super("Cluedo");
 		// setup menu
 		initMenu();
 		// setup game board
 		initBoard(boardFile);
-		
+		// setup player UI
+		initPlayerUI();
+
 		// setting title
 		setTitle("Cluedo Game");
 		// set size
@@ -53,7 +67,7 @@ public class CluedoFrame extends JFrame {
 	 * Creating the menu bar for the game
 	 */
 	private void initMenu() {
-		JMenuBar menuBar = new JMenuBar();	
+		JMenuBar menuBar = new JMenuBar();
 		ImageIcon iconExit = new ImageIcon(IMAGE_PATH + "exit.png");
 		ImageIcon iconNew = new ImageIcon(IMAGE_PATH + "new.png");
 		ImageIcon iconHelp = new ImageIcon(IMAGE_PATH + "help.png");
@@ -62,7 +76,7 @@ public class CluedoFrame extends JFrame {
 		menu.setMnemonic(KeyEvent.VK_M);
 		JMenu help = new JMenu("Help");
 		help.setMnemonic(KeyEvent.VK_H);
-		
+
 		// creating the view help menu item
 		JMenuItem hMenuItem = new JMenuItem("View Help", iconHelp);
 		hMenuItem.setMnemonic(KeyEvent.VK_H);
@@ -71,8 +85,8 @@ public class CluedoFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// displays a help message to user
-				displayHelp();		
-			}	
+				displayHelp();
+			}
 		});
 		// creating new game and exit menu items
 		JMenuItem nMenuItem = new JMenuItem("New Game", iconNew);
@@ -81,8 +95,8 @@ public class CluedoFrame extends JFrame {
 		nMenuItem.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO close current game; start new game	
-			}	
+				// TODO close current game; start new game
+			}
 		});
 		JMenuItem eMenuItem = new JMenuItem("Exit", iconExit);
 		eMenuItem.setMnemonic(KeyEvent.VK_E);
@@ -91,9 +105,9 @@ public class CluedoFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				confirmExit();
-			}		
+			}
 		});
-		// adding menu and help menus 
+		// adding menu and help menus
 		menu.add(nMenuItem);
 		menu.addSeparator();
 		menu.add(eMenuItem);
@@ -101,10 +115,10 @@ public class CluedoFrame extends JFrame {
 		// adding menus to menubar
 		menuBar.add(menu);
 		menuBar.add(help);
-		// set the menu bar 
-		setJMenuBar(menuBar);	
+		// set the menu bar
+		setJMenuBar(menuBar);
 	}
-	
+
 	/**
 	 * Initialises the game board
 	 * @param boardFile
@@ -113,7 +127,34 @@ public class CluedoFrame extends JFrame {
 		board = new CluedoBoard(boardFile, this);
 		add(gui);
 	}
-	
+
+	private void initPlayerUI(){
+		JPanel playerControls = new JPanel();
+		playerControls.setBorder(
+				   BorderFactory.createCompoundBorder(
+						      BorderFactory.createEmptyBorder(5,12,5,12),
+						      BorderFactory.createLineBorder(Color.BLACK, 1)
+						   )
+						);
+		playerControls.setLayout(new BoxLayout(playerControls, BoxLayout.LINE_AXIS));
+		List<BufferedImage> cards = new ArrayList<BufferedImage>();
+		//TODO: find images for cards
+		try {
+			cards.add(ImageIO.read(new File(IMAGE_PATH + "scarlett.png")));
+//			cards.add(ImageIO.read(new File("knife.png")));
+//			cards.add(ImageIO.read(new File("hall.png")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		for(BufferedImage img: cards){
+			JLabel picLabel = new JLabel(new ImageIcon(img));
+			playerControls.add(picLabel);
+		}
+		// TODO: add dice
+		// TODO: add options
+		add(playerControls, BorderLayout.SOUTH); // adds playerUI to frame
+	}
+
 	/**
 	 * Displays dialog asking if user wants to exit the game
 	 */
