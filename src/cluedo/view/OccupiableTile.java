@@ -1,12 +1,13 @@
 package cluedo.view;
 
+import cluedo.model.CharacterToken;
 import cluedo.model.CluedoGame;
 
 @SuppressWarnings("serial")
 public class OccupiableTile extends Tile {
 
 	// field to store the character occuping this tile or null if none
-	private CluedoGame.Character character;
+	private CharacterToken character;
 	// field to store the weapon occuping this tile or null if none
 	private CluedoGame.Weapon weapon;
 	
@@ -25,7 +26,7 @@ public class OccupiableTile extends Tile {
 	/*
 	 * Getter and Setter Methods
 	 */
-	public boolean setCharacter(CluedoGame.Character newChar){
+	public boolean setCharacter(CharacterToken newChar){
 		if(isOccupied()) return false; // tile already occupuied
 		if(character == null){
 			character = newChar;
@@ -33,7 +34,8 @@ public class OccupiableTile extends Tile {
 		}
 		return false;
 	}
-	public CluedoGame.Character getCharacter(){ return character; }
+	public CharacterToken getCharacter(){ return character; }
+	
 	public boolean setWeapon(CluedoGame.Weapon newWeap){
 		if(isOccupied()) return false; // tile already occupuied
 		if(weapon == null){

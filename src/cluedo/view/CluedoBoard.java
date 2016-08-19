@@ -59,9 +59,10 @@ public class CluedoBoard {
 					JButton b;
 					// If character is a digit, then make tile a player starting location
 					if(Character.isDigit(c)){
+						int digit = Character.digit(c, 10);
 						// Create this tile as a player starting tile
 						b = new HallwayTile('H');
-						((HallwayTile) b).setStartCharacter(c);
+						((HallwayTile) b).setStartCharacter(digit);
 						startTiles.add((HallwayTile) b);
 					} else {
 						// get the tile represented by the character
@@ -173,12 +174,21 @@ public class CluedoBoard {
 		return b;
 	}
 
+	/**
+	 * Initlises the players onto the board.
+	 * @param list of players
+	 */
 	public void initPlayers(List<CharacterToken> players) {
 		for(HallwayTile t: startTiles){
-			for(CharacterToken c: players){
-				
+			for(CharacterToken p: players){
+				if(t.getStartCharacter() != null){
+					if(p.getCharacter().toString().equalsIgnoreCase(
+							t.getStartCharacter().toString())){
+						//TODO init player start squares
+					}
+				}			
 			}
-		}		
+		}
 	}
 
 }

@@ -26,7 +26,9 @@ public class CluedoGame {
 	private List<Card> unusedCards;
 	
 	public CluedoGame(CluedoBoard board, List<CharacterToken> players) {
+		
 		board.initPlayers(players);
+		
 		this.setBoard(board);
 		this.setActivePlayers(players);
 		
@@ -34,6 +36,7 @@ public class CluedoGame {
 		this.deck = initDeck();
 		
 		dealCards();
+		getDeck();
 	}
 	
 	/**

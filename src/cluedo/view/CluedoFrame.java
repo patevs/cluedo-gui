@@ -14,8 +14,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -25,13 +23,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import cluedo.model.CharacterToken;
+import cluedo.control.Suggestion;
 
 @SuppressWarnings("serial")
 public class CluedoFrame extends JFrame {
@@ -144,7 +140,7 @@ public class CluedoFrame extends JFrame {
 		JPanel playerControls = new JPanel();
 		playerControls.setBorder(
 				   BorderFactory.createCompoundBorder(
-						      BorderFactory.createEmptyBorder(0,11,3,12),
+						      BorderFactory.createEmptyBorder(0,12,2,12),
 						      BorderFactory.createLineBorder(Color.BLACK, 1)
 						   )
 						);

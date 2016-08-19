@@ -8,7 +8,7 @@ import javax.swing.BorderFactory;
 import cluedo.model.CluedoGame;
 
 @SuppressWarnings("serial")
-public class HallwayTile extends Tile {
+public class HallwayTile extends OccupiableTile {
 	
 	// Stores the character which starts in this square
 	// 	or null if none.
