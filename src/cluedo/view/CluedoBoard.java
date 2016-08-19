@@ -5,6 +5,8 @@ import java.awt.GridLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import javax.swing.ImageIcon;
@@ -12,6 +14,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+
+import cluedo.model.CharacterToken;
 
 /**
  * This class represents the cluedo board for the the game
@@ -26,6 +30,8 @@ public class CluedoBoard {
 	private JButton[][] boardSquares = new JButton[22][22];
 	// field to store the board panel
 	private JPanel board;
+	// field to stores the player starting tiles
+	private List<HallwayTile> startTiles = new ArrayList<HallwayTile>();
 
 	public CluedoBoard(String boardFile, CluedoFrame frame) {
 		// initlizise the board squares from file
@@ -53,8 +59,10 @@ public class CluedoBoard {
 					JButton b;
 					// If character is a digit, then make tile a player starting location
 					if(Character.isDigit(c)){
-						// creating a character token in this tile
-						b = initCharacterToken(c);
+						// Create this tile as a player starting tile
+						b = new HallwayTile('H');
+						((HallwayTile) b).setStartCharacter(c);
+						startTiles.add((HallwayTile) b);
 					} else {
 						// get the tile represented by the character
 						b = getTile(c);
@@ -163,6 +171,14 @@ public class CluedoBoard {
 		b.setIcon(icon);
 		b.setPreferredSize(new Dimension(24, 24));
 		return b;
+	}
+
+	public void initPlayers(List<CharacterToken> players) {
+		for(HallwayTile t: startTiles){
+			for(CharacterToken c: players){
+				
+			}
+		}		
 	}
 
 }
