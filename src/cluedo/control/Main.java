@@ -64,6 +64,7 @@ public class Main {
 		// TODO something with the players
 		CluedoBoard board = frame.getBoard();
 		CluedoGame game = new CluedoGame(board, players);
+		game.getActivePlayers();
 	}
 
 	/**
@@ -75,9 +76,9 @@ public class Main {
 		EventQueue.invokeLater(new Runnable(){
 			@Override
 			public void run() {
-				CluedoFrame game = new CluedoFrame(args[0]);
-				game.setVisible(true);
-				initGame(game);
+				CluedoFrame frame = new CluedoFrame(args[0]);
+				frame.setVisible(true);
+				initGame(frame);
 			}
 		});
 	}

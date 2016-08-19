@@ -6,7 +6,7 @@ import javax.swing.JButton;
 public abstract class Tile extends JButton {
 	
 	// Stores the character symbol of the tile 
-	private char symbol;
+	private final char symbol;
 	
 	public Tile(char symbol){
 		this.symbol = symbol;

@@ -246,7 +246,7 @@ public class PlayerSetupDialog extends JDialog implements ActionListener {
 		// disabling chosen characters
 		for(CharacterToken player : players){
 			for(int i = 0; i<characterBtns.length; i++){
-				if(player.getCharacterStr().equals(characterBtns[i].getText())){
+				if(player.getCharacter().toString().equalsIgnoreCase(characterBtns[i].getText())){
 					characterBtns[i].setEnabled(false);
 				}
 			}

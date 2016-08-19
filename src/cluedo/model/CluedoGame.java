@@ -22,7 +22,7 @@ public class CluedoGame {
 	private Card[] solution;
 	// stores the deck of cards for the game
 	private List<Card> deck;
-	// stores the unused cards once the all the cards are dealt
+	// stores the unused leftover cards once all the cards are dealt
 	private List<Card> unusedCards;
 	
 	public CluedoGame(CluedoBoard board, List<CharacterToken> players) {
