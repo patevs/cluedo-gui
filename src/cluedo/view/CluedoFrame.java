@@ -14,6 +14,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -23,9 +25,14 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+
+import cluedo.control.Suggestion;
+import cluedo.model.CharacterToken;
 
 @SuppressWarnings("serial")
 public class CluedoFrame extends JFrame {
@@ -37,7 +44,7 @@ public class CluedoFrame extends JFrame {
 
 	public CluedoFrame(String boardFile){
 		super("Cluedo");
-		
+
 		// setup menu
 		initMenu();
 		// setup game board
@@ -66,7 +73,7 @@ public class CluedoFrame extends JFrame {
 	}
 
 	/**
-	 * Creating the menu bar for the game
+	 * Creates the menu bar for the game
 	 */
 	private void initMenu() {
 		JMenuBar menuBar = new JMenuBar();
@@ -142,7 +149,7 @@ public class CluedoFrame extends JFrame {
 						      BorderFactory.createLineBorder(Color.BLACK, 1)
 						   )
 						);
-		
+
 		// Creating a panel to store the dice images and roll button
 		JPanel rollPnl = new JPanel(new GridLayout(0,1,2,2));
 		rollPnl.setBorder(new EmptyBorder(0,4,0,2));
@@ -161,7 +168,7 @@ public class CluedoFrame extends JFrame {
 		rollBtn.setEnabled(false);
 		rollPnl.add(dicePnl);
 		rollPnl.add(rollBtn);
-		
+
 		// Creating a panel to display game information
 		JPanel gameInfoPnl = new JPanel();
 		// Creating a text area to display game information to the user
@@ -169,14 +176,14 @@ public class CluedoFrame extends JFrame {
 		gameTextArea.setEditable(false);
 		gameTextArea.setBorder(
 				   BorderFactory.createCompoundBorder(
-						      BorderFactory.createTitledBorder(new LineBorder(Color.BLACK,1), 
+						      BorderFactory.createTitledBorder(new LineBorder(Color.BLACK,1),
 						    		  "<html><b><u>GAME INFO</u></b></html>"), // using html tags to underline text
 						      BorderFactory.createEmptyBorder(4,4,2,2)
 						   )
 						);
 		// Adding the text area to the panel
-		gameInfoPnl.add(gameTextArea, BorderLayout.CENTER);	
-		
+		gameInfoPnl.add(gameTextArea, BorderLayout.CENTER);
+
 		// Creating a panel to display the current players options
 		JPanel gameOptionsPnl = new JPanel(new GridLayout(0,1,5,5));
 		gameOptionsPnl.setBorder(new EmptyBorder(0,2,0,4));
@@ -185,9 +192,15 @@ public class CluedoFrame extends JFrame {
 		JButton endTurnBtn = new JButton("End Turn.");
 		JButton quitBtn = new JButton("Quit.");
 		// setting up buttons
-		suggestBtn.setEnabled(false);
+//		suggestBtn.setEnabled(false);
 		endTurnBtn.setEnabled(false);
-		// adding an action listener to the quit button
+		// adding action listeners to buttons
+		suggestBtn.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				suggest();
+			}});
+
 		quitBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -197,9 +210,9 @@ public class CluedoFrame extends JFrame {
 		gameOptionsPnl.add(suggestBtn);
 		gameOptionsPnl.add(endTurnBtn);
 		gameOptionsPnl.add(quitBtn);
-		
+
 		/* Testing adding images to the UI
-		 * 
+		 *
 		JPanel handPnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		List<BufferedImage> cards = new ArrayList<BufferedImage>();
 		//TODO: find images for cards
@@ -216,10 +229,10 @@ public class CluedoFrame extends JFrame {
 		}
 		//playerControls.add(handPnl, BorderLayout.CENTER);
 		 */
-		
+
 		// TODO: add dice
 		// TODO: add options
-		
+
 		// adding the roll panel to the player controls panel
 		playerControls.add(rollPnl, BorderLayout.WEST);
 		// adding the game info panel to the player controls panel
@@ -228,6 +241,13 @@ public class CluedoFrame extends JFrame {
 		playerControls.add(gameOptionsPnl, BorderLayout.EAST);
 		// adding the player controls UI to the bottom of the window
 		add(playerControls, BorderLayout.SOUTH); // adds playerUI to frame
+	}
+
+	/**
+	 * Displays a suggestion dialogue.
+	 */
+	private void suggest(){
+		new Suggestion();
 	}
 
 	/**

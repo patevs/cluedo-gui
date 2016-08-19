@@ -152,7 +152,7 @@ public class PlayerSetupDialog extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method creates the player infomation UI
+	 * This method creates the player information UI
 	 */
 	private void createPlayerGUI() {
 
