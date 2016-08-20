@@ -11,6 +11,8 @@ import java.awt.event.WindowEvent;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+
 import javax.imageio.ImageIO;
 
 import javax.swing.BorderFactory;
@@ -28,7 +30,14 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import cluedo.control.Suggestion;
+import cluedo.model.CharacterToken;
+import cluedo.model.CluedoGame;
 
+/**
+ * Interacts with the players and handles actions.
+ * @author Patrick
+ *
+ */
 @SuppressWarnings("serial")
 public class CluedoFrame extends JFrame {
 
@@ -36,6 +45,7 @@ public class CluedoFrame extends JFrame {
 
 	private final JPanel gui = new JPanel(new BorderLayout(3, 3));
 	private CluedoBoard board;
+	private CluedoGame game;
 
 	public CluedoFrame(String boardFile){
 		super("Cluedo");
@@ -136,6 +146,7 @@ public class CluedoFrame extends JFrame {
 	 * Initialises the game's player user interface
 	 */
 	private void initPlayerUI(){
+		//TODO: keep track of which player is currently playing
 		// Creating a panel to store the UI
 		JPanel playerControls = new JPanel();
 		playerControls.setBorder(
@@ -178,6 +189,8 @@ public class CluedoFrame extends JFrame {
 						);
 		// Adding the text area to the panel
 		gameInfoPnl.add(gameTextArea, BorderLayout.CENTER);
+
+		//TODO: add info about moving using keyboard
 
 		// Creating a panel to display the current players options
 		JPanel gameOptionsPnl = new JPanel(new GridLayout(0,1,5,5));
@@ -242,7 +255,7 @@ public class CluedoFrame extends JFrame {
 	 * Displays a suggestion dialogue.
 	 */
 	private void suggest(){
-		new Suggestion();
+		new Suggestion(this);
 	}
 
 	/**
@@ -270,13 +283,26 @@ public class CluedoFrame extends JFrame {
 	}
 
 	/*
+	 * Setter methods
+	 */
+
+	public void setGame(CluedoGame game){
+		this.game = game;
+	}
+
+	/*
 	 * Getter methods
 	 */
 	public JPanel getGui() {
 		return gui;
 	}
+
 	public CluedoBoard getBoard(){
 		return board;
+	}
+
+	public List<CharacterToken> getPlayers() {
+		return game.getActivePlayers();
 	}
 
 }

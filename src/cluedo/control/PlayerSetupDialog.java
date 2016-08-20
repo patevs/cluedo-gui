@@ -45,7 +45,7 @@ public class PlayerSetupDialog extends JDialog implements ActionListener {
 	private JTextField nameField;
 	// a field for the currently selected character
 	private String currentSelection;
-	// represents the resulting plater token
+	// represents the resulting player token
 	private CharacterToken player;
 	// an array of character buttons
 	private JRadioButton[] characterBtns;

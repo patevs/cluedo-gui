@@ -48,7 +48,7 @@ public class Main {
 	 * Initialises the Cluedo game
 	 * @param parent frame
 	 */
-	protected static void initGame(CluedoFrame frame) {
+	protected static CluedoGame initGame(CluedoFrame frame) {
 		// Display welcome dialog
 		WelcomeDialog welcome = new WelcomeDialog(frame);
 		welcome.setAlwaysOnTop(true);
@@ -65,6 +65,7 @@ public class Main {
 		CluedoBoard board = frame.getBoard();
 		CluedoGame game = new CluedoGame(board, players);
 		game.getActivePlayers();
+		return game;
 	}
 
 	/**
@@ -78,7 +79,7 @@ public class Main {
 			public void run() {
 				CluedoFrame frame = new CluedoFrame(args[0]);
 				frame.setVisible(true);
-				initGame(frame);
+				frame.setGame(initGame(frame));
 			}
 		});
 	}

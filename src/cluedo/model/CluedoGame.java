@@ -24,24 +24,24 @@ public class CluedoGame {
 	private List<Card> deck;
 	// stores the unused leftover cards once all the cards are dealt
 	private List<Card> unusedCards;
-	
+
 	public CluedoGame(CluedoBoard board, List<CharacterToken> players) {
-		
+
 		board.initPlayers(players);
-		
+
 		this.setBoard(board);
 		this.setActivePlayers(players);
-		
+
 		this.solution = initSolution();
 		this.deck = initDeck();
-		
+
 		dealCards();
 		getDeck();
 	}
-	
+
 	/**
 	 * This method gets a random solution to the Cluedo game.
-	 *  The solution contains one Character card, one Room card, 
+	 *  The solution contains one Character card, one Room card,
 	 *  and one weapon card.
 	 * @return solution
 	 */
@@ -79,13 +79,13 @@ public class CluedoGame {
 		}
 		// deal cards evenly to players
 		int numCardsToDeal = deck.size() / numPlayers();
-		for(CharacterToken player: getPlayers()){
+		for(CharacterToken player: getActivePlayers()){
 			for(int i=0; i<numCardsToDeal; i++){
 				player.addCard(getCardFromDeck());
 			}
 		}
 	}
-	
+
 	/**
 	 * Gets a random card from the remaining deck of cards
 	 * @return random card from deck
@@ -118,20 +118,13 @@ public class CluedoGame {
 		return deck;
 	}
 	/**
-	 * Returns a list of active players in the game
-	 * @return list of active players
-	 */
-	private List<CharacterToken> getPlayers() {
-		return activePlayers;
-	}
-	/**
 	 * Returns the number of current players
 	 * @return number of current players
 	 */
 	private int numPlayers() {
 		return activePlayers.size();
 	}
-	
+
 	/*
 	 * Enums to represent the characters, rooms, and weapons
 	 * 	In the game.
