@@ -46,16 +46,23 @@ public class CluedoFrame extends JFrame {
 	private final JPanel gui = new JPanel(new BorderLayout(3, 3));
 	private CluedoBoard board;
 	private CluedoGame game;
+	private JLabel dice1;
+	private JLabel dice2;
 
 	public CluedoFrame(String boardFile){
 		super("Cluedo");
+
+		try{
+			dice1 = new JLabel(new ImageIcon(ImageIO.read(new File(IMAGE_PATH + "dice3.png"))));
+			dice2 = new JLabel(new ImageIcon(ImageIO.read(new File(IMAGE_PATH + "dice4.png"))));
+		} catch (IOException e1) { e1.printStackTrace(); }
 
 		// setup menu
 		initMenu();
 		// setup game board
 		initBoard(boardFile);
 		// setup player UI
-		initPlayerUI();
+		initPlayerUI(null);
 
 		// setting title
 		setTitle("Cluedo Game");
@@ -145,33 +152,35 @@ public class CluedoFrame extends JFrame {
 	/**
 	 * Initialises the game's player user interface
 	 */
-	private void initPlayerUI(){
-		//TODO: keep track of which player is currently playing
+	private void initPlayerUI(CharacterToken player){
 		// Creating a panel to store the UI
 		JPanel playerControls = new JPanel();
 		playerControls.setBorder(
-				   BorderFactory.createCompoundBorder(
-						      BorderFactory.createEmptyBorder(0,12,2,12),
-						      BorderFactory.createLineBorder(Color.BLACK, 1)
-						   )
-						);
+		   BorderFactory.createCompoundBorder(
+				      BorderFactory.createEmptyBorder(0,12,2,12),
+				      BorderFactory.createLineBorder(Color.BLACK, 1)
+				   )
+				);
 
 		// Creating a panel to store the dice images and roll button
 		JPanel rollPnl = new JPanel(new GridLayout(0,1,2,2));
 		rollPnl.setBorder(new EmptyBorder(0,4,0,2));
 		JPanel dicePnl = new JPanel();
-		// Creating the dice images
-		try {
-			JLabel dice1 = new JLabel(new ImageIcon(ImageIO.read(new File(IMAGE_PATH + "dice3.png"))));
-			dice1.setBorder(new LineBorder(Color.BLACK));
-			JLabel dice2 = new JLabel(new ImageIcon(ImageIO.read(new File(IMAGE_PATH + "dice4.png"))));
-			dice2.setBorder(new LineBorder(Color.BLACK));
-			dicePnl.add(dice1);
-			dicePnl.add(dice2);
+
+		try{
+			dice1 = new JLabel(new ImageIcon(ImageIO.read(new File(IMAGE_PATH + "dice3.png"))));
+			dice2 = new JLabel(new ImageIcon(ImageIO.read(new File(IMAGE_PATH + "dice4.png"))));
 		} catch (IOException e1) { e1.printStackTrace(); }
+
+		// Creating the dice images
+		dice1.setBorder(new LineBorder(Color.BLACK));
+		dice2.setBorder(new LineBorder(Color.BLACK));
+		dicePnl.add(dice1);
+		dicePnl.add(dice2);
+		if(dice1==null)
+			System.out.println("no dice");
 		// Adding dice and roll button to the roll panel
 		JButton rollBtn = new JButton("Roll.");
-		rollBtn.setEnabled(false);
 		rollPnl.add(dicePnl);
 		rollPnl.add(rollBtn);
 
@@ -187,21 +196,47 @@ public class CluedoFrame extends JFrame {
 						      BorderFactory.createEmptyBorder(4,4,2,2)
 						   )
 						);
+
 		// Adding the text area to the panel
 		gameInfoPnl.add(gameTextArea, BorderLayout.CENTER);
-
-		//TODO: add info about moving using keyboard
 
 		// Creating a panel to display the current players options
 		JPanel gameOptionsPnl = new JPanel(new GridLayout(0,1,5,5));
 		gameOptionsPnl.setBorder(new EmptyBorder(0,2,0,4));
+
 		// Creating buttons for the options
 		JButton suggestBtn = new JButton("Suggest / Accuse.");
 		JButton endTurnBtn = new JButton("End Turn.");
 		JButton quitBtn = new JButton("Quit.");
-		// setting up buttons
-//		suggestBtn.setEnabled(false);
-		endTurnBtn.setEnabled(false);
+
+		// show player info
+		if(player!=null){
+			gameTextArea.setText(player.getName() + ":\nPlease make a move.");
+		}
+		// if initial setup message
+		else{
+			gameTextArea.setText("Roll the dice then either use the arrow keys to move\n or click on the tile you want to move to.\n");
+			JButton beginTurn = new JButton("Begin.");
+			beginTurn.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if(game.getActivePlayers()==null)
+						System.out.println("no players");
+					else{
+						rollBtn.setEnabled(true);
+						suggestBtn.setEnabled(true);
+						endTurnBtn.setEnabled(true);
+						initPlayerUI(game.getActivePlayers().get(0));
+					}
+					repaint();
+				}
+			});
+			gameOptionsPnl.add(beginTurn);
+			rollBtn.setEnabled(false);
+			suggestBtn.setEnabled(false);
+			endTurnBtn.setEnabled(false);
+		}
+
 		// adding action listeners to buttons
 		suggestBtn.addActionListener(new ActionListener(){
 			@Override
@@ -214,6 +249,15 @@ public class CluedoFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				confirmExit();
 			}});
+
+		rollBtn.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				rollDice(player);
+				repaint();
+			}
+		});
+
 		// Adding the buttons to the panel
 		gameOptionsPnl.add(suggestBtn);
 		gameOptionsPnl.add(endTurnBtn);
@@ -238,9 +282,6 @@ public class CluedoFrame extends JFrame {
 		//playerControls.add(handPnl, BorderLayout.CENTER);
 		 */
 
-		// TODO: add dice
-		// TODO: add options
-
 		// adding the roll panel to the player controls panel
 		playerControls.add(rollPnl, BorderLayout.WEST);
 		// adding the game info panel to the player controls panel
@@ -249,6 +290,35 @@ public class CluedoFrame extends JFrame {
 		playerControls.add(gameOptionsPnl, BorderLayout.EAST);
 		// adding the player controls UI to the bottom of the window
 		add(playerControls, BorderLayout.SOUTH); // adds playerUI to frame
+	}
+
+	private void rollDice(CharacterToken player){
+		int first = (int)(Math.random() * 6) + 1;
+		int second = (int)(Math.random() * 6) + 1;
+		if(player!=null)
+			player.setStepsRemaining(first + second);
+		dice1 = getDiceImage(first);
+		dice2 = getDiceImage(second);
+	}
+
+	private JLabel getDiceImage(int roll){
+		try{
+			switch(roll){
+				case 1:
+					return new JLabel(new ImageIcon(ImageIO.read(new File(IMAGE_PATH + "dice1.png"))));
+				case 2:
+					return new JLabel(new ImageIcon(ImageIO.read(new File(IMAGE_PATH + "dice2.png"))));
+				case 3:
+					return new JLabel(new ImageIcon(ImageIO.read(new File(IMAGE_PATH + "dice3.png"))));
+				case 4:
+					return new JLabel(new ImageIcon(ImageIO.read(new File(IMAGE_PATH + "dice4.png"))));
+				case 5:
+					return new JLabel(new ImageIcon(ImageIO.read(new File(IMAGE_PATH + "dice5.png"))));
+				case 6:
+					return new JLabel(new ImageIcon(ImageIO.read(new File(IMAGE_PATH + "dice6.png"))));
+			}
+		} catch (IOException e1) { e1.printStackTrace(); }
+		return null;
 	}
 
 	/**

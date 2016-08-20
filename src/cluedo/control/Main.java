@@ -65,7 +65,7 @@ public class Main {
 		}
 		CluedoBoard board = frame.getBoard();
 		CluedoGame game = new CluedoGame(board, players);
-		game.getActivePlayers();
+		game.getActivePlayers(); //FIXME: what's this for?
 		return game;
 	}
 
@@ -80,8 +80,10 @@ public class Main {
 			public void run() {
 				CluedoFrame frame = new CluedoFrame(args[0]);
 				frame.setVisible(true);
-				frame.setGame(initGame(frame));
+				CluedoGame game = initGame(frame);
+				frame.setGame(game);
 				// TODO something with the players
+				game.getActivePlayers().get(0); // first player
 			}
 		});
 	}

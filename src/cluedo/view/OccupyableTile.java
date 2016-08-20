@@ -4,17 +4,17 @@ import cluedo.model.CharacterToken;
 import cluedo.model.CluedoGame;
 
 @SuppressWarnings("serial")
-public class OccupiableTile extends Tile {
+public class OccupyableTile extends Tile {
 
-	// field to store the character occuping this tile or null if none
+	// field to store the character occupying this tile or null if none
 	private CharacterToken character;
-	// field to store the weapon occuping this tile or null if none
+	// field to store the weapon occupying this tile or null if none
 	private CluedoGame.Weapon weapon;
-	
-	public OccupiableTile(char symbol) {
+
+	public OccupyableTile(char symbol) {
 		super(symbol);
 	}
-	
+
 	/**
 	 * Returns true if this tile is current occupied
 	 * @return
@@ -22,7 +22,7 @@ public class OccupiableTile extends Tile {
 	public boolean isOccupied(){
 		return (character!=null || weapon!=null);
 	}
-	
+
 	/*
 	 * Getter and Setter Methods
 	 */
@@ -35,7 +35,7 @@ public class OccupiableTile extends Tile {
 		return false;
 	}
 	public CharacterToken getCharacter(){ return character; }
-	
+
 	public boolean setWeapon(CluedoGame.Weapon newWeap){
 		if(isOccupied()) return false; // tile already occupuied
 		if(weapon == null){

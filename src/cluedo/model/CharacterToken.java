@@ -6,13 +6,15 @@ import java.util.List;
 import cluedo.model.CluedoGame.Character;
 
 public class CharacterToken extends Token {
-	
+
 	// field for the players unique ID
 	private final int Uid;
 	// stores the players chosen character token
 	private final CluedoGame.Character character;
 	// stores the players hand
 	private List<Card> hand;
+	// stores how many moves the player can make
+	private int stepsRemaining;
 
 	public CharacterToken(String name, int playerUID, String characterStr) {
 		super(name);
@@ -20,7 +22,7 @@ public class CharacterToken extends Token {
 		this.character = getChar(characterStr);
 		this.hand = new ArrayList<Card>();
 	}
-	
+
 	/**
 	 * Returns a cluedo character from a string or
 	 * 	null if the character isnt recognised.
@@ -66,5 +68,7 @@ public class CharacterToken extends Token {
 	public int getUid() { return Uid; }
 	public CluedoGame.Character getCharacter() { return character; }
 	public List<Card> getHand(){ return hand; }
-	public void setHand(List<Card> newHand){ this.hand = newHand; }
+	public void setHand(List<Card> newHand){ hand = newHand; }
+	public void setStepsRemaining(int steps){ stepsRemaining = steps; }
+	public int getStepsRemaining(){ return stepsRemaining; }
 }
