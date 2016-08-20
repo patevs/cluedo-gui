@@ -102,27 +102,29 @@ public class Suggestion extends JDialog implements ActionListener {
 			weapon = e.getActionCommand();
 		}
 		// select a room
-		else{
+		else if(e.getSource() instanceof RoomRadioBtn){
 			room = e.getActionCommand();
 		}
 
 		// get player's suggestion
 		if(e.getSource() instanceof JButton){
 			// check all elements selected
-			if(suspect == null){
+			if(suspect == null||suspect.length()<1){
 				JOptionPane.showMessageDialog(this, "Select a suspect.",
 		                "Alert", JOptionPane.ERROR_MESSAGE);
 			}
-			else if(weapon == null){
+			else if(weapon == null||weapon.length()<1){
 				JOptionPane.showMessageDialog(this, "Select a weapon.",
 		                "Alert", JOptionPane.ERROR_MESSAGE);
 			}
-			else if(room == null){
+			else if(room == null||suspect.length()<1){
 				JOptionPane.showMessageDialog(this, "Select a room.",
 		                "Alert", JOptionPane.ERROR_MESSAGE);
 			}
 			else{
+				System.out.println("You accuse " + suspect + " of committing the crime with the " + weapon + " in the " + room);
 				// TODO: call game to ask other players to refute - game must know who the current player is
+				dispose();
 			}
 		}
 	}
@@ -371,7 +373,7 @@ public class Suggestion extends JDialog implements ActionListener {
 		ballroom.setActionCommand("Ball Room");
 		conservatory.setActionCommand("Conservatory");
 		billiardRoom.setActionCommand("Billiard Room");
-		library.setActionCommand("Libraryk");
+		library.setActionCommand("Library");
 		study.setActionCommand("Study");
 		hall.setActionCommand("Hall");
 		lounge.setActionCommand("Lounge");

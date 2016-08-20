@@ -46,16 +46,14 @@ public class CluedoFrame extends JFrame {
 	private final JPanel gui = new JPanel(new BorderLayout(3, 3));
 	private CluedoBoard board;
 	private CluedoGame game;
-	private JLabel dice1;
-	private JLabel dice2;
+	private int firstDie;
+	private int secondDie;
 
 	public CluedoFrame(String boardFile){
 		super("Cluedo");
 
-		try{
-			dice1 = new JLabel(new ImageIcon(ImageIO.read(new File(IMAGE_PATH + "dice3.png"))));
-			dice2 = new JLabel(new ImageIcon(ImageIO.read(new File(IMAGE_PATH + "dice4.png"))));
-		} catch (IOException e1) { e1.printStackTrace(); }
+		firstDie = 3;
+		secondDie = 4;
 
 		// setup menu
 		initMenu();
@@ -166,19 +164,14 @@ public class CluedoFrame extends JFrame {
 		JPanel rollPnl = new JPanel(new GridLayout(0,1,2,2));
 		rollPnl.setBorder(new EmptyBorder(0,4,0,2));
 		JPanel dicePnl = new JPanel();
-
-		try{
-			dice1 = new JLabel(new ImageIcon(ImageIO.read(new File(IMAGE_PATH + "dice3.png"))));
-			dice2 = new JLabel(new ImageIcon(ImageIO.read(new File(IMAGE_PATH + "dice4.png"))));
-		} catch (IOException e1) { e1.printStackTrace(); }
-
 		// Creating the dice images
+		JLabel dice1 = getDiceImage(firstDie);
 		dice1.setBorder(new LineBorder(Color.BLACK));
+		JLabel dice2 = getDiceImage(secondDie);
 		dice2.setBorder(new LineBorder(Color.BLACK));
 		dicePnl.add(dice1);
 		dicePnl.add(dice2);
-		if(dice1==null)
-			System.out.println("no dice");
+
 		// Adding dice and roll button to the roll panel
 		JButton rollBtn = new JButton("Roll.");
 		rollPnl.add(dicePnl);
@@ -212,6 +205,7 @@ public class CluedoFrame extends JFrame {
 		// show player info
 		if(player!=null){
 			gameTextArea.setText(player.getName() + ":\nPlease make a move.");
+			repaint();
 		}
 		// if initial setup message
 		else{
@@ -254,6 +248,7 @@ public class CluedoFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				rollDice(player);
+				playerControls.invalidate();
 				repaint();
 			}
 		});
@@ -293,12 +288,10 @@ public class CluedoFrame extends JFrame {
 	}
 
 	private void rollDice(CharacterToken player){
-		int first = (int)(Math.random() * 6) + 1;
-		int second = (int)(Math.random() * 6) + 1;
+		firstDie = (int)(Math.random() * 6) + 1;
+		secondDie = (int)(Math.random() * 6) + 1;
 		if(player!=null)
-			player.setStepsRemaining(first + second);
-		dice1 = getDiceImage(first);
-		dice2 = getDiceImage(second);
+			player.setStepsRemaining(firstDie + secondDie);
 	}
 
 	private JLabel getDiceImage(int roll){
