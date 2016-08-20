@@ -1,4 +1,4 @@
-package cluedo.control;
+package cluedo.model;
 
 import javax.swing.JRadioButton;
 

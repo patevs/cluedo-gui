@@ -28,6 +28,8 @@ import javax.swing.border.TitledBorder;
 
 import cluedo.model.CharRadioBtn;
 import cluedo.model.CharacterToken;
+import cluedo.model.RoomRadioBtn;
+import cluedo.model.WeapRadioBtn;
 import cluedo.view.CluedoFrame;
 
 /**
@@ -43,13 +45,9 @@ public class Suggestion extends JDialog implements ActionListener {
 	// reference to main frame
 	private CluedoFrame frame;
 	// a field for the selected crime evidence
-	private String suspect;
-	private String weapon;
-	private String room;
-	// represents the resulting player token
-	private CharacterToken suspectToken;
-//	private WeaponToken weaponToken;
-//	private Room roomToken;
+	public String suspect;
+	public String weapon;
+	public String room;
 	// an arrays of buttons
 	private CharRadioBtn[] characterBtns;
 	private WeapRadioBtn[] weaponBtns;
@@ -90,16 +88,7 @@ public class Suggestion extends JDialog implements ActionListener {
 		this.setMinimumSize(this.getSize());
         this.setLocationRelativeTo(getParent());
         // make visible
-		showDialog();
-	}
-
-	/**
-	 * Displays the dialog and returns the result
-	 * @return number of players
-	 */
-	public CharacterToken showDialog(){
 		this.setVisible(true);
-		return suspectToken;
 	}
 
 	@Override
@@ -133,16 +122,7 @@ public class Suggestion extends JDialog implements ActionListener {
 		                "Alert", JOptionPane.ERROR_MESSAGE);
 			}
 			else{
-				// finds character token associated with the given name
-				for(CharacterToken t: frame.getPlayers()){
-					if(suspect.equalsIgnoreCase(t.getName())){
-							suspectToken = t;
-							//TODO: after selecting suspect, select weapon
-							return;
-					}
-				}
-				// TODO: find weapon token
-				// TODO: find room
+				// TODO: call game to ask other players to refute - game must know who the current player is
 			}
 		}
 	}

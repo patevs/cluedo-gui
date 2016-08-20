@@ -27,14 +27,14 @@ public class CluedoGame {
 
 	public CluedoGame(CluedoBoard board, List<CharacterToken> players) {
 
+		// sets the board up
 		board.initPlayers(players);
-
 		this.setBoard(board);
 		this.setActivePlayers(players);
 
+		// deals the cards
 		this.solution = initSolution();
 		this.deck = initDeck();
-
 		dealCards();
 		getDeck();
 	}
@@ -99,35 +99,52 @@ public class CluedoGame {
 	/*
 	 * Getter and Setter methods
 	 */
+
+	/**
+	 * Returns the board
+	 * @return
+	 */
 	public CluedoBoard getBoard() { return board; }
+
+	/**
+	 * Sets the board
+	 * @param board
+	 */
 	public void setBoard(CluedoBoard board) { this.board = board; }
+
+	/**
+	 * Returns all players
+	 * @return
+	 */
 	public List<CharacterToken> getActivePlayers() { return activePlayers; }
+
+	/**
+	 * Sets all players
+	 * @param activePlayers
+	 */
 	public void setActivePlayers(List<CharacterToken> activePlayers) { this.activePlayers = activePlayers; }
+
 	/**
 	 * Returns the solution to the game
 	 * @return game solution
 	 */
-	private Card[] getSolution() {
-		return solution;
-	}
+	private Card[] getSolution() { return solution;	}
+
 	/**
 	 * This method returns the current game deck
 	 * @return
 	 */
-	private List<Card> getDeck(){
-		return deck;
-	}
+	private List<Card> getDeck(){ return deck; }
+
 	/**
 	 * Returns the number of current players
 	 * @return number of current players
 	 */
-	private int numPlayers() {
-		return activePlayers.size();
-	}
+	private int numPlayers() { return activePlayers.size();	}
 
 	/*
 	 * Enums to represent the characters, rooms, and weapons
-	 * 	In the game.
+	 * 	in the game.
 	 */
 	/**
 	 * Represents the six characters in the game

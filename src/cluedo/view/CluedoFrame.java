@@ -255,7 +255,8 @@ public class CluedoFrame extends JFrame {
 	 * Displays a suggestion dialogue.
 	 */
 	private void suggest(){
-		new Suggestion(this);
+		Suggestion suggestion = new Suggestion(this);
+
 	}
 
 	/**
