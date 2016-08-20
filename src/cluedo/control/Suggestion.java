@@ -24,6 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 
 import cluedo.model.CharRadioBtn;
 import cluedo.model.CharacterToken;
@@ -64,11 +65,6 @@ public class Suggestion extends JDialog implements ActionListener {
 		//TODO: have option to suggest or accuse
 		// set window title
         this.setTitle("Enter Suggestion");
-        // ensures the frame is the minimum size it needs to be
-        // in order display the components within it
-		this.pack();
-        // ensures the minimum size is enforced.
-		this.setMinimumSize(this.getSize());
 		// set close operation
         this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         // set position
@@ -79,6 +75,22 @@ public class Suggestion extends JDialog implements ActionListener {
                 confirmExit();
             }
         });
+	}
+
+	/**
+	 * Initilizes the player setup dialog GUI
+	 */
+	private void initGUI() {
+		// adds elements
+		createHeader();
+		createPlayerGUI();
+		createFooter();
+		// sets position and size
+		pack();
+		this.setMinimumSize(this.getSize());
+        this.setLocationRelativeTo(getParent());
+        // make visible
+		showDialog();
 	}
 
 	/**
@@ -105,35 +117,34 @@ public class Suggestion extends JDialog implements ActionListener {
 			room = e.getActionCommand();
 		}
 
-		// check all elements selected
+		// get player's suggestion
 		if(e.getSource() instanceof JButton){
+			// check all elements selected
 			if(suspect == null){
 				JOptionPane.showMessageDialog(this, "Select a suspect.",
 		                "Alert", JOptionPane.ERROR_MESSAGE);
 			}
+			else if(weapon == null){
+				JOptionPane.showMessageDialog(this, "Select a weapon.",
+		                "Alert", JOptionPane.ERROR_MESSAGE);
+			}
+			else if(room == null){
+				JOptionPane.showMessageDialog(this, "Select a room.",
+		                "Alert", JOptionPane.ERROR_MESSAGE);
+			}
 			else{
+				// finds character token associated with the given name
 				for(CharacterToken t: frame.getPlayers()){
 					if(suspect.equalsIgnoreCase(t.getName())){
 							suspectToken = t;
 							//TODO: after selecting suspect, select weapon
-							dispose();
 							return;
 					}
 				}
+				// TODO: find weapon token
+				// TODO: find room
 			}
 		}
-	}
-
-	/**
-	 * Initilizes the player setup dialog GUI
-	 */
-	private void initGUI() {
-		createHeader();
-		createPlayerGUI();
-		createFooter();
-		setSize(700, 700);
-		pack();
-		showDialog();
 	}
 
 	/**
@@ -180,10 +191,13 @@ public class Suggestion extends JDialog implements ActionListener {
 		// Creating a panel for suggestion selection
 		JPanel charPnl = createCharacterBtnsPnl();
 		JPanel weapPnl = createWeaponBtnsPnl();
+		JPanel roomPnl = createRoomBtnsPnl();
 
 		// adding the panels to the content panel
 		content.add(charPnl);
 		content.add(weapPnl);
+		content.add(roomPnl);
+
 		// display the content center window
 		add(content, BorderLayout.CENTER);
 	}
@@ -203,6 +217,12 @@ public class Suggestion extends JDialog implements ActionListener {
 				      BorderFactory.createEmptyBorder(4, 2, 4, 1)
 				   )
 				);
+
+		// sets a title for this panel
+		TitledBorder border = new TitledBorder("Suspects");
+	    border.setTitleJustification(TitledBorder.CENTER);
+	    border.setTitlePosition(TitledBorder.TOP);
+	    charPnl.setBorder(border);
 
 		// Creating a button group for the radio buttons
 		ButtonGroup bg = new ButtonGroup();
@@ -248,12 +268,12 @@ public class Suggestion extends JDialog implements ActionListener {
 		characterBtns[5] = plum;
 
 		// adding each button to the character panel
-		charPnl.add(plum);
-		charPnl.add(peacock);
-		charPnl.add(green);
-		charPnl.add(white);
-		charPnl.add(mustard);
 		charPnl.add(scarlett);
+		charPnl.add(mustard);
+		charPnl.add(white);
+		charPnl.add(green);
+		charPnl.add(peacock);
+		charPnl.add(plum);
 
 		// return the panel
 		return charPnl;
@@ -269,6 +289,12 @@ public class Suggestion extends JDialog implements ActionListener {
 				      BorderFactory.createEmptyBorder(4, 2, 4, 1)
 				   )
 				);
+
+		// sets a title for this panel
+		TitledBorder border = new TitledBorder("Weapons");
+	    border.setTitleJustification(TitledBorder.CENTER);
+	    border.setTitlePosition(TitledBorder.TOP);
+	    weapPnl.setBorder(border);
 
 		// Creating a button group for the radio buttons
 		ButtonGroup bg = new ButtonGroup();
@@ -315,14 +341,110 @@ public class Suggestion extends JDialog implements ActionListener {
 
 		// adding each button to the weapon panel
 		weapPnl.add(candlestick);
-		weapPnl.add(spanner);
-		weapPnl.add(rope);
-		weapPnl.add(revolver);
-		weapPnl.add(pipe);
 		weapPnl.add(dagger);
+		weapPnl.add(pipe);
+		weapPnl.add(revolver);
+		weapPnl.add(rope);
+		weapPnl.add(spanner);
 
 		// return the panel
 		return weapPnl;
+	}
+
+	/**
+	 * Creates and returns a panel containing the
+	 * 	room radio buttons for the user to select.
+	 * @return JPanel containing radiobuttons
+	 */
+	private JPanel createRoomBtnsPnl() {
+		// Creating a panel for room selection
+		JPanel roomPnl = new JPanel(new GridLayout(0,3));
+		// setting the room panel border
+		roomPnl.setBorder(
+		   BorderFactory.createCompoundBorder(
+				      BorderFactory.createLineBorder(Color.GRAY, 1),
+				      BorderFactory.createEmptyBorder(4, 2, 4, 1)
+				   )
+				);
+
+		// sets a title for this panel
+		TitledBorder border = new TitledBorder("Rooms");
+	    border.setTitleJustification(TitledBorder.CENTER);
+	    border.setTitlePosition(TitledBorder.TOP);
+	    roomPnl.setBorder(border);
+
+		// Creating a button group for the radio buttons
+		ButtonGroup bg = new ButtonGroup();
+		// Creating a button for each room in the game
+		RoomRadioBtn kitchen = new RoomRadioBtn("Kitchen");
+		RoomRadioBtn ballroom = new RoomRadioBtn("Ball Room");
+		RoomRadioBtn conservatory = new RoomRadioBtn("Conservatory");
+		RoomRadioBtn billiardRoom = new RoomRadioBtn("Billiard Room");
+		RoomRadioBtn library = new RoomRadioBtn("Library");
+		RoomRadioBtn study = new RoomRadioBtn("Study");
+		RoomRadioBtn hall = new RoomRadioBtn("Hall");
+		RoomRadioBtn lounge = new RoomRadioBtn("Lounge");
+		RoomRadioBtn diningRoom = new RoomRadioBtn("Dining Room");
+
+		// Adding action commands to the buttons
+		kitchen.setActionCommand("Kitchen");
+		ballroom.setActionCommand("Ball Room");
+		conservatory.setActionCommand("Conservatory");
+		billiardRoom.setActionCommand("Billiard Room");
+		library.setActionCommand("Libraryk");
+		study.setActionCommand("Study");
+		hall.setActionCommand("Hall");
+		lounge.setActionCommand("Lounge");
+		diningRoom.setActionCommand("Dining Room");
+
+		// Adding Action listeners
+		kitchen.addActionListener(this);
+		ballroom.addActionListener(this);
+		conservatory.addActionListener(this);
+		billiardRoom.addActionListener(this);
+		library.addActionListener(this);
+		study.addActionListener(this);
+		hall.addActionListener(this);
+		lounge.addActionListener(this);
+		diningRoom.addActionListener(this);
+
+		// adding the room radio buttons the the button group
+		bg.add(kitchen);
+		bg.add(ballroom);
+		bg.add(conservatory);
+		bg.add(billiardRoom);
+		bg.add(library);
+		bg.add(study);
+		bg.add(hall);
+		bg.add(lounge);
+		bg.add(diningRoom);
+
+		// adding all the buttons to an array
+		roomBtns = new RoomRadioBtn[9];
+		roomBtns[0] = kitchen;
+		roomBtns[1] = ballroom;
+		roomBtns[2] = conservatory;
+		roomBtns[3] = billiardRoom;
+		roomBtns[4] = library;
+		roomBtns[5] = study;
+		roomBtns[6] = hall;
+		roomBtns[7] = lounge;
+		roomBtns[8] = diningRoom;
+
+
+		// adding each button to the room panel
+		roomPnl.add(kitchen);
+		roomPnl.add(ballroom);
+		roomPnl.add(conservatory);
+		roomPnl.add(billiardRoom);
+		roomPnl.add(library);
+		roomPnl.add(study);
+		roomPnl.add(hall);
+		roomPnl.add(lounge);
+		roomPnl.add(diningRoom);
+
+		// return the panel
+		return roomPnl;
 	}
 
 	/**
