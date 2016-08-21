@@ -185,6 +185,57 @@ public class Suggestion extends JDialog implements ActionListener {
 	}
 
 	/**
+	 * This method creates the footer for the player setup gui.
+	 * 	The footer contains an ok button which validates the
+	 * 	users input.
+	 */
+	private void createFooter() {
+		// Creating a panel for the footer
+		JPanel footer = new JPanel();
+		// Setting the layout and border of the panel
+		footer.setLayout(new BoxLayout(footer, BoxLayout.LINE_AXIS));
+		footer.setBorder(new EmptyBorder(5,5,5,5));
+
+		// Creating cancel option
+		JButton cancelBtn = new JButton("Cancel");
+		cancelBtn.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				confirmExit();
+			}
+		});
+
+		// Creating an ok button
+		JButton OKbtn = new JButton("OK");
+		// Adding an action listener to the button
+		OKbtn.addActionListener(this);
+
+		// Adding the button to the right side of the panel
+		footer.add(Box.createHorizontalGlue());
+		footer.add(cancelBtn);
+		footer.add(OKbtn);
+
+		// Display the footer south in the window
+		add(footer, BorderLayout.SOUTH);
+	}
+
+	/**
+	 * Displays dialog asking if user wants to exit the game
+	 */
+	protected void confirmExit() {
+		String msg = "Are You Sure You Want to Cancel Your Suggestion?" ;
+		int result = JOptionPane.showConfirmDialog(this, msg,
+		        "Alert", JOptionPane.OK_CANCEL_OPTION);
+		if(result==0){
+			dispose();
+		}
+	}
+
+	/*
+	 * Buttons for suspect, weapon, crime scene selection
+	 */
+
+	/**
 	 * Creates and returns a panel containing the
 	 * 	character radio buttons for the user to select.
 	 * @return JPanel containing radiobuttons
@@ -427,52 +478,5 @@ public class Suggestion extends JDialog implements ActionListener {
 
 		// return the panel
 		return roomPnl;
-	}
-
-	/**
-	 * This method creates the footer for the player setup gui.
-	 * 	The footer contains an ok button which validates the
-	 * 	users input.
-	 */
-	private void createFooter() {
-		// Creating a panel for the footer
-		JPanel footer = new JPanel();
-		// Setting the layout and border of the panel
-		footer.setLayout(new BoxLayout(footer, BoxLayout.LINE_AXIS));
-		footer.setBorder(new EmptyBorder(5,5,5,5));
-
-		// Creating cancel option
-		JButton cancelBtn = new JButton("Cancel");
-		cancelBtn.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				confirmExit();
-			}
-		});
-
-		// Creating an ok button
-		JButton OKbtn = new JButton("OK");
-		// Adding an action listener to the button
-		OKbtn.addActionListener(this);
-
-		// Adding the button to the right side of the panel
-		footer.add(Box.createHorizontalGlue());
-		footer.add(cancelBtn);
-		footer.add(OKbtn);
-
-		// Display the footer south in the window
-		add(footer, BorderLayout.SOUTH);
-	}
-
-	/**
-	 * Displays dialog asking if user wants to exit the game
-	 */
-	protected void confirmExit() {
-		String msg = "Are You Sure You Want to Cancel Your Suggestion?" ;
-		int result = JOptionPane.showConfirmDialog(this, msg,
-		        "Alert", JOptionPane.OK_CANCEL_OPTION);
-		if(result==0){
-			dispose();
-		}
 	}
 }
