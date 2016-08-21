@@ -2,15 +2,17 @@ package cluedo.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -25,17 +27,19 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import cluedo.control.Suggestion;
+import cluedo.model.Card;
 import cluedo.model.CharacterToken;
 import cluedo.model.CluedoGame;
 
 /**
  * Interacts with the players and handles actions.
- * @author Patrick
+ * @author Patrick and Maria
  *
  */
 @SuppressWarnings("serial")
@@ -49,6 +53,7 @@ public class CluedoFrame extends JFrame {
 	private int firstDie;
 	private int secondDie;
 	private JPanel playerControls;
+	private JTextArea gameTextArea;
 
 	public CluedoFrame(String boardFile){
 		super("Cluedo");
@@ -61,7 +66,7 @@ public class CluedoFrame extends JFrame {
 		// setup game board
 		initBoard(boardFile);
 		// setup player UI
-		initPlayerUI(null);
+		initPlayerUI(null, false);
 
 		// setting title
 		setTitle("Cluedo Game");
@@ -151,9 +156,9 @@ public class CluedoFrame extends JFrame {
 	/**
 	 * Initialises the game's player user interface
 	 */
-	private void initPlayerUI(CharacterToken player){
+	private void initPlayerUI(CharacterToken player, boolean newPlayer){
 		// Creating a panel to store the UI
-		this.playerControls = new JPanel();
+		playerControls = new JPanel();
 		playerControls.setBorder(
 		   BorderFactory.createCompoundBorder(
 				      BorderFactory.createEmptyBorder(0,12,2,12),
@@ -162,73 +167,96 @@ public class CluedoFrame extends JFrame {
 				);
 
 		// Creating roll panel
-		JPanel rollPnl = initRollPnl(player);
+		JPanel rollPnl = initRollPnl(player, newPlayer);
 
 		// Creating a panel to display game information
-		JPanel gameInfoPnl = new JPanel();
+//		JPanel gameInfoPnl = new JPanel();
+		JTabbedPane gameInfoPnl = new JTabbedPane(); // two panes - game info and cards
+
 		// Creating a text area to display game information to the user
-		JTextArea gameTextArea = new JTextArea(4, 28);
-		gameTextArea.setEditable(false);
-		gameTextArea.setBorder(
-				   BorderFactory.createCompoundBorder(
-						      BorderFactory.createTitledBorder(new LineBorder(Color.BLACK,1),
-						    		  "<html><b><u>GAME INFO</u></b></html>"), // using html tags to underline text
-						      BorderFactory.createEmptyBorder(4,4,2,2)
-						   )
-						);
+		gameTextArea = initGameTextArea();
+		setText(player, newPlayer);
 
 		// Adding the text area to the panel
-		gameInfoPnl.add(gameTextArea, BorderLayout.CENTER);
+//		gameInfoPnl.add(gameTextArea, BorderLayout.CENTER);
+		gameInfoPnl.add("Game Info",gameTextArea);
+
+		if(player!=null){
+			// Adding hand to panel
+			JPanel handPnl = initHandPnl(player); //FIXME: cards too wide
+			gameInfoPnl.addTab("Hand", handPnl);
+		}
+
 
 		// Creating a panel to display the current players options
 		JPanel gameOptionsPnl = new JPanel(new GridLayout(0,1,5,5));
 		gameOptionsPnl.setBorder(new EmptyBorder(0,2,0,4));
 
 		// Creating buttons for the options
+		JButton beginBtn = new JButton("Begin.");
 		JButton suggestBtn = new JButton("Suggest / Accuse.");
 		JButton endTurnBtn = new JButton("End Turn.");
 		JButton quitBtn = new JButton("Quit.");
 
-		// show player info
-		if(player!=null){
-			gameTextArea.setText(player.getName() + ":\nPlease make a move.");
-		}
-		// if initial setup message
-		else{
-			gameTextArea.setText("Roll the dice then either use the arrow keys to move\n or click on the tile you want to move to.\n");
-			JButton beginTurn = new JButton("Begin.");
-			beginTurn.addActionListener(new ActionListener(){
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if(game.getActivePlayers()==null)
-						System.out.println("no players");
-					else{
-						remove(playerControls); // remove the old panel
-						suggestBtn.setEnabled(true);
-						endTurnBtn.setEnabled(true);
-						redraw(game.getActivePlayers().get(0));
-					}
+		/*
+		 * Adds ActionListeners to buttons
+		 */
+		// Begins the game
+		beginBtn.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(game.getActivePlayers()==null)
+					System.out.println("no players");
+				else{
+					suggestBtn.setEnabled(true);
+					endTurnBtn.setEnabled(true);
+					redraw(game.getActivePlayers().get(0), true);
 				}
-			});
-			gameOptionsPnl.add(beginTurn);
-			suggestBtn.setEnabled(false);
-			endTurnBtn.setEnabled(false);
-		}
-
-		// adding action listeners to buttons
+			}
+		});
+		// Opens suggest dialog box
 		suggestBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				suggest();
 			}});
 
+		// Starts next player's turn
+		endTurnBtn.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				CharacterToken nextPlayer = player;
+				// get next player
+				if(player.getUid()<game.getActivePlayers().size()){
+					nextPlayer = game.getActivePlayers().get(player.getUid()); // player's uid is 1-6
+				}
+				else{
+					nextPlayer = game.getActivePlayers().get(0);
+				}
+				// draw next player's UI
+//				System.out.println("Current player's id: " + player.getUid());
+//				System.out.println("Next player's id: " + nextPlayer.getUid());
+				redraw(nextPlayer, true);
+			}
+		});
+
+		// Ends game
 		quitBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				confirmExit();
 			}});
 
-		// Adding the buttons to the panel
+
+		// Adding buttons to panel and enabling the relevant ones
+		if(player!=null){
+			beginBtn.setEnabled(false);
+		}
+		else{
+			gameOptionsPnl.add(beginBtn);
+			suggestBtn.setEnabled(false);
+			endTurnBtn.setEnabled(false);
+		}
 		gameOptionsPnl.add(suggestBtn);
 		gameOptionsPnl.add(endTurnBtn);
 		gameOptionsPnl.add(quitBtn);
@@ -242,10 +270,53 @@ public class CluedoFrame extends JFrame {
 		playerControls.add(gameOptionsPnl, BorderLayout.EAST);
 		// adding the player controls UI to the bottom of the window
 		add(playerControls, BorderLayout.SOUTH); // adds playerUI to frame
-		repaint();
+//		repaint();
 	}
 
-	private JPanel initRollPnl(CharacterToken player){
+	/**
+	 * Creates the game text area to display messages to the player.
+	 * @param msg
+	 * @return
+	 */
+	private JTextArea initGameTextArea(){
+		gameTextArea = new JTextArea(4, 28);
+		gameTextArea.setEditable(false);
+		gameTextArea.setBorder(
+				   BorderFactory.createCompoundBorder(
+						      BorderFactory.createTitledBorder(new LineBorder(Color.BLACK,1),
+						    		  "<html><b><u>GAME INFO</u></b></html>"), // using html tags to underline text
+						      BorderFactory.createEmptyBorder(4,4,2,2)
+						   )
+						);
+		return gameTextArea;
+	}
+
+	/**
+	 * Changes the message in the game text area.
+	 * @param msg
+	 */
+	private void setText(CharacterToken player, boolean newPlayer){
+		String msg = "";
+		if(player==null){
+			msg = "Roll the dice then either use the arrow keys to move\nor click on the tile you want to move to.\n";
+		}
+		else if(newPlayer){
+			msg = player.getName() + "\nRoll the dice to move or select another option.";
+		}
+		else{
+			msg = player.getName() + ": " + player.getStepsRemaining() + " moves left.\n" +
+					"Use arrow keys to move or click on the board.";
+		}
+		gameTextArea.setText(msg);
+	}
+
+	/**
+	 * Creates the roll panel with the dice and the roll button.
+	 * @param player
+	 * @param newPlayer
+	 * @return
+	 */
+	private JPanel initRollPnl(CharacterToken player, boolean newPlayer){
 		// Creating a panel to store the dice images and roll button
 		JPanel rollPnl = new JPanel(new GridLayout(0,1,2,2));
 		rollPnl.setBorder(new EmptyBorder(0,4,0,2));
@@ -260,16 +331,19 @@ public class CluedoFrame extends JFrame {
 
 		// Adding dice and roll button to the roll panel
 		JButton rollBtn = new JButton("Roll.");
+		if(!newPlayer)
+			rollBtn.setEnabled(false);
+		else
+			rollBtn.setEnabled(true);
+
 		rollPnl.add(dicePnl);
 		rollPnl.add(rollBtn);
-
 
 		rollBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				remove(playerControls); // remove the old panel
 				rollDice(player); // set player's steps and dice pictures
-				redraw(player);
+				redraw(player, false);
 			}
 		});
 
@@ -279,28 +353,32 @@ public class CluedoFrame extends JFrame {
 	/**
 	 * Creates panel for all the player's cards
 	 */
-	private JPanel initHandPnl(){
-		/* Testing adding images to the UI
-		 *
+	private JPanel initHandPnl(CharacterToken player){
 		JPanel handPnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		List<BufferedImage> cards = new ArrayList<BufferedImage>();
-		//TODO: find images for cards
-		try {
-			cards.add(ImageIO.read(new File(IMAGE_PATH + "scarlett-card.png")));
-			cards.add(ImageIO.read(new File(IMAGE_PATH + "scarlett-card.png")));
-			cards.add(ImageIO.read(new File(IMAGE_PATH + "scarlett-card.png")));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		for(BufferedImage img: cards){
-			JLabel picLabel = new JLabel(new ImageIcon(img));
+//		List<BufferedImage> cards = new ArrayList<BufferedImage>();
+//		try {
+//			cards.add(ImageIO.read(new File(IMAGE_PATH + "scarlett-card.png")));
+//			cards.add(ImageIO.read(new File(IMAGE_PATH + "scarlett-card.png")));
+//			cards.add(ImageIO.read(new File(IMAGE_PATH + "scarlett-card.png")));
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		for(BufferedImage img: cards){
+//			JLabel picLabel = new JLabel(new ImageIcon(img));
+//			handPnl.add(picLabel);
+//		}
+		for(Card c: player.getHand()){
+			JLabel picLabel = new JLabel(new ImageIcon(c.getImage()));
 			handPnl.add(picLabel);
 		}
-		//playerControls.add(handPnl, BorderLayout.CENTER);
-		 */
-		return new JPanel();
+		playerControls.add(handPnl, BorderLayout.CENTER);
+		return handPnl;
 	}
 
+	/**
+	 * Rolls the dice and sets the player's initial amount of steps.
+	 * @param player
+	 */
 	private void rollDice(CharacterToken player){
 		firstDie = (int)(Math.random() * 6) + 1;
 		secondDie = (int)(Math.random() * 6) + 1;
@@ -308,6 +386,11 @@ public class CluedoFrame extends JFrame {
 			player.setStepsRemaining(firstDie + secondDie);
 	}
 
+	/**
+	 * Returns a dice image to match the roll amount.
+	 * @param roll
+	 * @return
+	 */
 	private JLabel getDiceImage(int roll){
 		try{
 			switch(roll){
@@ -360,8 +443,14 @@ public class CluedoFrame extends JFrame {
                 "Cluedo Game Guide", JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	private void redraw(CharacterToken player){
-		initPlayerUI(player); // reset the player UI
+	/**
+	 * Redraws the player controls panel.
+	 * @param player
+	 * @param newPlayer
+	 */
+	private void redraw(CharacterToken player, boolean newPlayer){
+		remove(playerControls); // remove the old panel
+		initPlayerUI(player, newPlayer); // reset the player UI
 		revalidate(); // draw
 	}
 
@@ -369,6 +458,10 @@ public class CluedoFrame extends JFrame {
 	 * Setter methods
 	 */
 
+	/**
+	 * Sets the reference to the CluedoGame.
+	 * @param game
+	 */
 	public void setGame(CluedoGame game){
 		this.game = game;
 	}
@@ -376,14 +469,26 @@ public class CluedoFrame extends JFrame {
 	/*
 	 * Getter methods
 	 */
+	/**
+	 * Returns the main panel.
+	 * @return
+	 */
 	public JPanel getGui() {
 		return gui;
 	}
 
+	/**
+	 * Returns the board associated with this frame.
+	 * @return
+	 */
 	public CluedoBoard getBoard(){
 		return board;
 	}
 
+	/**
+	 * Returns the list of players.
+	 * @return
+	 */
 	public List<CharacterToken> getPlayers() {
 		return game.getActivePlayers();
 	}

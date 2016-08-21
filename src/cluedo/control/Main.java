@@ -10,7 +10,7 @@ import cluedo.view.CluedoBoard;
 import cluedo.view.CluedoFrame;
 
 /**
- * This Main Class starts and runs the Cluedo game program
+ * Sets up the Cluedo game and begins running it.
  * @author Patrick
  *
  */
@@ -61,10 +61,16 @@ public class Main {
 		for(int i = 1; i<=numOfPlayers; i++){
 			PlayerSetupDialog playerSetup = new PlayerSetupDialog(frame, i, players);
 			playerSetup.setAlwaysOnTop(true);
+			playerSetup.setVisible(false);
 			players.add(playerSetup.showDialog());
 		}
 		CluedoBoard board = frame.getBoard();
 		CluedoGame game = new CluedoGame(board, players);
+		//FIXME: characters not made with correct names
+//		game.getActivePlayers();
+//		for(CharacterToken p: players){
+//			System.out.println("Player " + p.getUid() + ": " + p.getName() + ": " + p.getCharacter().toString());
+//		}
 		return game;
 	}
 
