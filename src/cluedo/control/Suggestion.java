@@ -328,52 +328,52 @@ public class Suggestion extends JDialog implements ActionListener {
 		ButtonGroup bg = new ButtonGroup();
 		// Creating a button for each weapon in the game
 		WeapRadioBtn candlestick = new WeapRadioBtn("Candlestick");
-		WeapRadioBtn dagger = new WeapRadioBtn("Dagger");
+		WeapRadioBtn knife = new WeapRadioBtn("Knife");
 		WeapRadioBtn pipe = new WeapRadioBtn("Lead Pipe");
 		WeapRadioBtn revolver = new WeapRadioBtn("Revolver");
 		WeapRadioBtn rope = new WeapRadioBtn("Rope");
-		WeapRadioBtn spanner = new WeapRadioBtn("Spanner");
+		WeapRadioBtn wrench = new WeapRadioBtn("Wrench");
 
 		// Adding action commands to the buttons
 		candlestick.setActionCommand("Candlestick");
-		dagger.setActionCommand("Dagger");
+		knife.setActionCommand("Knife");
 		pipe.setActionCommand("Lead Pipe");
 		revolver.setActionCommand("Revolver");
 		rope.setActionCommand("Rope");
-		spanner.setActionCommand("Spanner");
+		wrench.setActionCommand("Wrench");
 
 		// Adding Action listeners
 		candlestick.addActionListener(this);
-		dagger.addActionListener(this);
+		knife.addActionListener(this);
 		pipe.addActionListener(this);
 		revolver.addActionListener(this);
 		rope.addActionListener(this);
-		spanner.addActionListener(this);
+		wrench.addActionListener(this);
 
 		// adding the weapon radio buttons the the button group
 		bg.add(candlestick);
-		bg.add(dagger);
+		bg.add(knife);
 		bg.add(pipe);
 		bg.add(revolver);
 		bg.add(rope);
-		bg.add(spanner);
+		bg.add(wrench);
 
 		// adding all the buttons to an array
 		weaponBtns = new WeapRadioBtn[6];
 		weaponBtns[0] = candlestick;
-		weaponBtns[1] = dagger;
+		weaponBtns[1] = knife;
 		weaponBtns[2] = pipe;
 		weaponBtns[3] = revolver;
 		weaponBtns[4] = rope;
-		weaponBtns[5] = spanner;
+		weaponBtns[5] = wrench;
 
 		// adding each button to the weapon panel
 		weapPnl.add(candlestick);
-		weapPnl.add(dagger);
+		weapPnl.add(knife);
 		weapPnl.add(pipe);
 		weapPnl.add(revolver);
 		weapPnl.add(rope);
-		weapPnl.add(spanner);
+		weapPnl.add(wrench);
 
 		// return the panel
 		return weapPnl;
