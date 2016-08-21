@@ -10,7 +10,7 @@ import cluedo.view.CluedoBoard;
 import cluedo.view.CluedoFrame;
 
 /**
- * This Main Class starts and runs the Cluedo game program
+ * Sets up the Cluedo game and begins running it.
  * @author Patrick
  *
  */

@@ -1,5 +1,7 @@
 package cluedo.model;
 
-public interface Card {
+import java.awt.image.BufferedImage;
 
+public interface Card {
+	public BufferedImage getImage();
 }

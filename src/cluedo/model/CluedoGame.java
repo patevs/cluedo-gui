@@ -1,9 +1,14 @@
 package cluedo.model;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+
+import javax.imageio.ImageIO;
 
 import cluedo.view.CluedoBoard;
 
@@ -14,6 +19,8 @@ import cluedo.view.CluedoBoard;
  */
 public class CluedoGame {
 
+	// path to images - source: game-board.blogspot.co.nz/2008/05/clue-characters-board-game-vs-clue.html
+	private static final String IMAGE_PATH = "images/";
 	// represents the current game board
 	private CluedoBoard board;
 	// a list of all current players
@@ -169,6 +176,29 @@ public class CluedoGame {
 		public String toString() {
 			return this.name().replaceAll("_", " ");
 		}
+
+		@Override
+		public BufferedImage getImage() {
+			try{
+				switch(this){
+					case MISS_SCARLETT:
+						return ImageIO.read(new File(IMAGE_PATH + "scarlett-card.png"));
+					case COLONEL_MUSTARD:
+						return ImageIO.read(new File(IMAGE_PATH + "mustard-card.png"));
+					case MRS_WHITE:
+						return ImageIO.read(new File(IMAGE_PATH + "white-card.png"));
+					case THE_REVEREND_GREEN:
+						return ImageIO.read(new File(IMAGE_PATH + "green-card.png"));
+					case MRS_PEACOCK:
+						return ImageIO.read(new File(IMAGE_PATH + "peacock-card.png"));
+					case PROFESSOR_PLUM:
+						return ImageIO.read(new File(IMAGE_PATH + "plum-card.png"));
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
 	}
 
 	/**
@@ -176,11 +206,11 @@ public class CluedoGame {
 	 */
 	public enum Weapon implements Card {
 		CANDLESTICK,
-		DAGGER,
+		KNIFE, // changed from dagger to match cards
 		LEAD_PIPE,
 		REVOLVER,
 		ROPE,
-		SPANNER;
+		WRENCH; // changed from spanner to match cards
 
 		/**
 		 * Returns a random weapon.
@@ -193,6 +223,29 @@ public class CluedoGame {
 		@Override
 		public String toString() {
 			return this.name().replaceAll("_", " ");
+		}
+
+		@Override
+		public BufferedImage getImage() {
+			try{
+				switch(this){
+					case CANDLESTICK:
+						return ImageIO.read(new File(IMAGE_PATH + "candlestick-card.png"));
+					case KNIFE:
+						return ImageIO.read(new File(IMAGE_PATH + "knife-card.png"));
+					case LEAD_PIPE:
+						return ImageIO.read(new File(IMAGE_PATH + "pipe-card.png"));
+					case REVOLVER:
+						return ImageIO.read(new File(IMAGE_PATH + "revolver-card.png"));
+					case ROPE:
+						return ImageIO.read(new File(IMAGE_PATH + "rope-card.png"));
+					case WRENCH:
+						return ImageIO.read(new File(IMAGE_PATH + "wrench-card.png"));
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
 		}
 	}
 
@@ -221,6 +274,35 @@ public class CluedoGame {
 		@Override
 		public String toString() {
 			return this.name().replaceAll("_", " ");
+		}
+
+		@Override
+		public BufferedImage getImage() {
+			try{
+				switch(this){
+					case KITCHEN:
+						return ImageIO.read(new File(IMAGE_PATH + "kitchen-card.png"));
+					case BALL_ROOM:
+						return ImageIO.read(new File(IMAGE_PATH + "ballroom-card.png"));
+					case CONSERVATORY:
+						return ImageIO.read(new File(IMAGE_PATH + "conservatory-card.png"));
+					case BILLIARD_ROOM:
+						return ImageIO.read(new File(IMAGE_PATH + "billiard-card.png"));
+					case LIBRARY:
+						return ImageIO.read(new File(IMAGE_PATH + "library-card.png"));
+					case STUDY:
+						return ImageIO.read(new File(IMAGE_PATH + "study-card.png"));
+					case HALL:
+						return ImageIO.read(new File(IMAGE_PATH + "hall-card.png"));
+					case LOUNGE:
+						return ImageIO.read(new File(IMAGE_PATH + "lounge-card.png"));
+					case DINING_ROOM:
+						return ImageIO.read(new File(IMAGE_PATH + "diningroom-card.png"));
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
 		}
 	}
 }

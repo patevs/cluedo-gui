@@ -2,15 +2,17 @@ package cluedo.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -25,17 +27,19 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import cluedo.control.Suggestion;
+import cluedo.model.Card;
 import cluedo.model.CharacterToken;
 import cluedo.model.CluedoGame;
 
 /**
  * Interacts with the players and handles actions.
- * @author Patrick
+ * @author Patrick and Maria
  *
  */
 @SuppressWarnings("serial")
@@ -166,51 +170,58 @@ public class CluedoFrame extends JFrame {
 		JPanel rollPnl = initRollPnl(player, newPlayer);
 
 		// Creating a panel to display game information
-		JPanel gameInfoPnl = new JPanel();
+//		JPanel gameInfoPnl = new JPanel();
+		JTabbedPane gameInfoPnl = new JTabbedPane(); // two panes - game info and cards
+
 		// Creating a text area to display game information to the user
 		gameTextArea = initGameTextArea();
 		setText(player, newPlayer);
 
 		// Adding the text area to the panel
-		gameInfoPnl.add(gameTextArea, BorderLayout.CENTER);
+//		gameInfoPnl.add(gameTextArea, BorderLayout.CENTER);
+		gameInfoPnl.add("Game Info",gameTextArea);
+
+		if(player!=null){
+			// Adding hand to panel
+			JPanel handPnl = initHandPnl(player); //FIXME: cards too wide
+			gameInfoPnl.addTab("Hand", handPnl);
+		}
+
 
 		// Creating a panel to display the current players options
 		JPanel gameOptionsPnl = new JPanel(new GridLayout(0,1,5,5));
 		gameOptionsPnl.setBorder(new EmptyBorder(0,2,0,4));
 
 		// Creating buttons for the options
+		JButton beginBtn = new JButton("Begin.");
 		JButton suggestBtn = new JButton("Suggest / Accuse.");
 		JButton endTurnBtn = new JButton("End Turn.");
 		JButton quitBtn = new JButton("Quit.");
 
-		// initial setup
-		if(player==null){
-			JButton beginTurn = new JButton("Begin.");
-			beginTurn.addActionListener(new ActionListener(){
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if(game.getActivePlayers()==null)
-						System.out.println("no players");
-					else{
-						suggestBtn.setEnabled(true);
-						endTurnBtn.setEnabled(true);
-						redraw(game.getActivePlayers().get(0), true);
-					}
+		/*
+		 * Adds ActionListeners to buttons
+		 */
+		// Begins the game
+		beginBtn.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(game.getActivePlayers()==null)
+					System.out.println("no players");
+				else{
+					suggestBtn.setEnabled(true);
+					endTurnBtn.setEnabled(true);
+					redraw(game.getActivePlayers().get(0), true);
 				}
-			});
-			gameOptionsPnl.add(beginTurn);
-			suggestBtn.setEnabled(false);
-			endTurnBtn.setEnabled(false);
-		}
-
-		// adding action listeners to buttons
+			}
+		});
+		// Opens suggest dialog box
 		suggestBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				suggest();
 			}});
 
-		// starts next player's turn
+		// Starts next player's turn
 		endTurnBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -229,13 +240,23 @@ public class CluedoFrame extends JFrame {
 			}
 		});
 
+		// Ends game
 		quitBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				confirmExit();
 			}});
 
-		// Adding the buttons to the panel
+
+		// Adding buttons to panel and enabling the relevant ones
+		if(player!=null){
+			beginBtn.setEnabled(false);
+		}
+		else{
+			gameOptionsPnl.add(beginBtn);
+			suggestBtn.setEnabled(false);
+			endTurnBtn.setEnabled(false);
+		}
 		gameOptionsPnl.add(suggestBtn);
 		gameOptionsPnl.add(endTurnBtn);
 		gameOptionsPnl.add(quitBtn);
@@ -280,11 +301,11 @@ public class CluedoFrame extends JFrame {
 			msg = "Roll the dice then either use the arrow keys to move\nor click on the tile you want to move to.\n";
 		}
 		else if(newPlayer){
-			msg = player.getName() + ":\nRoll the dice to move or select another option.";
+			msg = player.getName() + "\nRoll the dice to move or select another option.";
 		}
 		else{
-			msg = player.getName() + ":\nMoves left: " + player.getStepsRemaining() +
-					"\nUse arrow keys to move or click on the board.";
+			msg = player.getName() + ": " + player.getStepsRemaining() + " moves left.\n" +
+					"Use arrow keys to move or click on the board.";
 		}
 		gameTextArea.setText(msg);
 	}
@@ -332,26 +353,26 @@ public class CluedoFrame extends JFrame {
 	/**
 	 * Creates panel for all the player's cards
 	 */
-	private JPanel initHandPnl(){
-		/* Testing adding images to the UI
-		 *
+	private JPanel initHandPnl(CharacterToken player){
 		JPanel handPnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		List<BufferedImage> cards = new ArrayList<BufferedImage>();
-		//TODO: find images for cards
-		try {
-			cards.add(ImageIO.read(new File(IMAGE_PATH + "scarlett-card.png")));
-			cards.add(ImageIO.read(new File(IMAGE_PATH + "scarlett-card.png")));
-			cards.add(ImageIO.read(new File(IMAGE_PATH + "scarlett-card.png")));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		for(BufferedImage img: cards){
-			JLabel picLabel = new JLabel(new ImageIcon(img));
+//		List<BufferedImage> cards = new ArrayList<BufferedImage>();
+//		try {
+//			cards.add(ImageIO.read(new File(IMAGE_PATH + "scarlett-card.png")));
+//			cards.add(ImageIO.read(new File(IMAGE_PATH + "scarlett-card.png")));
+//			cards.add(ImageIO.read(new File(IMAGE_PATH + "scarlett-card.png")));
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		for(BufferedImage img: cards){
+//			JLabel picLabel = new JLabel(new ImageIcon(img));
+//			handPnl.add(picLabel);
+//		}
+		for(Card c: player.getHand()){
+			JLabel picLabel = new JLabel(new ImageIcon(c.getImage()));
 			handPnl.add(picLabel);
 		}
-		//playerControls.add(handPnl, BorderLayout.CENTER);
-		 */
-		return new JPanel();
+		playerControls.add(handPnl, BorderLayout.CENTER);
+		return handPnl;
 	}
 
 	/**
