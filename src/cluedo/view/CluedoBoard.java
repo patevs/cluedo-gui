@@ -32,12 +32,16 @@ public class CluedoBoard {
 	private JPanel board;
 	// field to stores the player starting tiles
 	private List<HallwayTile> startTiles = new ArrayList<HallwayTile>();
+	
+	private CluedoFrame parent;
 
 	public CluedoBoard(String boardFile, CluedoFrame frame) {
 		// initlizise the board squares from file
 		initSquares(boardFile);
 		// initlizise the board
 		initBoard(frame);
+		
+		this.parent = frame;
 	}
 	
 	/**
@@ -76,44 +80,6 @@ public class CluedoBoard {
 			// board reading failed
 			System.out.println("Board file reading fail: " + e.getMessage());
 		}
-	}
-	
-	/**
-	 * This method creates the character token images and
-	 *  sets the tool tip text.
-	 * @param c
-	 * @return board square jbutton
-	 */
-	private JButton initCharacterToken(char c) {
-		JButton b = new HallwayTile('H');
-		int playerID = Character.digit(c, 10);
-		switch(playerID){
-			case 1:
-				b.setIcon(new ImageIcon(IMAGE_PATH + "scarlett.png"));
-				b.setToolTipText("MISS SCARLETT");
-				break;
-			case 2:
-				b.setIcon(new ImageIcon(IMAGE_PATH + "mustard.png"));
-				b.setToolTipText("COLONEL MUSTARD");
-				break;
-			case 3:
-				b.setIcon(new ImageIcon(IMAGE_PATH + "green.png"));
-				b.setToolTipText("THE REVERENED GREEN");
-				break;
-			case 4:
-				b.setIcon(new ImageIcon(IMAGE_PATH + "peacock.png"));
-				b.setToolTipText("MRS PEACOCK");
-				break;
-			case 5:
-				b.setIcon(new ImageIcon(IMAGE_PATH + "plum.png"));
-				b.setToolTipText("PROFESSOR PLUM");
-				break;
-			case 6:
-				b.setIcon(new ImageIcon(IMAGE_PATH + "white.png"));
-				b.setToolTipText("MRS WHITE");
-				break;
-		}
-		return b;
 	}
 
 	/**
@@ -184,11 +150,51 @@ public class CluedoBoard {
 				if(t.getStartCharacter() != null){
 					if(p.getCharacter().toString().equalsIgnoreCase(
 							t.getStartCharacter().toString())){
-						//TODO init player start squares
-					}
-				}			
+						t = (HallwayTile) initCharacterTile(p.getCharacter().toString(), p.getName());
+						t.setCharacter(p);
+					}	
+				}
 			}
 		}
 	}
+	
+	/**
+	 * This method creates the character token images and
+	 *  sets the tool tip text.
+	 * @param c
+	 * @return board square jbutton
+	 */
+	private JButton initCharacterTile(String charName, String playerName) {
+		JButton b = new HallwayTile('H');
 
+		System.out.println(charName + " " + playerName);
+		
+		switch(charName.toUpperCase()){
+			case "MISS SCARLETT":
+				b.setIcon(new ImageIcon(IMAGE_PATH + "scarlett.png"));
+				b.setToolTipText(playerName + ": MISS SCARLETT");
+				break;
+			case "COLONEL MUSTARD":
+				b.setIcon(new ImageIcon(IMAGE_PATH + "mustard.png"));
+				b.setToolTipText(playerName + ": COLONEL MUSTARD");
+				break;
+			case "THE REVEREND GREEN":
+				b.setIcon(new ImageIcon(IMAGE_PATH + "green.png"));
+				b.setToolTipText(playerName + ": THE REVERENED GREEN");
+				break;
+			case "MRS PEACOCK":
+				b.setIcon(new ImageIcon(IMAGE_PATH + "peacock.png"));
+				b.setToolTipText(playerName + ": MRS PEACOCK");
+				break;
+			case "PROFESSOR PLUM":
+				b.setIcon(new ImageIcon(IMAGE_PATH + "plum.png"));
+				b.setToolTipText(playerName + ": PROFESSOR PLUM");
+				break;
+			case "MRS WHITE":
+				b.setIcon(new ImageIcon(IMAGE_PATH + "white.png"));
+				b.setToolTipText(playerName + ": MRS WHITE");
+				break;
+		}
+		return b;
+	}
 }

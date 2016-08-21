@@ -37,6 +37,7 @@ public class CluedoGame {
 		this.deck = initDeck();
 		dealCards();
 		getDeck();
+
 	}
 
 	/**
