@@ -61,11 +61,16 @@ public class Main {
 		for(int i = 1; i<=numOfPlayers; i++){
 			PlayerSetupDialog playerSetup = new PlayerSetupDialog(frame, i, players);
 			playerSetup.setAlwaysOnTop(true);
+			playerSetup.setVisible(false);
 			players.add(playerSetup.showDialog());
 		}
 		CluedoBoard board = frame.getBoard();
 		CluedoGame game = new CluedoGame(board, players);
-		game.getActivePlayers(); //FIXME: what's this for?
+		//FIXME: characters not made with correct names
+//		game.getActivePlayers();
+//		for(CharacterToken p: players){
+//			System.out.println("Player " + p.getUid() + ": " + p.getName() + ": " + p.getCharacter().toString());
+//		}
 		return game;
 	}
 
@@ -82,8 +87,6 @@ public class Main {
 				frame.setVisible(true);
 				CluedoGame game = initGame(frame);
 				frame.setGame(game);
-				// TODO something with the players
-				game.getActivePlayers().get(0); // first player
 			}
 		});
 	}

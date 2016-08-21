@@ -49,6 +49,7 @@ public class CluedoFrame extends JFrame {
 	private int firstDie;
 	private int secondDie;
 	private JPanel playerControls;
+	private JTextArea gameTextArea;
 
 	public CluedoFrame(String boardFile){
 		super("Cluedo");
@@ -61,7 +62,7 @@ public class CluedoFrame extends JFrame {
 		// setup game board
 		initBoard(boardFile);
 		// setup player UI
-		initPlayerUI(null);
+		initPlayerUI(null, false);
 
 		// setting title
 		setTitle("Cluedo Game");
@@ -151,9 +152,9 @@ public class CluedoFrame extends JFrame {
 	/**
 	 * Initialises the game's player user interface
 	 */
-	private void initPlayerUI(CharacterToken player){
+	private void initPlayerUI(CharacterToken player, boolean newPlayer){
 		// Creating a panel to store the UI
-		this.playerControls = new JPanel();
+		playerControls = new JPanel();
 		playerControls.setBorder(
 		   BorderFactory.createCompoundBorder(
 				      BorderFactory.createEmptyBorder(0,12,2,12),
@@ -162,20 +163,13 @@ public class CluedoFrame extends JFrame {
 				);
 
 		// Creating roll panel
-		JPanel rollPnl = initRollPnl(player);
+		JPanel rollPnl = initRollPnl(player, newPlayer);
 
 		// Creating a panel to display game information
 		JPanel gameInfoPnl = new JPanel();
 		// Creating a text area to display game information to the user
-		JTextArea gameTextArea = new JTextArea(4, 28);
-		gameTextArea.setEditable(false);
-		gameTextArea.setBorder(
-				   BorderFactory.createCompoundBorder(
-						      BorderFactory.createTitledBorder(new LineBorder(Color.BLACK,1),
-						    		  "<html><b><u>GAME INFO</u></b></html>"), // using html tags to underline text
-						      BorderFactory.createEmptyBorder(4,4,2,2)
-						   )
-						);
+		gameTextArea = initGameTextArea();
+		setText(player, newPlayer);
 
 		// Adding the text area to the panel
 		gameInfoPnl.add(gameTextArea, BorderLayout.CENTER);
@@ -189,13 +183,8 @@ public class CluedoFrame extends JFrame {
 		JButton endTurnBtn = new JButton("End Turn.");
 		JButton quitBtn = new JButton("Quit.");
 
-		// show player info
-		if(player!=null){
-			gameTextArea.setText(player.getName() + ":\nPlease make a move.");
-		}
-		// if initial setup message
-		else{
-			gameTextArea.setText("Roll the dice then either use the arrow keys to move\n or click on the tile you want to move to.\n");
+		// initial setup
+		if(player==null){
 			JButton beginTurn = new JButton("Begin.");
 			beginTurn.addActionListener(new ActionListener(){
 				@Override
@@ -203,10 +192,9 @@ public class CluedoFrame extends JFrame {
 					if(game.getActivePlayers()==null)
 						System.out.println("no players");
 					else{
-						remove(playerControls); // remove the old panel
 						suggestBtn.setEnabled(true);
 						endTurnBtn.setEnabled(true);
-						redraw(game.getActivePlayers().get(0));
+						redraw(game.getActivePlayers().get(0), true);
 					}
 				}
 			});
@@ -221,6 +209,25 @@ public class CluedoFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				suggest();
 			}});
+
+		// starts next player's turn
+		endTurnBtn.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				CharacterToken nextPlayer = player;
+				// get next player
+				if(player.getUid()<game.getActivePlayers().size()){
+					nextPlayer = game.getActivePlayers().get(player.getUid()); // player's uid is 1-6
+				}
+				else{
+					nextPlayer = game.getActivePlayers().get(0);
+				}
+				// draw next player's UI
+//				System.out.println("Current player's id: " + player.getUid());
+//				System.out.println("Next player's id: " + nextPlayer.getUid());
+				redraw(nextPlayer, true);
+			}
+		});
 
 		quitBtn.addActionListener(new ActionListener(){
 			@Override
@@ -242,10 +249,53 @@ public class CluedoFrame extends JFrame {
 		playerControls.add(gameOptionsPnl, BorderLayout.EAST);
 		// adding the player controls UI to the bottom of the window
 		add(playerControls, BorderLayout.SOUTH); // adds playerUI to frame
-		repaint();
+//		repaint();
 	}
 
-	private JPanel initRollPnl(CharacterToken player){
+	/**
+	 * Creates the game text area to display messages to the player.
+	 * @param msg
+	 * @return
+	 */
+	private JTextArea initGameTextArea(){
+		gameTextArea = new JTextArea(4, 28);
+		gameTextArea.setEditable(false);
+		gameTextArea.setBorder(
+				   BorderFactory.createCompoundBorder(
+						      BorderFactory.createTitledBorder(new LineBorder(Color.BLACK,1),
+						    		  "<html><b><u>GAME INFO</u></b></html>"), // using html tags to underline text
+						      BorderFactory.createEmptyBorder(4,4,2,2)
+						   )
+						);
+		return gameTextArea;
+	}
+
+	/**
+	 * Changes the message in the game text area.
+	 * @param msg
+	 */
+	private void setText(CharacterToken player, boolean newPlayer){
+		String msg = "";
+		if(player==null){
+			msg = "Roll the dice then either use the arrow keys to move\nor click on the tile you want to move to.\n";
+		}
+		else if(newPlayer){
+			msg = player.getName() + ":\nRoll the dice to move or select another option.";
+		}
+		else{
+			msg = player.getName() + ":\nMoves left: " + player.getStepsRemaining() +
+					"\nUse arrow keys to move or click on the board.";
+		}
+		gameTextArea.setText(msg);
+	}
+
+	/**
+	 * Creates the roll panel with the dice and the roll button.
+	 * @param player
+	 * @param newPlayer
+	 * @return
+	 */
+	private JPanel initRollPnl(CharacterToken player, boolean newPlayer){
 		// Creating a panel to store the dice images and roll button
 		JPanel rollPnl = new JPanel(new GridLayout(0,1,2,2));
 		rollPnl.setBorder(new EmptyBorder(0,4,0,2));
@@ -260,16 +310,19 @@ public class CluedoFrame extends JFrame {
 
 		// Adding dice and roll button to the roll panel
 		JButton rollBtn = new JButton("Roll.");
+		if(!newPlayer)
+			rollBtn.setEnabled(false);
+		else
+			rollBtn.setEnabled(true);
+
 		rollPnl.add(dicePnl);
 		rollPnl.add(rollBtn);
-
 
 		rollBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				remove(playerControls); // remove the old panel
 				rollDice(player); // set player's steps and dice pictures
-				redraw(player);
+				redraw(player, false);
 			}
 		});
 
@@ -301,6 +354,10 @@ public class CluedoFrame extends JFrame {
 		return new JPanel();
 	}
 
+	/**
+	 * Rolls the dice and sets the player's initial amount of steps.
+	 * @param player
+	 */
 	private void rollDice(CharacterToken player){
 		firstDie = (int)(Math.random() * 6) + 1;
 		secondDie = (int)(Math.random() * 6) + 1;
@@ -308,6 +365,11 @@ public class CluedoFrame extends JFrame {
 			player.setStepsRemaining(firstDie + secondDie);
 	}
 
+	/**
+	 * Returns a dice image to match the roll amount.
+	 * @param roll
+	 * @return
+	 */
 	private JLabel getDiceImage(int roll){
 		try{
 			switch(roll){
@@ -360,8 +422,14 @@ public class CluedoFrame extends JFrame {
                 "Cluedo Game Guide", JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	private void redraw(CharacterToken player){
-		initPlayerUI(player); // reset the player UI
+	/**
+	 * Redraws the player controls panel.
+	 * @param player
+	 * @param newPlayer
+	 */
+	private void redraw(CharacterToken player, boolean newPlayer){
+		remove(playerControls); // remove the old panel
+		initPlayerUI(player, newPlayer); // reset the player UI
 		revalidate(); // draw
 	}
 
@@ -369,6 +437,10 @@ public class CluedoFrame extends JFrame {
 	 * Setter methods
 	 */
 
+	/**
+	 * Sets the reference to the CluedoGame.
+	 * @param game
+	 */
 	public void setGame(CluedoGame game){
 		this.game = game;
 	}
@@ -376,14 +448,26 @@ public class CluedoFrame extends JFrame {
 	/*
 	 * Getter methods
 	 */
+	/**
+	 * Returns the main panel.
+	 * @return
+	 */
 	public JPanel getGui() {
 		return gui;
 	}
 
+	/**
+	 * Returns the board associated with this frame.
+	 * @return
+	 */
 	public CluedoBoard getBoard(){
 		return board;
 	}
 
+	/**
+	 * Returns the list of players.
+	 * @return
+	 */
 	public List<CharacterToken> getPlayers() {
 		return game.getActivePlayers();
 	}
