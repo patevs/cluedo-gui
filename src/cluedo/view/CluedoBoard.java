@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import cluedo.control.CluedoError;
 import cluedo.control.CluedoFrame;
 import cluedo.model.CharacterToken;
 import cluedo.model.Position;
@@ -86,7 +87,7 @@ public class CluedoBoard {
 
 	/**
 	 * Initlises the cluedo board and adds it to
-	 * 	the parnet board frame
+	 * 	the parent board frame
 	 * @param frame
 	 */
 	private void initBoard(CluedoFrame frame) {
@@ -103,6 +104,8 @@ public class CluedoBoard {
             	board.add(boardSquares[jj][ii]);
             }
         }
+        board.addMouseListener(frame);
+		board.addKeyListener(frame);
 	}
 
 	/**
@@ -206,6 +209,8 @@ public class CluedoBoard {
 	 * @return
 	 */
 	public Tile tileAt(Position p){
+		if(p.getX() < 0 || p.getX() >= 24 || p.getY() < 0 || p.getY() >= 24)
+			return null;
 		return (Tile) boardSquares[p.getY()][p.getX()];
 	}
 }

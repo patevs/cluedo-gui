@@ -64,6 +64,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	private int secondDie;
 
 	public CharacterToken player;
+	private boolean newPlayer;
 
 	public CluedoFrame(String boardFile){
 		super("Cluedo");
@@ -77,7 +78,8 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		initBoard(boardFile);
 		// setup player UI
 		player = null;
-		initPlayerUI(false);
+		newPlayer = false;
+		initPlayerUI();
 
 		// setting title
 		setTitle("Cluedo Game");
@@ -97,7 +99,6 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
                 confirmExit();
             }
         });
-
 		// set move
 		movement = new Movement(this, board);
 	}
@@ -170,7 +171,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	/**
 	 * Initialises the game's player user interface
 	 */
-	private void initPlayerUI(boolean newPlayer){
+	private void initPlayerUI(){
 		// Creating a panel to store the UI
 		playerControls = new JPanel();
 		playerControls.setBorder(
@@ -181,7 +182,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 				);
 
 		// Creating roll panel
-		JPanel rollPnl = initRollPnl(newPlayer);
+		JPanel rollPnl = initRollPnl();
 
 		// Creating a panel to display game information
 //		JPanel gameInfoPnl = new JPanel();
@@ -189,7 +190,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 
 		// Creating a text area to display game information to the user
 		gameTextArea = initGameTextArea();
-		setText(newPlayer);
+		setText("");
 
 		// Adding the text area to the panel
 //		gameInfoPnl.add(gameTextArea, BorderLayout.CENTER);
@@ -225,7 +226,8 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 					suggestBtn.setEnabled(true);
 					endTurnBtn.setEnabled(true);
 					player = game.getActivePlayers().get(0);
-					redraw(true);
+					newPlayer = true;
+					redraw();
 				}
 			}
 		});
@@ -250,7 +252,8 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 				// draw next player's UI
 //				System.out.println("Current player's id: " + player.getUid());
 //				System.out.println("Next player's id: " + nextPlayer.getUid());
-				redraw(true);
+				newPlayer = true;
+				redraw();
 			}
 		});
 
@@ -309,17 +312,18 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	 * Changes the message in the game text area.
 	 * @param msg
 	 */
-	private void setText(boolean newPlayer){
-		String msg = "";
-		if(player==null){
-			msg = "Roll the dice then either use the arrow keys to move\nor click on the tile you want to move to.\n";
-		}
-		else if(newPlayer){
-			msg = player.getName() + "\nRoll the dice to move or select another option.";
-		}
-		else{
-			msg = player.getName() + ": " + player.getStepsRemaining() + " moves left.\n" +
-					"Use arrow keys to move or click on the board.";
+	private void setText(String msg){
+		if(msg.equals("")){
+			if(player==null){
+				msg = "Roll the dice then either use the arrow keys to move\nor click on the tile you want to move to.\n";
+			}
+			else if(newPlayer){
+				msg = player.getName() + "\nRoll the dice to move or select another option.";
+			}
+			else{
+				msg = player.getName() + ": " + player.getStepsRemaining() + " moves left.\n" +
+						"Use arrow keys to move or click on the board.";
+			}
 		}
 		gameTextArea.setText(msg);
 	}
@@ -330,7 +334,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	 * @param newPlayer
 	 * @return
 	 */
-	private JPanel initRollPnl(boolean newPlayer){
+	private JPanel initRollPnl(){
 		// Creating a panel to store the dice images and roll button
 		JPanel rollPnl = new JPanel(new GridLayout(0,1,2,2));
 		rollPnl.setBorder(new EmptyBorder(0,4,0,2));
@@ -357,7 +361,8 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				rollDice(); // set player's steps and dice pictures
-				redraw(false);
+				newPlayer = false;
+				redraw();
 			}
 		});
 
@@ -465,9 +470,9 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	 * @param player
 	 * @param newPlayer
 	 */
-	private void redraw(boolean newPlayer){
+	private void redraw(){
 		remove(playerControls); // remove the old panel
-		initPlayerUI(newPlayer); // reset the player UI
+		initPlayerUI(); // reset the player UI
 		revalidate(); // draw
 	}
 
@@ -479,17 +484,13 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	public void mouseClicked(MouseEvent e) {
 		boolean moved = movement.move(player, new Position(e.getX(), e.getY()));
 		if(!moved){
-			String msg = "Cannot move to that tile." ;
-			int result = JOptionPane.showConfirmDialog(this, msg,
-			        "Alert", JOptionPane.OK_CANCEL_OPTION);
-			if(result==0){
-				dispose();
-			}
+			invalidMoveDialog();
 		}
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		System.out.println("Player oldPos: " + player.pos());
 		if(player.getStepsRemaining()>0){
 			if(e.getKeyCode() == KeyEvent.VK_UP)
 				movement.moveNorth(player);
@@ -500,10 +501,18 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 			else if(e.getKeyCode() == KeyEvent.VK_RIGHT)
 				movement.moveEast(player);
 		}
+		else{
+			setText("Please roll the dice.");
+		}
+		System.out.println("Player newPos: " + player.pos());
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		System.out.println("Player oldPos: " + player.pos());
+		if(!movement.move(player, new Position(e.getX()/24, e.getY()/24)))
+			invalidMoveDialog();
+		System.out.println("Player newPos: " + player.pos());
 	}
 
 	@Override
@@ -525,6 +534,11 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	@Override
 	public void keyReleased(KeyEvent e) {}
 
+	public void invalidMoveDialog(){
+		String msg = "Cannot move to that tile." ;
+		int result = JOptionPane.showConfirmDialog(this, msg,
+		        "Alert", JOptionPane.OK_CANCEL_OPTION);
+	}
 	/*
 	 * Setter methods
 	 */
