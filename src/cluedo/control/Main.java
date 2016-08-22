@@ -7,7 +7,6 @@ import java.util.List;
 import cluedo.model.CharacterToken;
 import cluedo.model.CluedoGame;
 import cluedo.view.CluedoBoard;
-import cluedo.view.CluedoFrame;
 
 /**
  * Sets up the Cluedo game and begins running it.

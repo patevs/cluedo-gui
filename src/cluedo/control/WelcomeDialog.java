@@ -17,8 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import cluedo.view.CluedoFrame;
-
 /**
  * This class creates a welcome message as a dialog.
  * 	The dialog welcomes the user(s) and asks for the

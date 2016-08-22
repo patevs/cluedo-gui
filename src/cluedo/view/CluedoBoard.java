@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import cluedo.control.CluedoFrame;
 import cluedo.model.CharacterToken;
 
 /**

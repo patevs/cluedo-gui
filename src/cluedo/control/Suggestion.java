@@ -25,7 +25,6 @@ import javax.swing.border.TitledBorder;
 import cluedo.model.CharRadioBtn;
 import cluedo.model.RoomRadioBtn;
 import cluedo.model.WeapRadioBtn;
-import cluedo.view.CluedoFrame;
 
 /**
  * This class creates a custom JDialog which gets

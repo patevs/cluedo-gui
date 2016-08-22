@@ -1,4 +1,4 @@
-package cluedo.view;
+package cluedo.control;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -8,6 +8,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -34,10 +36,10 @@ import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import cluedo.control.Suggestion;
 import cluedo.model.Card;
 import cluedo.model.CharacterToken;
 import cluedo.model.CluedoGame;
+import cluedo.view.CluedoBoard;
 
 /**
  * Interacts with the players and handles actions.
@@ -45,7 +47,7 @@ import cluedo.model.CluedoGame;
  *
  */
 @SuppressWarnings("serial")
-public class CluedoFrame extends JFrame {
+public class CluedoFrame extends JFrame implements MouseListener{
 
 	private static final String IMAGE_PATH = "images/";
 
@@ -231,7 +233,6 @@ public class CluedoFrame extends JFrame {
 		endTurnBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				CharacterToken nextPlayer = player;
 				// get next player
 				if(player.getUid()<game.getActivePlayers().size()){
 					player = game.getActivePlayers().get(player.getUid()); // player's uid is 1-6
@@ -501,5 +502,23 @@ public class CluedoFrame extends JFrame {
 	public List<CharacterToken> getPlayers() {
 		return game.getActivePlayers();
 	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// get button
+		// get position of tile
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
 
 }
