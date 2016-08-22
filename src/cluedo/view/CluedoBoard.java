@@ -150,8 +150,11 @@ public class CluedoBoard {
 				if(t.getStartCharacter() != null){
 					if(p.getCharacter().toString().equalsIgnoreCase(
 							t.getStartCharacter().toString())){
-						t = (HallwayTile) initCharacterTile(p.getCharacter().toString(), p.getName());
-						t.setCharacter(p);
+						t.setBackground(Color.BLACK);
+						
+						//t.redraw();
+						//t.repaint();
+						//t = (HallwayTile) initCharacterTile(p.getCharacter().toString(), p.getName());
 					}	
 				}
 			}

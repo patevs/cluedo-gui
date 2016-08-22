@@ -34,10 +34,11 @@ public class CluedoGame {
 
 	public CluedoGame(CluedoBoard board, List<CharacterToken> players) {
 
-		// sets the board up
-		board.initPlayers(players);
 		this.setBoard(board);
 		this.setActivePlayers(players);
+		
+		// sets the board up
+		//board.initPlayers(players);
 
 		// deals the cards
 		this.solution = initSolution();

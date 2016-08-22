@@ -55,4 +55,13 @@ public class HallwayTile extends OccupyableTile {
 	public CluedoGame.Character getStartCharacter(){
 		return startChar;
 	}
+	
+	public void redraw(){
+		if(this.isOccupied()){
+			if(this.getCharacter()!=null){
+				String charName = this.getCharacter().getCharacter().toString();
+				//CluedoBoard.initCharacterTile(charName, "0");
+			}
+		}
+	}
 }

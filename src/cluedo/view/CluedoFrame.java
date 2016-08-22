@@ -47,7 +47,7 @@ public class CluedoFrame extends JFrame {
 
 	private static final String IMAGE_PATH = "images/";
 
-	private final JPanel gui = new JPanel(new BorderLayout(3, 3));
+	private JPanel gui = new JPanel(new BorderLayout(3, 3));
 	private CluedoBoard board;
 	private CluedoGame game;
 	private int firstDie;
