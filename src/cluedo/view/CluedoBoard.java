@@ -17,6 +17,7 @@ import javax.swing.border.LineBorder;
 
 import cluedo.control.CluedoFrame;
 import cluedo.model.CharacterToken;
+import cluedo.model.Position;
 
 /**
  * This class represents the cluedo board for the the game
@@ -197,5 +198,14 @@ public class CluedoBoard {
 				break;
 		}
 		return b;
+	}
+
+	/**
+	 * Returns the tile at a given position.
+	 * @param p
+	 * @return
+	 */
+	public Tile tileAt(Position p){
+		return (Tile) boardSquares[p.getY()][p.getX()];
 	}
 }

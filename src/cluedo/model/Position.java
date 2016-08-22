@@ -10,7 +10,7 @@ public class Position {
 	private int Xpos;
 	private int Ypos;
 	private char symbol;
-	
+
 	/**
 	 * Creates a position with a given x, y value.
 	 * @param X
@@ -22,7 +22,13 @@ public class Position {
 		this.Ypos = Y;
 		this.symbol = symbol;
 	}
-	
+
+	public Position(int X, int Y){
+		this.Xpos = X;
+		this.Ypos = Y;
+		this.symbol = Character.MIN_VALUE;
+	}
+
 	/**
 	 * Returns the x position.
 	 * @return
@@ -30,7 +36,7 @@ public class Position {
 	public int getX(){
 		return this.Xpos;
 	}
-	
+
 	/**
 	 * Returns the y position.
 	 * @return
@@ -38,7 +44,7 @@ public class Position {
 	public int getY(){
 		return this.Ypos;
 	}
-	
+
 	/**
 	 * Returns the character representing this position.
 	 * @return
@@ -46,5 +52,5 @@ public class Position {
 	public char getSymbol(){
 		return this.symbol;
 	}
-	
+
 }

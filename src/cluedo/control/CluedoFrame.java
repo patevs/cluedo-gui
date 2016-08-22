@@ -8,6 +8,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
@@ -39,7 +40,9 @@ import javax.swing.border.LineBorder;
 import cluedo.model.Card;
 import cluedo.model.CharacterToken;
 import cluedo.model.CluedoGame;
+import cluedo.model.Position;
 import cluedo.view.CluedoBoard;
+import cluedo.view.Tile;
 
 /**
  * Interacts with the players and handles actions.
@@ -47,19 +50,20 @@ import cluedo.view.CluedoBoard;
  *
  */
 @SuppressWarnings("serial")
-public class CluedoFrame extends JFrame implements MouseListener{
+public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 
 	private static final String IMAGE_PATH = "images/";
 
 	private final JPanel gui = new JPanel(new BorderLayout(3, 3));
 	private CluedoBoard board;
 	private CluedoGame game;
+	private Movement movement;
 	private JPanel playerControls;
 	private JTextArea gameTextArea;
 	private int firstDie;
 	private int secondDie;
 
-	private CharacterToken player;
+	public CharacterToken player;
 
 	public CluedoFrame(String boardFile){
 		super("Cluedo");
@@ -93,6 +97,9 @@ public class CluedoFrame extends JFrame implements MouseListener{
                 confirmExit();
             }
         });
+
+		// set move
+		movement = new Movement(this, board);
 	}
 
 	/**
@@ -465,6 +472,60 @@ public class CluedoFrame extends JFrame implements MouseListener{
 	}
 
 	/*
+	 * Move methods
+	 */
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		boolean moved = movement.move(player, new Position(e.getX(), e.getY()));
+		if(!moved){
+			String msg = "Cannot move to that tile." ;
+			int result = JOptionPane.showConfirmDialog(this, msg,
+			        "Alert", JOptionPane.OK_CANCEL_OPTION);
+			if(result==0){
+				dispose();
+			}
+		}
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if(player.getStepsRemaining()>0){
+			if(e.getKeyCode() == KeyEvent.VK_UP)
+				movement.moveNorth(player);
+			else if(e.getKeyCode() == KeyEvent.VK_DOWN)
+				movement.moveSouth(player);
+			else if(e.getKeyCode() == KeyEvent.VK_LEFT)
+				movement.moveWest(player);
+			else if(e.getKeyCode() == KeyEvent.VK_RIGHT)
+				movement.moveEast(player);
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {}
+
+
+	@Override
+	public void keyReleased(KeyEvent e) {}
+
+	/*
 	 * Setter methods
 	 */
 
@@ -502,23 +563,4 @@ public class CluedoFrame extends JFrame implements MouseListener{
 	public List<CharacterToken> getPlayers() {
 		return game.getActivePlayers();
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// get button
-		// get position of tile
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {}
-
-	@Override
-	public void mouseExited(MouseEvent e) {}
-
 }

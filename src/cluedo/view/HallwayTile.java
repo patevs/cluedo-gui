@@ -9,18 +9,19 @@ import cluedo.model.CluedoGame;
 
 @SuppressWarnings("serial")
 public class HallwayTile extends OccupyableTile {
-	
+
 	// Stores the character which starts in this square
 	// 	or null if none.
 	CluedoGame.Character startChar;
 
 	public HallwayTile(char c){
 		super(c);
-		this.setBackground(Color.YELLOW.darker());
-		this.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 1));
+//		this.setBackground(Color.YELLOW.darker());
+		this.setBackground(Color.decode("#525564").brighter());
+		this.setBorder(BorderFactory.createLineBorder(Color.decode("#BEB9B5").darker(), 1));
 		this.setMargin(new Insets(10,10,10,10));
 	}
-	
+
 	/**
 	 * Sets this tile as a player starting tile
 	 * @param charID

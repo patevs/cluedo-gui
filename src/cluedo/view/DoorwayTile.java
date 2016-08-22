@@ -4,7 +4,7 @@ import java.awt.Color;
 import javax.swing.border.EmptyBorder;
 
 @SuppressWarnings("serial")
-public class DoorwayTile extends Tile {
+public class DoorwayTile extends OccupyableTile {
 
 	public DoorwayTile(char symbol) {
 		super(symbol);
