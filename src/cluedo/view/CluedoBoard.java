@@ -163,6 +163,10 @@ public class CluedoBoard {
 		redraw();
 	}
 	
+	/**
+	 * This method redraws the cludoBoard on the parent
+	 * 	CluedoFrame.
+	 */
 	public void redraw(){
 		parent.getGui().removeAll();
 		parent.getGui().revalidate();
