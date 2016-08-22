@@ -2,6 +2,7 @@ package cluedo.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -27,6 +28,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
@@ -183,7 +185,7 @@ public class CluedoFrame extends JFrame {
 
 		if(player!=null){
 			// Adding hand to panel
-			JPanel handPnl = initHandPnl(player); //FIXME: cards too wide
+			JScrollPane handPnl = initHandPnl(player); //FIXME: cards too wide
 			gameInfoPnl.addTab("Hand", handPnl);
 		}
 
@@ -353,8 +355,12 @@ public class CluedoFrame extends JFrame {
 	/**
 	 * Creates panel for all the player's cards
 	 */
-	private JPanel initHandPnl(CharacterToken player){
+	private JScrollPane initHandPnl(CharacterToken player){
+		JScrollPane hand = new JScrollPane();
 		JPanel handPnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
+//		handPnl.setAutoscrolls(true);
+		hand.setViewportView(handPnl);
+		hand.setPreferredSize(new Dimension(300, 100));
 //		List<BufferedImage> cards = new ArrayList<BufferedImage>();
 //		try {
 //			cards.add(ImageIO.read(new File(IMAGE_PATH + "scarlett-card.png")));
@@ -371,8 +377,7 @@ public class CluedoFrame extends JFrame {
 			JLabel picLabel = new JLabel(new ImageIcon(c.getImage()));
 			handPnl.add(picLabel);
 		}
-		playerControls.add(handPnl, BorderLayout.CENTER);
-		return handPnl;
+		return hand;
 	}
 
 	/**
