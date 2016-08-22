@@ -15,7 +15,10 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import cluedo.control.CluedoError;
+import cluedo.control.CluedoFrame;
 import cluedo.model.CharacterToken;
+import cluedo.model.Position;
 
 /**
  * This class represents the cluedo board for the the game
@@ -23,29 +26,29 @@ import cluedo.model.CharacterToken;
  *
  */
 public class CluedoBoard {
-	
+
 	private static final String IMAGE_PATH = "images/";
-	
+
 	// The board is made up of a 2D array of Jbuttons
 	private JButton[][] boardSquares = new JButton[22][22];
 	// field to store the board panel
 	private JPanel board;
 	// field to stores the player starting tiles
 	private List<HallwayTile> startTiles = new ArrayList<HallwayTile>();
-	
+
 	private CluedoFrame parent;
 
 	public CluedoBoard(String boardFile, CluedoFrame frame) {
-		// initlizise the board squares from file
+		// initialise the board squares from file
 		initSquares(boardFile);
-		// initlizise the board
+		// initialise the board
 		initBoard(frame);
-		
+
 		this.parent = frame;
 	}
-	
+
 	/**
-	 * Scans a text file and constucts a 2D array
+	 * Scans a text file and constructs a 2D array
 	 * 	of board squares
 	 * @param boardFile
 	 */
@@ -58,7 +61,7 @@ public class CluedoBoard {
 				// reading a line of text
 				char[] line = scanner.nextLine().toCharArray();
 				for(int width = 0; width < line.length; width++){
-					// read the text character	
+					// read the text character
 					char c = line[width];
 					JButton b;
 					// If character is a digit, then make tile a player starting location
@@ -73,7 +76,7 @@ public class CluedoBoard {
 						b = getTile(c);
 					}
 					// set the tile on the board
-					boardSquares[width][height] = b;	
+					boardSquares[width][height] = b;
 				}
 			}
 		} catch(IOException e){
@@ -84,7 +87,7 @@ public class CluedoBoard {
 
 	/**
 	 * Initlises the cluedo board and adds it to
-	 * 	the parnet board frame
+	 * 	the parent board frame
 	 * @param frame
 	 */
 	private void initBoard(CluedoFrame frame) {
@@ -101,6 +104,8 @@ public class CluedoBoard {
             	board.add(boardSquares[jj][ii]);
             }
         }
+        board.addMouseListener(frame);
+		board.addKeyListener(frame);
 	}
 
 	/**
@@ -132,7 +137,7 @@ public class CluedoBoard {
 			b = new HallwayTile(c);
 			break;
 		}
-		// tiles are 24x24 px in size 
+		// tiles are 24x24 px in size
 		ImageIcon icon = new ImageIcon(
 		                new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB));
 		b.setIcon(icon);
@@ -150,17 +155,14 @@ public class CluedoBoard {
 				if(t.getStartCharacter() != null){
 					if(p.getCharacter().toString().equalsIgnoreCase(
 							t.getStartCharacter().toString())){
-						t.setBackground(Color.BLACK);
-						
-						//t.redraw();
-						//t.repaint();
-						//t = (HallwayTile) initCharacterTile(p.getCharacter().toString(), p.getName());
-					}	
+						t = (HallwayTile) initCharacterTile(p.getCharacter().toString(), p.getName());
+						t.setCharacter(p);
+					}
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * This method creates the character token images and
 	 *  sets the tool tip text.
@@ -171,7 +173,7 @@ public class CluedoBoard {
 		JButton b = new HallwayTile('H');
 
 		System.out.println(charName + " " + playerName);
-		
+
 		switch(charName.toUpperCase()){
 			case "MISS SCARLETT":
 				b.setIcon(new ImageIcon(IMAGE_PATH + "scarlett.png"));
@@ -199,5 +201,16 @@ public class CluedoBoard {
 				break;
 		}
 		return b;
+	}
+
+	/**
+	 * Returns the tile at a given position.
+	 * @param p
+	 * @return
+	 */
+	public Tile tileAt(Position p){
+		if(p.getX() < 0 || p.getX() >= 24 || p.getY() < 0 || p.getY() >= 24)
+			return null;
+		return (Tile) boardSquares[p.getY()][p.getX()];
 	}
 }

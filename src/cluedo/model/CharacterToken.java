@@ -25,7 +25,7 @@ public class CharacterToken extends Token {
 
 	/**
 	 * Returns a cluedo character from a string or
-	 * 	null if the character isnt recognised.
+	 * 	null if the character isn't recognised.
 	 * @param str
 	 * @return
 	 */

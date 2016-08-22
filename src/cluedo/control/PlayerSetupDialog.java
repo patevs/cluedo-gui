@@ -25,7 +25,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
 import cluedo.model.CharacterToken;
-import cluedo.view.CluedoFrame;
 
 /**
  * This Class creates a custom JDialog which gets

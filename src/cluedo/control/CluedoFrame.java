@@ -1,12 +1,16 @@
-package cluedo.view;
+package cluedo.control;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -27,15 +31,18 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import cluedo.control.Suggestion;
 import cluedo.model.Card;
 import cluedo.model.CharacterToken;
 import cluedo.model.CluedoGame;
+import cluedo.model.Position;
+import cluedo.view.CluedoBoard;
+import cluedo.view.Tile;
 
 /**
  * Interacts with the players and handles actions.
@@ -43,17 +50,21 @@ import cluedo.model.CluedoGame;
  *
  */
 @SuppressWarnings("serial")
-public class CluedoFrame extends JFrame {
+public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 
 	private static final String IMAGE_PATH = "images/";
 
 	private JPanel gui = new JPanel(new BorderLayout(3, 3));
 	private CluedoBoard board;
 	private CluedoGame game;
-	private int firstDie;
-	private int secondDie;
+	private Movement movement;
 	private JPanel playerControls;
 	private JTextArea gameTextArea;
+	private int firstDie;
+	private int secondDie;
+
+	public CharacterToken player;
+	private boolean newPlayer;
 
 	public CluedoFrame(String boardFile){
 		super("Cluedo");
@@ -66,7 +77,9 @@ public class CluedoFrame extends JFrame {
 		// setup game board
 		initBoard(boardFile);
 		// setup player UI
-		initPlayerUI(null, false);
+		player = null;
+		newPlayer = false;
+		initPlayerUI();
 
 		// setting title
 		setTitle("Cluedo Game");
@@ -86,6 +99,8 @@ public class CluedoFrame extends JFrame {
                 confirmExit();
             }
         });
+		// set move
+		movement = new Movement(this, board);
 	}
 
 	/**
@@ -156,7 +171,7 @@ public class CluedoFrame extends JFrame {
 	/**
 	 * Initialises the game's player user interface
 	 */
-	private void initPlayerUI(CharacterToken player, boolean newPlayer){
+	private void initPlayerUI(){
 		// Creating a panel to store the UI
 		playerControls = new JPanel();
 		playerControls.setBorder(
@@ -167,7 +182,7 @@ public class CluedoFrame extends JFrame {
 				);
 
 		// Creating roll panel
-		JPanel rollPnl = initRollPnl(player, newPlayer);
+		JPanel rollPnl = initRollPnl();
 
 		// Creating a panel to display game information
 //		JPanel gameInfoPnl = new JPanel();
@@ -175,7 +190,7 @@ public class CluedoFrame extends JFrame {
 
 		// Creating a text area to display game information to the user
 		gameTextArea = initGameTextArea();
-		setText(player, newPlayer);
+		setText("");
 
 		// Adding the text area to the panel
 //		gameInfoPnl.add(gameTextArea, BorderLayout.CENTER);
@@ -183,7 +198,7 @@ public class CluedoFrame extends JFrame {
 
 		if(player!=null){
 			// Adding hand to panel
-			JPanel handPnl = initHandPnl(player); //FIXME: cards too wide
+			JScrollPane handPnl = initHandPnl(); //FIXME: cards too wide
 			gameInfoPnl.addTab("Hand", handPnl);
 		}
 
@@ -210,7 +225,9 @@ public class CluedoFrame extends JFrame {
 				else{
 					suggestBtn.setEnabled(true);
 					endTurnBtn.setEnabled(true);
-					redraw(game.getActivePlayers().get(0), true);
+					player = game.getActivePlayers().get(0);
+					newPlayer = true;
+					redraw();
 				}
 			}
 		});
@@ -225,18 +242,18 @@ public class CluedoFrame extends JFrame {
 		endTurnBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				CharacterToken nextPlayer = player;
 				// get next player
 				if(player.getUid()<game.getActivePlayers().size()){
-					nextPlayer = game.getActivePlayers().get(player.getUid()); // player's uid is 1-6
+					player = game.getActivePlayers().get(player.getUid()); // player's uid is 1-6
 				}
 				else{
-					nextPlayer = game.getActivePlayers().get(0);
+					player = game.getActivePlayers().get(0);
 				}
 				// draw next player's UI
 //				System.out.println("Current player's id: " + player.getUid());
 //				System.out.println("Next player's id: " + nextPlayer.getUid());
-				redraw(nextPlayer, true);
+				newPlayer = true;
+				redraw();
 			}
 		});
 
@@ -295,17 +312,18 @@ public class CluedoFrame extends JFrame {
 	 * Changes the message in the game text area.
 	 * @param msg
 	 */
-	private void setText(CharacterToken player, boolean newPlayer){
-		String msg = "";
-		if(player==null){
-			msg = "Roll the dice then either use the arrow keys to move\nor click on the tile you want to move to.\n";
-		}
-		else if(newPlayer){
-			msg = player.getName() + "\nRoll the dice to move or select another option.";
-		}
-		else{
-			msg = player.getName() + ": " + player.getStepsRemaining() + " moves left.\n" +
-					"Use arrow keys to move or click on the board.";
+	private void setText(String msg){
+		if(msg.equals("")){
+			if(player==null){
+				msg = "Roll the dice then either use the arrow keys to move\nor click on the tile you want to move to.\n";
+			}
+			else if(newPlayer){
+				msg = player.getName() + "\nRoll the dice to move or select another option.";
+			}
+			else{
+				msg = player.getName() + ": " + player.getStepsRemaining() + " moves left.\n" +
+						"Use arrow keys to move or click on the board.";
+			}
 		}
 		gameTextArea.setText(msg);
 	}
@@ -316,7 +334,7 @@ public class CluedoFrame extends JFrame {
 	 * @param newPlayer
 	 * @return
 	 */
-	private JPanel initRollPnl(CharacterToken player, boolean newPlayer){
+	private JPanel initRollPnl(){
 		// Creating a panel to store the dice images and roll button
 		JPanel rollPnl = new JPanel(new GridLayout(0,1,2,2));
 		rollPnl.setBorder(new EmptyBorder(0,4,0,2));
@@ -342,8 +360,9 @@ public class CluedoFrame extends JFrame {
 		rollBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				rollDice(player); // set player's steps and dice pictures
-				redraw(player, false);
+				rollDice(); // set player's steps and dice pictures
+				newPlayer = false;
+				redraw();
 			}
 		});
 
@@ -353,8 +372,12 @@ public class CluedoFrame extends JFrame {
 	/**
 	 * Creates panel for all the player's cards
 	 */
-	private JPanel initHandPnl(CharacterToken player){
+	private JScrollPane initHandPnl(){
+		JScrollPane hand = new JScrollPane();
 		JPanel handPnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
+//		handPnl.setAutoscrolls(true);
+		hand.setViewportView(handPnl);
+		hand.setPreferredSize(new Dimension(300, 100));
 //		List<BufferedImage> cards = new ArrayList<BufferedImage>();
 //		try {
 //			cards.add(ImageIO.read(new File(IMAGE_PATH + "scarlett-card.png")));
@@ -371,15 +394,14 @@ public class CluedoFrame extends JFrame {
 			JLabel picLabel = new JLabel(new ImageIcon(c.getImage()));
 			handPnl.add(picLabel);
 		}
-		playerControls.add(handPnl, BorderLayout.CENTER);
-		return handPnl;
+		return hand;
 	}
 
 	/**
 	 * Rolls the dice and sets the player's initial amount of steps.
 	 * @param player
 	 */
-	private void rollDice(CharacterToken player){
+	private void rollDice(){
 		firstDie = (int)(Math.random() * 6) + 1;
 		secondDie = (int)(Math.random() * 6) + 1;
 		if(player!=null)
@@ -448,12 +470,75 @@ public class CluedoFrame extends JFrame {
 	 * @param player
 	 * @param newPlayer
 	 */
-	private void redraw(CharacterToken player, boolean newPlayer){
+	private void redraw(){
 		remove(playerControls); // remove the old panel
-		initPlayerUI(player, newPlayer); // reset the player UI
+		initPlayerUI(); // reset the player UI
 		revalidate(); // draw
 	}
 
+	/*
+	 * Move methods
+	 */
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		boolean moved = movement.move(player, new Position(e.getX(), e.getY()));
+		if(!moved){
+			invalidMoveDialog();
+		}
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		System.out.println("Player oldPos: " + player.pos());
+		if(player.getStepsRemaining()>0){
+			if(e.getKeyCode() == KeyEvent.VK_UP)
+				movement.moveNorth(player);
+			else if(e.getKeyCode() == KeyEvent.VK_DOWN)
+				movement.moveSouth(player);
+			else if(e.getKeyCode() == KeyEvent.VK_LEFT)
+				movement.moveWest(player);
+			else if(e.getKeyCode() == KeyEvent.VK_RIGHT)
+				movement.moveEast(player);
+		}
+		else{
+			setText("Please roll the dice.");
+		}
+		System.out.println("Player newPos: " + player.pos());
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		System.out.println("Player oldPos: " + player.pos());
+		if(!movement.move(player, new Position(e.getX()/24, e.getY()/24)))
+			invalidMoveDialog();
+		System.out.println("Player newPos: " + player.pos());
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {}
+
+
+	@Override
+	public void keyReleased(KeyEvent e) {}
+
+	public void invalidMoveDialog(){
+		String msg = "Cannot move to that tile." ;
+		int result = JOptionPane.showConfirmDialog(this, msg,
+		        "Alert", JOptionPane.OK_CANCEL_OPTION);
+	}
 	/*
 	 * Setter methods
 	 */
@@ -492,5 +577,4 @@ public class CluedoFrame extends JFrame {
 	public List<CharacterToken> getPlayers() {
 		return game.getActivePlayers();
 	}
-
 }
