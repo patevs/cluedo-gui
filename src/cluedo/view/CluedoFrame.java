@@ -52,10 +52,12 @@ public class CluedoFrame extends JFrame {
 	private final JPanel gui = new JPanel(new BorderLayout(3, 3));
 	private CluedoBoard board;
 	private CluedoGame game;
-	private int firstDie;
-	private int secondDie;
 	private JPanel playerControls;
 	private JTextArea gameTextArea;
+	private int firstDie;
+	private int secondDie;
+
+	private CharacterToken player;
 
 	public CluedoFrame(String boardFile){
 		super("Cluedo");
@@ -68,7 +70,8 @@ public class CluedoFrame extends JFrame {
 		// setup game board
 		initBoard(boardFile);
 		// setup player UI
-		initPlayerUI(null, false);
+		player = null;
+		initPlayerUI(false);
 
 		// setting title
 		setTitle("Cluedo Game");
@@ -158,7 +161,7 @@ public class CluedoFrame extends JFrame {
 	/**
 	 * Initialises the game's player user interface
 	 */
-	private void initPlayerUI(CharacterToken player, boolean newPlayer){
+	private void initPlayerUI(boolean newPlayer){
 		// Creating a panel to store the UI
 		playerControls = new JPanel();
 		playerControls.setBorder(
@@ -169,7 +172,7 @@ public class CluedoFrame extends JFrame {
 				);
 
 		// Creating roll panel
-		JPanel rollPnl = initRollPnl(player, newPlayer);
+		JPanel rollPnl = initRollPnl(newPlayer);
 
 		// Creating a panel to display game information
 //		JPanel gameInfoPnl = new JPanel();
@@ -177,7 +180,7 @@ public class CluedoFrame extends JFrame {
 
 		// Creating a text area to display game information to the user
 		gameTextArea = initGameTextArea();
-		setText(player, newPlayer);
+		setText(newPlayer);
 
 		// Adding the text area to the panel
 //		gameInfoPnl.add(gameTextArea, BorderLayout.CENTER);
@@ -185,7 +188,7 @@ public class CluedoFrame extends JFrame {
 
 		if(player!=null){
 			// Adding hand to panel
-			JScrollPane handPnl = initHandPnl(player); //FIXME: cards too wide
+			JScrollPane handPnl = initHandPnl(); //FIXME: cards too wide
 			gameInfoPnl.addTab("Hand", handPnl);
 		}
 
@@ -212,7 +215,8 @@ public class CluedoFrame extends JFrame {
 				else{
 					suggestBtn.setEnabled(true);
 					endTurnBtn.setEnabled(true);
-					redraw(game.getActivePlayers().get(0), true);
+					player = game.getActivePlayers().get(0);
+					redraw(true);
 				}
 			}
 		});
@@ -230,15 +234,15 @@ public class CluedoFrame extends JFrame {
 				CharacterToken nextPlayer = player;
 				// get next player
 				if(player.getUid()<game.getActivePlayers().size()){
-					nextPlayer = game.getActivePlayers().get(player.getUid()); // player's uid is 1-6
+					player = game.getActivePlayers().get(player.getUid()); // player's uid is 1-6
 				}
 				else{
-					nextPlayer = game.getActivePlayers().get(0);
+					player = game.getActivePlayers().get(0);
 				}
 				// draw next player's UI
 //				System.out.println("Current player's id: " + player.getUid());
 //				System.out.println("Next player's id: " + nextPlayer.getUid());
-				redraw(nextPlayer, true);
+				redraw(true);
 			}
 		});
 
@@ -297,7 +301,7 @@ public class CluedoFrame extends JFrame {
 	 * Changes the message in the game text area.
 	 * @param msg
 	 */
-	private void setText(CharacterToken player, boolean newPlayer){
+	private void setText(boolean newPlayer){
 		String msg = "";
 		if(player==null){
 			msg = "Roll the dice then either use the arrow keys to move\nor click on the tile you want to move to.\n";
@@ -318,7 +322,7 @@ public class CluedoFrame extends JFrame {
 	 * @param newPlayer
 	 * @return
 	 */
-	private JPanel initRollPnl(CharacterToken player, boolean newPlayer){
+	private JPanel initRollPnl(boolean newPlayer){
 		// Creating a panel to store the dice images and roll button
 		JPanel rollPnl = new JPanel(new GridLayout(0,1,2,2));
 		rollPnl.setBorder(new EmptyBorder(0,4,0,2));
@@ -344,8 +348,8 @@ public class CluedoFrame extends JFrame {
 		rollBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				rollDice(player); // set player's steps and dice pictures
-				redraw(player, false);
+				rollDice(); // set player's steps and dice pictures
+				redraw(false);
 			}
 		});
 
@@ -355,7 +359,7 @@ public class CluedoFrame extends JFrame {
 	/**
 	 * Creates panel for all the player's cards
 	 */
-	private JScrollPane initHandPnl(CharacterToken player){
+	private JScrollPane initHandPnl(){
 		JScrollPane hand = new JScrollPane();
 		JPanel handPnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
 //		handPnl.setAutoscrolls(true);
@@ -384,7 +388,7 @@ public class CluedoFrame extends JFrame {
 	 * Rolls the dice and sets the player's initial amount of steps.
 	 * @param player
 	 */
-	private void rollDice(CharacterToken player){
+	private void rollDice(){
 		firstDie = (int)(Math.random() * 6) + 1;
 		secondDie = (int)(Math.random() * 6) + 1;
 		if(player!=null)
@@ -453,9 +457,9 @@ public class CluedoFrame extends JFrame {
 	 * @param player
 	 * @param newPlayer
 	 */
-	private void redraw(CharacterToken player, boolean newPlayer){
+	private void redraw(boolean newPlayer){
 		remove(playerControls); // remove the old panel
-		initPlayerUI(player, newPlayer); // reset the player UI
+		initPlayerUI(newPlayer); // reset the player UI
 		revalidate(); // draw
 	}
 
