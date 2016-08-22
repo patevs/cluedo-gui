@@ -2,11 +2,11 @@ package cluedo.model;
 
 public abstract class Token {
 
-	protected static String name;
+	protected String name;
 	protected Position pos;
 
 	public Token(String name){
-		Token.name = name;
+		this.name = name;
 	}
 
 	/*

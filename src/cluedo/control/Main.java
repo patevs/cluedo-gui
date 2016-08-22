@@ -64,13 +64,7 @@ public class Main {
 			players.add(playerSetup.showDialog());
 		}
 		CluedoBoard board = frame.getBoard();
-		//board.initPlayers(players);
 		CluedoGame game = new CluedoGame(board, players);
-		//FIXME: characters not made with correct names
-//		game.getActivePlayers();
-//		for(CharacterToken p: players){
-//			System.out.println("Player " + p.getUid() + ": " + p.getName() + ": " + p.getCharacter().toString());
-//		}
 		return game;
 	}
 
