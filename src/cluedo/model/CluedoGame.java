@@ -38,7 +38,7 @@ public class CluedoGame {
 		this.setActivePlayers(players);
 		
 		// sets the board up
-		//board.initPlayers(players);
+		board.initPlayers(players);
 
 		// deals the cards
 		this.solution = initSolution();
