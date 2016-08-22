@@ -25,7 +25,7 @@ public class Movement{
 		Position oldPos = player.pos();// get pos of player
 //		t.setToken(null); // remove player from current tile
 //		t.setToken(player); // add player to new tile
-		player.setPos(newPos); // set player pos
+		//player.setPos(newPos); // set player pos
 		return true;
 	}
 

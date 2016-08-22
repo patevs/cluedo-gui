@@ -13,10 +13,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -42,7 +40,6 @@ import cluedo.model.CharacterToken;
 import cluedo.model.CluedoGame;
 import cluedo.model.Position;
 import cluedo.view.CluedoBoard;
-import cluedo.view.Tile;
 
 /**
  * Interacts with the players and handles actions.
@@ -54,17 +51,27 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 
 	private static final String IMAGE_PATH = "images/";
 
+	// Stores the panel which holds the game board gui
 	private JPanel gui = new JPanel(new BorderLayout(3, 3));
+	// Stores the game board
 	private CluedoBoard board;
+	// Stores the game
 	private CluedoGame game;
 	private Movement movement;
+	
+	// Player UI panel
 	private JPanel playerControls;
+	
+	// Game infomation text area
 	private JTextArea gameTextArea;
+	
+	// Stores the current dice roll
 	private int firstDie;
 	private int secondDie;
 
+	// Storex the current player
 	public CharacterToken player;
-	private boolean newPlayer;
+	private boolean newPlayer = false;
 
 	public CluedoFrame(String boardFile){
 		super("Cluedo");
@@ -187,7 +194,8 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		// Creating a panel to display game information
 //		JPanel gameInfoPnl = new JPanel();
 		JTabbedPane gameInfoPnl = new JTabbedPane(); // two panes - game info and cards
-
+		gameInfoPnl.setPreferredSize(null);
+		
 		// Creating a text area to display game information to the user
 		gameTextArea = initGameTextArea();
 		setText("");
@@ -227,7 +235,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 					endTurnBtn.setEnabled(true);
 					player = game.getActivePlayers().get(0);
 					newPlayer = true;
-					redraw();
+					redrawPlayerControls();
 				}
 			}
 		});
@@ -253,7 +261,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 //				System.out.println("Current player's id: " + player.getUid());
 //				System.out.println("Next player's id: " + nextPlayer.getUid());
 				newPlayer = true;
-				redraw();
+				redrawPlayerControls();
 			}
 		});
 
@@ -362,7 +370,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 			public void actionPerformed(ActionEvent e) {
 				rollDice(); // set player's steps and dice pictures
 				newPlayer = false;
-				redraw();
+				redrawPlayerControls();
 			}
 		});
 
@@ -375,7 +383,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	private JScrollPane initHandPnl(){
 		JScrollPane hand = new JScrollPane();
 		JPanel handPnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
-//		handPnl.setAutoscrolls(true);
+		hand.setAutoscrolls(true);
 		hand.setViewportView(handPnl);
 		hand.setPreferredSize(new Dimension(300, 100));
 //		List<BufferedImage> cards = new ArrayList<BufferedImage>();
@@ -437,7 +445,9 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	 * Displays a suggestion dialogue.
 	 */
 	private void suggest(){
+		//TODO: suggestion and accusation
 		Suggestion suggestion = new Suggestion(this);
+		
 
 	}
 
@@ -470,7 +480,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	 * @param player
 	 * @param newPlayer
 	 */
-	private void redraw(){
+	private void redrawPlayerControls(){
 		remove(playerControls); // remove the old panel
 		initPlayerUI(); // reset the player UI
 		revalidate(); // draw
@@ -481,16 +491,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	 */
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		boolean moved = movement.move(player, new Position(e.getX(), e.getY()));
-		if(!moved){
-			invalidMoveDialog();
-		}
-	}
-
-	@Override
 	public void keyPressed(KeyEvent e) {
-		System.out.println("Player oldPos: " + player.pos());
 		if(player.getStepsRemaining()>0){
 			if(e.getKeyCode() == KeyEvent.VK_UP)
 				movement.moveNorth(player);
@@ -504,15 +505,22 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		else{
 			setText("Please roll the dice.");
 		}
-		System.out.println("Player newPos: " + player.pos());
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		System.out.println("Player oldPos: " + player.pos());
 		if(!movement.move(player, new Position(e.getX()/24, e.getY()/24)))
 			invalidMoveDialog();
-		System.out.println("Player newPos: " + player.pos());
+	}
+	
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		/*
+		boolean moved = movement.move(player, new Position(e.getX(), e.getY()));
+		if(!moved){
+			invalidMoveDialog();
+		}
+		*/
 	}
 
 	@Override
@@ -545,6 +553,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 
 	/**
 	 * Sets the reference to the CluedoGame.
+	 * 	FIXME: is this used?
 	 * @param game
 	 */
 	public void setGame(CluedoGame game){

@@ -36,9 +36,6 @@ public class CluedoGame {
 
 		this.setBoard(board);
 		this.setActivePlayers(players);
-		
-		// sets the board up
-		board.initPlayers(players);
 
 		// deals the cards
 		this.solution = initSolution();
@@ -119,19 +116,25 @@ public class CluedoGame {
 	 * Sets the board
 	 * @param board
 	 */
-	public void setBoard(CluedoBoard board) { this.board = board; }
+	public void setBoard(CluedoBoard board) { 
+		this.board = board; 
+	}
 
 	/**
 	 * Returns all players
 	 * @return
 	 */
-	public List<CharacterToken> getActivePlayers() { return activePlayers; }
+	public List<CharacterToken> getActivePlayers() { 
+		return activePlayers; 
+	}
 
 	/**
 	 * Sets all players
 	 * @param activePlayers
 	 */
-	public void setActivePlayers(List<CharacterToken> activePlayers) { this.activePlayers = activePlayers; }
+	public void setActivePlayers(List<CharacterToken> activePlayers) { 
+		this.activePlayers = activePlayers; 
+	}
 
 	/**
 	 * Returns the solution to the game

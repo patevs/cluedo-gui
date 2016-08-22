@@ -16,8 +16,7 @@ public class HallwayTile extends OccupyableTile {
 
 	public HallwayTile(char c){
 		super(c);
-//		this.setBackground(Color.YELLOW.darker());
-		this.setBackground(Color.decode("#525564").brighter());
+		this.setBackground(Color.decode("#525564"));
 		this.setBorder(BorderFactory.createLineBorder(Color.decode("#BEB9B5").darker(), 1));
 		this.setMargin(new Insets(10,10,10,10));
 	}
@@ -55,14 +54,5 @@ public class HallwayTile extends OccupyableTile {
 	 */
 	public CluedoGame.Character getStartCharacter(){
 		return startChar;
-	}
-	
-	public void redraw(){
-		if(this.isOccupied()){
-			if(this.getCharacter()!=null){
-				String charName = this.getCharacter().getCharacter().toString();
-				//CluedoBoard.initCharacterTile(charName, "0");
-			}
-		}
 	}
 }

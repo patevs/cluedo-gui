@@ -33,4 +33,5 @@ public abstract class Tile extends JButton {
 	 * @param pos
 	 */
 	public void setPos(Position pos){ this.pos = pos; }
+	
 }

@@ -4,12 +4,12 @@ import cluedo.model.CharacterToken;
 import cluedo.model.CluedoGame;
 
 @SuppressWarnings("serial")
-public class OccupyableTile extends Tile {
+public abstract class OccupyableTile extends Tile {
 
 	// field to store the character occupying this tile or null if none
-	private CharacterToken character;
+	private CharacterToken character = null;
 	// field to store the weapon occupying this tile or null if none
-	private CluedoGame.Weapon weapon;
+	private CluedoGame.Weapon weapon = null;
 
 	public OccupyableTile(char symbol) {
 		super(symbol);
@@ -28,6 +28,10 @@ public class OccupyableTile extends Tile {
 	 */
 	public boolean setCharacter(CharacterToken newChar){
 		if(isOccupied()) return false; // tile already occupuied
+		if(newChar == null){
+			character = null;
+			return true;
+		}
 		if(character == null){
 			character = newChar;
 			return true;

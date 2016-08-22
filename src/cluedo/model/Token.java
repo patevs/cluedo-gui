@@ -1,17 +1,30 @@
 package cluedo.model;
 
+import cluedo.view.OccupyableTile;
+
 public abstract class Token {
 
+	// Stores the name of the token
 	protected String name;
+	// Stores the position of the token
+	// or null if not on board.
 	protected Position pos;
+	protected OccupyableTile tile;
 
 	public Token(String name){
 		this.name = name;
 	}
-
+	
 	/*
 	 * Getter/setter methods
 	 */
+	public OccupyableTile getTile() {
+		return tile;
+	}
+
+	public void setTile(OccupyableTile tile) {
+		this.tile = tile;
+	}
 	/**
 	 * Returns the name of this token.
 	 * @return

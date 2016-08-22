@@ -29,7 +29,7 @@ public class CharacterToken extends Token {
 	 * @param str
 	 * @return
 	 */
-	private Character getChar(String str) {
+	private CluedoGame.Character getChar(String str) {
 		Character res = null;
 		switch(str.toUpperCase()){
 			case "MISS SCARLETT":

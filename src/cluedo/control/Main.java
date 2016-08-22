@@ -63,7 +63,12 @@ public class Main {
 			playerSetup.setVisible(false);
 			players.add(playerSetup.showDialog());
 		}
+		
+		// Setting up the game board
 		CluedoBoard board = frame.getBoard();
+		board.initPlayers(players);
+		board.redraw();
+		
 		CluedoGame game = new CluedoGame(board, players);
 		return game;
 	}
@@ -81,9 +86,13 @@ public class Main {
 				frame.setVisible(true);
 				CluedoGame game = initGame(frame);
 				frame.setGame(game);
-				frame.repaint();
+//				frame.repaint();
 				// TODO something with the players
-				game.getActivePlayers().get(0); // first player
+				
+				frame.player = game.getActivePlayers().get(0); // first player
+				if(!gameOver){
+					// play game
+				}
 			}
 		});
 	}

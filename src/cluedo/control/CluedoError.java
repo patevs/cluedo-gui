@@ -6,6 +6,7 @@ package cluedo.control;
  * @author Patrick Evans and Maria Legaspi
  *
  */
+@SuppressWarnings("serial")
 public class CluedoError extends RuntimeException {
 
 	/**
