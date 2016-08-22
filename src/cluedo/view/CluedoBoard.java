@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import cluedo.control.CluedoError;
 import cluedo.control.CluedoFrame;
 import cluedo.model.CharacterToken;
 import cluedo.model.Position;
@@ -154,22 +155,12 @@ public class CluedoBoard {
 				if(t.getStartCharacter() != null){
 					if(p.getCharacter().toString().equalsIgnoreCase(
 							t.getStartCharacter().toString())){
-						initCharacterTile(t, p.getCharacter().toString(), p.getName());
+						t = (HallwayTile) initCharacterTile(p.getCharacter().toString(), p.getName());
 						t.setCharacter(p);
 					}
 				}
 			}
 		}
-		redraw();
-	}
-	
-	public void redraw(){
-		parent.getGui().removeAll();
-		parent.getGui().revalidate();
-		
-		parent.getGui().add(board);
-		parent.getGui().revalidate();
-		parent.getGui().repaint();
 	}
 
 	/**
@@ -178,34 +169,38 @@ public class CluedoBoard {
 	 * @param c
 	 * @return board square jbutton
 	 */
-	private void initCharacterTile(JButton tile, String charName, String playerName) {
+	private JButton initCharacterTile(String charName, String playerName) {
+		JButton b = new HallwayTile('H');
+
+		System.out.println(charName + " " + playerName);
 
 		switch(charName.toUpperCase()){
 			case "MISS SCARLETT":
-				tile.setIcon(new ImageIcon(IMAGE_PATH + "scarlett.png"));
-				tile.setToolTipText(playerName + ": MISS SCARLETT");
+				b.setIcon(new ImageIcon(IMAGE_PATH + "scarlett.png"));
+				b.setToolTipText(playerName + ": MISS SCARLETT");
 				break;
 			case "COLONEL MUSTARD":
-				tile.setIcon(new ImageIcon(IMAGE_PATH + "mustard.png"));
-				tile.setToolTipText(playerName + ": COLONEL MUSTARD");
+				b.setIcon(new ImageIcon(IMAGE_PATH + "mustard.png"));
+				b.setToolTipText(playerName + ": COLONEL MUSTARD");
 				break;
 			case "THE REVEREND GREEN":
-				tile.setIcon(new ImageIcon(IMAGE_PATH + "green.png"));
-				tile.setToolTipText(playerName + ": THE REVERENED GREEN");
+				b.setIcon(new ImageIcon(IMAGE_PATH + "green.png"));
+				b.setToolTipText(playerName + ": THE REVERENED GREEN");
 				break;
 			case "MRS PEACOCK":
-				tile.setIcon(new ImageIcon(IMAGE_PATH + "peacock.png"));
-				tile.setToolTipText(playerName + ": MRS PEACOCK");
+				b.setIcon(new ImageIcon(IMAGE_PATH + "peacock.png"));
+				b.setToolTipText(playerName + ": MRS PEACOCK");
 				break;
 			case "PROFESSOR PLUM":
-				tile.setIcon(new ImageIcon(IMAGE_PATH + "plum.png"));
-				tile.setToolTipText(playerName + ": PROFESSOR PLUM");
+				b.setIcon(new ImageIcon(IMAGE_PATH + "plum.png"));
+				b.setToolTipText(playerName + ": PROFESSOR PLUM");
 				break;
 			case "MRS WHITE":
-				tile.setIcon(new ImageIcon(IMAGE_PATH + "white.png"));
-				tile.setToolTipText(playerName + ": MRS WHITE");
+				b.setIcon(new ImageIcon(IMAGE_PATH + "white.png"));
+				b.setToolTipText(playerName + ": MRS WHITE");
 				break;
 		}
+		return b;
 	}
 
 	/**
