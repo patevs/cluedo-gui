@@ -18,7 +18,6 @@ import javax.swing.border.LineBorder;
 
 import cluedo.control.CluedoFrame;
 import cluedo.model.CharacterToken;
-import cluedo.model.CluedoGame;
 import cluedo.model.CluedoGame.Room;
 import cluedo.model.Position;
 import cluedo.model.WeaponToken;
@@ -276,6 +275,9 @@ public class CluedoBoard {
 		}
 	}
 	
+	/*
+	 * Methods handeling the movement of players around the board.
+	 */
 	/**
 	 * Checks if a player is able to make a move north
 	 * @param player
@@ -303,7 +305,6 @@ public class CluedoBoard {
 		}
 		return false;
 	}
-	
 	/**
 	 * Moves a player north on the board
 	 * @param player
@@ -326,7 +327,55 @@ public class CluedoBoard {
 		player.setPos(newPos);
 		player.setTile((OccupyableTile) newTile);
 	}
-	
+	/**
+	 * Checks if a player can move east on the board
+	 * @param player
+	 * @return
+	 */
+	public boolean canMoveEast(CharacterToken player){
+		// check parameter
+		if(player==null) return false;	
+		// already in east most square
+		if(player.x() + 1 >= WIDTH){
+			return false;
+		}
+		
+		// Getting player position
+		int xpos = player.x();
+		int ypos = player.y();
+		
+		// Getting the new tile
+		Tile tile = boardSquares[xpos+1][ypos];
+		// Checking if the player can move to the tile
+		if(tile instanceof OccupyableTile){
+			if(!((OccupyableTile) tile).isOccupied()){
+				return true;
+			}
+		}
+		return false;
+	}
+	/**
+	 * Moves a player east on the board
+	 * @param player
+	 */
+	public void moveEast(CharacterToken player){
+		// Resetting the old tile
+		player.getTile().reset();
+		player.getTile().setCharacter(null);
+		
+		// Getting the new tile position
+		Position newPos = new Position(player.x()+1,player.y());
+		
+		// Getting the new tile
+		OccupyableTile newTile = (OccupyableTile)boardSquares[newPos.getX()][newPos.getY()];
+		initCharacterTile(newTile, player.getCharacter().toString(), player.getName());
+		newTile.setCharacter(player);
+		
+		// Moving the player to the new tile
+		player.setStepsRemaining(player.getStepsRemaining() - 1);
+		player.setPos(newPos);
+		player.setTile((OccupyableTile) newTile);
+	}
 	/**
 	 * Checks if a player can move south on the board
 	 * @param player
@@ -354,7 +403,6 @@ public class CluedoBoard {
 		}
 		return false;
 	}
-	
 	/**
 	 * Moves a player south on the board
 	 * @param player
@@ -366,6 +414,55 @@ public class CluedoBoard {
 		
 		// Getting the new tile position
 		Position newPos = new Position(player.x(),player.y()+1);
+		
+		// Getting the new tile
+		OccupyableTile newTile = (OccupyableTile)boardSquares[newPos.getX()][newPos.getY()];
+		initCharacterTile(newTile, player.getCharacter().toString(), player.getName());
+		newTile.setCharacter(player);
+		
+		// Moving the player to the new tile
+		player.setStepsRemaining(player.getStepsRemaining() - 1);
+		player.setPos(newPos);
+		player.setTile((OccupyableTile) newTile);
+	}
+	/**
+	 * Checks if a player can move west on the board
+	 * @param player
+	 * @return
+	 */
+	public boolean canMoveWest(CharacterToken player){
+		// check parameter
+		if(player==null) return false;	
+		// already in south most square
+		if(player.x() - 1 < 0){
+			return false;
+		}
+		
+		// Getting player position
+		int xpos = player.x();
+		int ypos = player.y();
+		
+		// Getting the new tile
+		Tile tile = boardSquares[xpos-1][ypos];
+		// Checking if the player can move to the tile
+		if(tile instanceof OccupyableTile){
+			if(!((OccupyableTile) tile).isOccupied()){
+				return true;
+			}
+		}
+		return false;
+	}
+	/**
+	 * Moves a player west on the board
+	 * @param player
+	 */
+	public void moveWest(CharacterToken player){
+		// Resetting the old tile
+		player.getTile().reset();
+		player.getTile().setCharacter(null);
+		
+		// Getting the new tile position
+		Position newPos = new Position(player.x()-1,player.y());
 		
 		// Getting the new tile
 		OccupyableTile newTile = (OccupyableTile)boardSquares[newPos.getX()][newPos.getY()];

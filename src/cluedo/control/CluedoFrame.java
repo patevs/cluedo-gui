@@ -707,19 +707,17 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		
-		// Check player
+		// Check player isnt null
 		if(player == null) return;
-		
+		// Checking click source
 		Object source = e.getSource();
 		if(source instanceof Tile){
+			// player must have steps remaining to move on the board
 			if(player != null && player.getStepsRemaining() > 0){
-				
 				// Getting the player position
 				Position pPos = player.pos();
-				// Getting the clicked tiles position
+				// Getting the clicked tile position
 				Position tPos = ((Tile) source).pos();
-				
 				// Player attempting to move north
 				if((pPos.getY()-1 == tPos.getY())&&(pPos.getX() == tPos.getX())){
 					if(board.canMoveNorth(player)){
@@ -728,7 +726,6 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 						return;
 					}
 				}
-				
 				// Player attempting to move south
 				if((pPos.getY()+1 == tPos.getY())&&(pPos.getX() == tPos.getX())){
 					if(board.canMoveSouth(player)){
@@ -736,12 +733,26 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 						this.setText("");
 						return;
 					}
+				}	
+				// Player attempting to move east
+				if((pPos.getY() == tPos.getY())&&(pPos.getX()+1 == tPos.getX())){
+					if(board.canMoveEast(player)){
+						board.moveEast(player);
+						this.setText("");
+						return;
+					}
+				}
+				// Player attempting to move west
+				if((pPos.getY() == tPos.getY())&&(pPos.getX()-1 == tPos.getX())){
+					if(board.canMoveWest(player)){
+						board.moveWest(player);
+						this.setText("");
+						return;
+					}
 				}
 			}
 		}
-
-//		if(!movement.move(player, new Position(e.getX()/24, e.getY()/24)))
-//			invalidMoveDialog();
+//		invalidMoveDialog();
 	}
 	
 	@Override
