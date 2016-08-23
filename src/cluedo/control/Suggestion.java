@@ -127,8 +127,6 @@ public class Suggestion extends JDialog implements ActionListener {
 			}
 			else{
 				dispose();
-				// gets player to move suspect
-				frame.moveSuggestionItems(suspect, weapon, room);
 				// calls another class to handle refutations
 				CharacterToken currentRefuter = refuter;
 				while((refuter = nextRefuter())!= frame.player){

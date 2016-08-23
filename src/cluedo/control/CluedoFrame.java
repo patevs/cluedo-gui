@@ -268,6 +268,10 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 							suggest();
 							player.suggested = true;
 						}
+						else{
+							msg = "You cannot suggest again this turn." ;
+							JOptionPane.showMessageDialog(gui, msg);
+						}
 					} else {
 						msg = "You Must be in a Room to Suggest" ;
 						JOptionPane.showMessageDialog(gui, msg);
@@ -326,18 +330,6 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 	private void suggest(){
 		Suggestion suggestion = new Suggestion(this);
 		setText(suggestion.getPlayerSuggestion() + "\n" + suggestion.getResult());
-//		suggestion.dispose();
-	}
-	
-	/**
-	 * Gets player to move the suspect and weapon into the suspected crime scene.
-	 * @param suspect
-	 * @param weapon
-	 * @param room
-	 */
-	public void moveSuggestionItems(String suspect, String weapon, String room){
-		//TODO: this
-		CharacterToken suspectToken = getSuspectToken(suspect);
 	}
 
 	/**
