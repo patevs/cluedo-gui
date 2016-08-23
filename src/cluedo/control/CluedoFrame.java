@@ -691,11 +691,11 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	@Override
 	public void mousePressed(MouseEvent e) {
 		
-		Tile tile = board.tileAt(new Position(e.getX(),e.getY()));
-		if(tile != null){
-			tile.setBackground(Color.BLACK);
-			System.out.println(tile.getName() + "GOT HERE");
+		Object source = e.getSource();
+		if(source instanceof Tile){
+			//((Tile) source).setBackground(Color.BLACK);
 		}
+
 		if(!movement.move(player, new Position(e.getX()/24, e.getY()/24)))
 			invalidMoveDialog();
 	}
@@ -709,23 +709,14 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		}
 		*/
 	}
-
 	@Override
-	public void mouseReleased(MouseEvent e) {
-	}
-
+	public void mouseReleased(MouseEvent e) {}
 	@Override
-	public void mouseEntered(MouseEvent e) {
-	}
-
+	public void mouseEntered(MouseEvent e) {}
 	@Override
-	public void mouseExited(MouseEvent e) {
-	}
-
+	public void mouseExited(MouseEvent e) {}
 	@Override
 	public void keyTyped(KeyEvent e) {}
-
-
 	@Override
 	public void keyReleased(KeyEvent e) {}
 
@@ -740,7 +731,6 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 
 	/**
 	 * Sets the reference to the CluedoGame.
-	 * 	FIXME: is this used? Yep in main class
 	 * @param game
 	 */
 	public void setGame(CluedoGame game){

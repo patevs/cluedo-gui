@@ -215,15 +215,22 @@ public class CluedoBoard {
 				break;
 		}
 	}
+	
+	public boolean canMoveSouth(CharacterToken player){
+		
+		
+		return false;
+	}
 
-	/**
+	/** THIS DOESNT WORK
+	 * TODO Fix or remove
 	 * Returns the tile at a given position.
 	 * @param p
 	 * @return
 	 */
 	public Tile tileAt(Position p){
-		if(p.getX() < 0 || p.getX() >= 22 || p.getY() < 0 || p.getY() >= 22)
+		if(p.getX() <= 0 || p.getX() >= 22 || p.getY() <= 0 || p.getY() >= 22)
 			return null;
-		return (Tile) boardSquares[p.getY()][p.getX()];
+		return (Tile) boardSquares[p.getX()][p.getY()];
 	}
 }
