@@ -141,7 +141,7 @@ public class CluedoGame {
 	 * Returns the solution to the game
 	 * @return game solution
 	 */
-	private Card[] getSolution() { return solution;	}
+	public Card[] getSolution() { return solution;	}
 
 	/**
 	 * This method returns the current game deck

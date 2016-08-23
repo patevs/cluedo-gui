@@ -59,11 +59,11 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	private CluedoBoard board;
 	// Stores the game
 	private CluedoGame game;
+	// Stores a class to handle movement
 	private Movement movement;
 	
 	// Player UI panel
 	private JPanel playerControls;
-	
 	// Game information text area
 	private JTextArea gameTextArea;
 	
@@ -71,9 +71,12 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	private int firstDie;
 	private int secondDie;
 
-	// Storex the current player
+	// Stores the current player
 	public CharacterToken player;
 	private boolean newPlayer = false;
+	
+	// Stores game status
+	private boolean gameOver = false;
 
 	public CluedoFrame(String boardFile){
 		super("Cluedo");
@@ -254,37 +257,30 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 						JOptionPane.INFORMATION_MESSAGE,null,options,null);
 				if(result==0){
 					// check if player can suggest
-					System.out.println(player.pos().getX() + ", " + player.pos().getY());
+					// 1. if in a room
 					Tile t = board.tileAt(player.pos());
-					if(t instanceof RoomTile)
-						suggest();
+					if(t instanceof RoomTile){
+						//2. if haven't suggested this turn
+						if(!player.suggested){
+							suggest();
+							player.suggested = true;
+						}
+					}
 					else{
 						msg = "You Must be in a Room to Suggest" ;
 						JOptionPane.showMessageDialog(gui, msg);
 					}
 				}
-				//TODO:
-//				else{
-//					accuse();
-//				}
+				else{
+					accuse();
+				}
 			}});
 
 		// Starts next player's turn
 		endTurnBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// get next player
-				if(player.getUid()<game.getActivePlayers().size()){
-					player = game.getActivePlayers().get(player.getUid()); // player's uid is 1-6
-				}
-				else{
-					player = game.getActivePlayers().get(0);
-				}
-				// draw next player's UI
-//				System.out.println("Current player's id: " + player.getUid());
-//				System.out.println("Next player's id: " + nextPlayer.getUid());
-				newPlayer = true;
-				redrawPlayerControls();
+				nextPlayer();
 			}
 		});
 
@@ -328,22 +324,68 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	 * Displays a suggestion dialogue.
 	 */
 	private void suggest(){
-		//TODO: suggestion and accusation
 		Suggestion suggestion = new Suggestion(this);
 		setText(suggestion.getPlayerSuggestion() + "\n" + suggestion.getResult());
 //		suggestion.dispose();
 	}
 	
 	/**
-	 * Gets character to move the suspect and weapon into the suspected crime scene.
+	 * Gets player to move the suspect and weapon into the suspected crime scene.
 	 * @param suspect
 	 * @param weapon
 	 * @param room
 	 */
 	public void moveSuggestionItems(String suspect, String weapon, String room){
+		//TODO: this
 		CharacterToken suspectToken = getSuspectToken(suspect);
 	}
 
+	/**
+	 * Gets player to accuse a suspect, weapon, room.
+	 */
+	private void accuse(){
+		Accusation accuse = new Accusation(this);
+	}
+	
+	/**
+	 * Tells player whether they succeeded in accusation.
+	 * @param accusation
+	 */
+	public void result(Accusation accusation){
+		setText(accusation.getPlayerAccusation());
+		List<String> guess = accusation.getAccusation();
+		Card[]solution = game.getSolution();
+//		System.out.println(solution[0].toString()+","+solution[2].toString()+","+solution[1].toString());
+		// if player was correct
+		if(solution[0].toString().equalsIgnoreCase(guess.get(0))&&
+				solution[1].toString().equalsIgnoreCase(guess.get(2))&&
+				solution[2].toString().equalsIgnoreCase(guess.get(1))){
+			// display message and end game
+			gameWon(player);
+			gameOver = true;
+		}
+		// otherwise player lost
+		else{
+			// set text to show losing message
+			player.active = false;
+			// if there are no more active players, display losing message and end game
+			if(!active())
+				gameLost();
+			// otherwise just displaying losing message to this player
+			else
+				playerLost();
+		}
+	}
+	
+	/**
+	 * Returns the answer as a message;
+	 * @return
+	 */
+	private String answer(){
+		Card[] solution = game.getSolution();
+		return solution[0].toString() + " committed the crime with the " +
+				solution[2].toString() + " in the " + solution[1].toString();
+	}
 	/**
 	 * Returns the character token associated with this character name.
 	 * @param suspect
@@ -355,6 +397,71 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 				return t;
 		}
 		return null;
+	}
+	
+	/*------------------
+	 * Game over methods
+	 -----------------*/
+	
+	/**
+	 * Returns true if there are still active players.
+	 */
+	private boolean active(){
+		for(CharacterToken t: getPlayers()){
+			if(t.active)
+				return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Displays losing message to accuser.
+	 */
+	private void playerLost(){
+		String msg = "You Did Not Solve the Crime...\n" +
+				answer();
+		JOptionPane.showMessageDialog(this, msg);
+	}
+	
+	/**
+	 * Displays winning message.
+	 * @param player
+	 */
+	private void gameWon(CharacterToken player){
+		String msg = "CONGRATULATIONS YOU WON THE GAME!\n" +
+					answer();
+		JOptionPane.showMessageDialog(this, msg);
+		newGame();
+	}
+	
+	/**
+	 * Displays losing message.
+	 */
+	private void gameLost(){
+		String msg = "NO ONE SOLVED THE CRIME...\n" +
+				answer();
+		JOptionPane.showMessageDialog(this, msg);
+		newGame();
+	}
+	
+	/**
+	 * Asks players if they want to start another game.
+	 */
+	private void newGame(){
+		String msg = "Would You Like To Start Again?" ;
+		int result = JOptionPane.showConfirmDialog(this, msg,
+		        "Alert", JOptionPane.YES_NO_OPTION);
+		// restart game
+		if(result==0){
+			String[] file = {"boardFile.txt"};
+			Main.main(file);
+			dispose();
+		}
+		// end game
+		else{
+			System.exit(0);
+			dispose();
+		}
 	}
 	
 	/*-----------------------
@@ -483,33 +590,6 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		return null;
 	}
 	
-	/*---------------------
-	 * Help and exit methods
-	 ---------------------*/
-	/**
-	 * Displays dialog asking if user wants to exit the game
-	 */
-	private void confirmExit() {
-		String msg = "Are You Sure You Want to Exit the Game?" ;
-		int result = JOptionPane.showConfirmDialog(this, msg,
-		        "Alert", JOptionPane.OK_CANCEL_OPTION);
-		if(result==0){
-			System.exit(0);
-			dispose();
-		}
-	}
-
-	/**
-	 * Displays a help dialog message to the player
-	 */
-	protected void displayHelp() {
-		String msg = "-- Cluedo Game Help -- \n" + "Select New Game to restart the game." ;
-		JFrame helpPanel = new JFrame();
-		JPanel pnl = (JPanel) helpPanel.getContentPane();
-		JOptionPane.showMessageDialog(pnl, msg,
-                "Cluedo Game Guide", JOptionPane.INFORMATION_MESSAGE);
-	}
-	
 	/*---------------
 	 * Redraw methods
 	 --------------*/
@@ -541,9 +621,55 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		revalidate(); // draw
 	}
 
-	/*
-	 * Move methods
+	/**
+	 * Sets the gui up for the next player
 	 */
+	private void nextPlayer(){
+		// allows player to suggest next turn
+		player.suggested = false;
+		while(!player.active){
+			// get next player
+			if(player.getUid()<game.getActivePlayers().size()){
+				player = game.getActivePlayers().get(player.getUid()); // player's uid is 1-6
+			}
+			else{
+				player = game.getActivePlayers().get(0);
+			}
+			newPlayer = true;
+		}
+		redrawPlayerControls();
+	}
+	
+	/*---------------------
+	 * Help and exit methods
+	 ---------------------*/
+	/**
+	 * Displays dialog asking if user wants to exit the game
+	 */
+	private void confirmExit() {
+		String msg = "Are You Sure You Want to Exit the Game?" ;
+		int result = JOptionPane.showConfirmDialog(this, msg,
+		        "Alert", JOptionPane.OK_CANCEL_OPTION);
+		if(result==0){
+			System.exit(0);
+			dispose();
+		}
+	}
+
+	/**
+	 * Displays a help dialog message to the player
+	 */
+	protected void displayHelp() {
+		String msg = "-- Cluedo Game Help -- \n" + "Select New Game to restart the game." ;
+		JFrame helpPanel = new JFrame();
+		JPanel pnl = (JPanel) helpPanel.getContentPane();
+		JOptionPane.showMessageDialog(pnl, msg,
+                "Cluedo Game Guide", JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	/*-------------
+	 * Move methods
+	 ------------*/
 
 	@Override
 	public void keyPressed(KeyEvent e) {
