@@ -66,8 +66,6 @@ public class Suggestion extends JDialog implements ActionListener {
 		super(parent, "Suggestion", true);
         frame = parent;
         
-        getRoom();
-        
 		initGUI();
 
 		// make the dialog blocking (always on top)
@@ -76,20 +74,14 @@ public class Suggestion extends JDialog implements ActionListener {
         this.setTitle("Enter Suggestion");
 		// set close operation
         this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        // set position
-        this.setLocationRelativeTo(getParent());
-        // handles the user closing the window dialog
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent evt){
-                confirmExit();
-            }
-        });
 	}
 
 	/**
 	 * Initilizes the player setup dialog GUI
 	 */
 	private void initGUI() {
+        
+        getRoom();
 		// adds elements
 		createHeader();
 		createPlayerGUI();
@@ -98,6 +90,12 @@ public class Suggestion extends JDialog implements ActionListener {
 		pack();
 		this.setMinimumSize(this.getSize());
         this.setLocationRelativeTo(getParent());
+        // handles the user closing the window dialog
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent evt){
+                confirmExit();
+            }
+        });
         // make visible
 		this.setVisible(true);
 	}
@@ -128,7 +126,7 @@ public class Suggestion extends JDialog implements ActionListener {
 				JOptionPane.showMessageDialog(this, "Select a weapon.",
 		                "Alert", JOptionPane.ERROR_MESSAGE);
 			}
-			else if(room == null||suspect.length()<1){
+			else if(room == null||room.length()<1){
 				JOptionPane.showMessageDialog(this, "Select a room.",
 		                "Alert", JOptionPane.ERROR_MESSAGE);
 			}
@@ -261,9 +259,11 @@ public class Suggestion extends JDialog implements ActionListener {
 				weapon + "\nin the " + room;
 	}
 	
+	/**
+	 * Sets the name of the room.
+	 */
 	private void getRoom(){
-		Position p = frame.player.pos();
-		room = frame.getBoard().tileAt(p).getName();
+		room = frame.player.getTile().getName();
 	}
 	
 	/**
@@ -533,28 +533,7 @@ public class Suggestion extends JDialog implements ActionListener {
 		RoomRadioBtn lounge = new RoomRadioBtn("Lounge");
 		RoomRadioBtn diningRoom = new RoomRadioBtn("Dining Room");
 
-//		// Adding action commands to the buttons
-//		kitchen.setActionCommand("KITCHEN");
-//		ballroom.setActionCommand("BALL ROOM");
-//		conservatory.setActionCommand("CONSERVATORY");
-//		billiardRoom.setActionCommand("BILLIARD ROOM");
-//		library.setActionCommand("LIBRARY");
-//		study.setActionCommand("STUDY");
-//		hall.setActionCommand("HALL");
-//		lounge.setActionCommand("LOUNGE");
-//		diningRoom.setActionCommand("DINING ROOM");
-//
-//		// Adding Action listeners
-//		kitchen.addActionListener(this);
-//		ballroom.addActionListener(this);
-//		conservatory.addActionListener(this);
-//		billiardRoom.addActionListener(this);
-//		library.addActionListener(this);
-//		study.addActionListener(this);
-//		hall.addActionListener(this);
-//		lounge.addActionListener(this);
-//		diningRoom.addActionListener(this);
-
+		// disable buttons
 		kitchen.setEnabled(false);
 		ballroom.setEnabled(false);
 		conservatory.setEnabled(false);
