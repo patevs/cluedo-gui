@@ -137,6 +137,10 @@ public class CharacterToken extends Token {
 	 */
 	public BufferedImage image(){ return image; }
 	
+	/**
+	 * Returns true if this character is in a room.
+	 * @return
+	 */
 	public boolean inRoom(){
 		Tile t = this.getTile();
 		if(t == null) return false;

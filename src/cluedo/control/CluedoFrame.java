@@ -441,7 +441,8 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 	private void setText(String msg){
 		if(msg.equals("")){
 			if(player==null){
-				msg = "Roll the dice then either use the arrow keys to move\nor click on the tile you want to move to.\n";
+				msg = "Roll the dice then either use the arrow keys to move\n+"
+						+ "or click to a neighbouring tile.";
 			}
 			else if(newPlayer){
 				msg = player.getName() + " : " + player.getCharacter().toString() + 
@@ -450,7 +451,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 			else{
 				msg = player.getName() + " : " + player.getCharacter().toString() +  
 						": " + player.getStepsRemaining() + " moves left.\n" +
-						"Use arrow keys to move or click on the board.";
+						"Use arrow keys to move or click on a neighbouring tile.";
 			}
 		}
 		gameTextArea.setText(msg);
