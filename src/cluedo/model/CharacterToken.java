@@ -9,6 +9,8 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import cluedo.model.CluedoGame.Character;
+import cluedo.view.RoomTile;
+import cluedo.view.Tile;
 
 /**
  * Character token class representing characters on the board
@@ -134,4 +136,13 @@ public class CharacterToken extends Token {
 	 * @return
 	 */
 	public BufferedImage image(){ return image; }
+	
+	public boolean inRoom(){
+		Tile t = this.getTile();
+		if(t == null) return false;
+		if(t instanceof RoomTile){
+			return true;
+		}
+		return false;
+	}
 }

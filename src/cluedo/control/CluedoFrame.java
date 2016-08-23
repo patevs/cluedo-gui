@@ -260,13 +260,12 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 				if(result==0){
 					// check if player can suggest
 					// 1. if in a room
-					//FIXME Test if this works
-					Tile t = board.tileAt(player.pos());
-					if(t instanceof RoomTile){
+					if(player.inRoom()){
 						//2. if haven't suggested this turn
 						if(!player.suggested){
 							// hide suggester's cards from other players
 				            gameInfoPnl.setSelectedIndex(0);
+				            // FIXME 
 							suggest();
 							player.suggested = true;
 						}
@@ -277,6 +276,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 					}
 				}
 				else if(result==1){
+					// FIXME
 					accuse();
 				}
 			}});
@@ -296,14 +296,13 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 				confirmExit();
 			}});
 
-
 		// Adding buttons to panel and enabling the relevant ones
 		if(player!=null){
 			beginBtn.setEnabled(false);
-			if(!player.active)
+			if(!player.active){
 				suggestBtn.setEnabled(false);
-		}
-		else{
+			}
+		} else {
 			gameOptionsPnl.add(beginBtn);
 			suggestBtn.setEnabled(false);
 			endTurnBtn.setEnabled(false);

@@ -162,7 +162,8 @@ public class Suggestion extends JDialog implements ActionListener {
 
 		// Creating player and info message labels
 		// using html tags to underline text
-		JLabel playerMsg = new JLabel("<html><b><u>" + frame.player.getName() + "</u></b></html>");
+		JLabel playerMsg = new JLabel("<html><b><u>" + frame.player.getCharacter().toString() + 
+				frame.player.getName() + "</u></b></html>");
 		JLabel infoMsg = new JLabel("Make Your Suggestion.");
 
 		// Setting labels font, border, and alignments

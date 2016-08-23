@@ -1,8 +1,6 @@
 package cluedo.control;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -16,23 +14,17 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-import cluedo.model.Card;
-import cluedo.model.CardRadioBtn;
 import cluedo.model.CharRadioBtn;
-import cluedo.model.CharacterToken;
 import cluedo.model.RoomRadioBtn;
 import cluedo.model.WeapRadioBtn;
 
@@ -68,6 +60,19 @@ public class Accusation extends JDialog implements ActionListener {
         this.setTitle("Enter Accusation");
 		// set close operation
         this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        // set display position
+        this.setLocationRelativeTo(getParent());
+        // ensures the frame is the minimum size it needs to be
+        // in order display the components within it
+		this.pack();
+        // ensures the minimum size is enforced.
+		this.setMinimumSize(this.getSize());
+        // handles the user closing the window dialog
+        this.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent evt){
+                confirmExit();
+            }
+        });
 	}
 
 	/**
@@ -78,18 +83,6 @@ public class Accusation extends JDialog implements ActionListener {
 		createHeader();
 		createPlayerGUI();
 		createFooter();
-		// sets position and size
-		pack();
-		this.setMinimumSize(this.getSize());
-        this.setLocationRelativeTo(getParent());
-        // handles the user closing the window dialog
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent evt){
-                confirmExit();
-            }
-        });
-        // make visible
-		this.setVisible(true);
 	}
 
 	@Override
@@ -118,7 +111,7 @@ public class Accusation extends JDialog implements ActionListener {
 				JOptionPane.showMessageDialog(this, "Select a weapon.",
 		                "Alert", JOptionPane.ERROR_MESSAGE);
 			}
-			else if(room == null||suspect.length()<1){
+			else if(room == null||room.length()<1){
 				JOptionPane.showMessageDialog(this, "Select a room.",
 		                "Alert", JOptionPane.ERROR_MESSAGE);
 			}
@@ -249,6 +242,7 @@ public class Accusation extends JDialog implements ActionListener {
 		        "Alert", JOptionPane.OK_CANCEL_OPTION);
 		if(result==0){
 			dispose();
+			System.exit(0);
 		}
 	}
 
