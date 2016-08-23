@@ -23,8 +23,9 @@ public class CluedoGame {
 	private static final String IMAGE_PATH = "images/";
 	// represents the current game board
 	private CluedoBoard board;
-	// a list of all current players
+	// a list of equipment
 	private List<CharacterToken> activePlayers;
+	private List<WeaponToken> weapons;
 	// stores the random solution to the game
 	private Card[] solution;
 	// stores the deck of cards for the game

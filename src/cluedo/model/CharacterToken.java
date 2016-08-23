@@ -5,31 +5,42 @@ import java.util.List;
 
 import cluedo.model.CluedoGame.Character;
 
+/**
+ * Character token class representing characters on the board
+ * @author Patrick
+ *
+ */
 public class CharacterToken extends Token {
 
 	// field for the players unique ID
 	private final int Uid;
 	// stores the players chosen character token
-	private final CluedoGame.Character character;
+	private CluedoGame.Character character;
 	// stores the players hand
 	private List<Card> hand;
 	// stores how many moves the player can make
 	private int stepsRemaining;
 
+	/**
+	 * Creates a character token representing a player on the board.
+	 * @param name
+	 * @param playerUID
+	 * @param characterStr
+	 */
 	public CharacterToken(String name, int playerUID, String characterStr) {
 		super(name);
 		this.Uid = playerUID;
-		this.character = getChar(characterStr);
+		character = null;
+		setChar(characterStr);
 		this.hand = new ArrayList<Card>();
 	}
 
 	/**
-	 * Returns a cluedo character from a string or
-	 * 	null if the character isn't recognised.
+	 * Sets the character associated with this token.
 	 * @param str
 	 * @return
 	 */
-	private CluedoGame.Character getChar(String str) {
+	private void setChar(String str) {
 		Character res = null;
 		switch(str.toUpperCase()){
 			case "MISS SCARLETT":
@@ -51,7 +62,7 @@ public class CharacterToken extends Token {
 				res = Character.PROFESSOR_PLUM;
 				break;
 		}
-		return res;
+		character = res;
 	}
 
 	/**
@@ -65,10 +76,34 @@ public class CharacterToken extends Token {
 	/*
 	 * Getter and Setter methods
 	 */
+	/**
+	 * Returns the uid of this player.
+	 * @return
+	 */
 	public int getUid() { return Uid; }
+	/**
+	 * Returns the character associated with this character token.
+	 * @return
+	 */
 	public CluedoGame.Character getCharacter() { return character; }
+	/**
+	 * Returns all the cards in player's hand.
+	 * @return
+	 */
 	public List<Card> getHand(){ return hand; }
+	/**
+	 * Sets the cards in this hand.
+	 * @param newHand
+	 */
 	public void setHand(List<Card> newHand){ hand = newHand; }
+	/**
+	 * Sets the amount of steps the player can move.
+	 * @param steps
+	 */
 	public void setStepsRemaining(int steps){ stepsRemaining = steps; }
+	/**
+	 * Returns the amount of steps the player can move.
+	 * @return
+	 */
 	public int getStepsRemaining(){ return stepsRemaining; }
 }

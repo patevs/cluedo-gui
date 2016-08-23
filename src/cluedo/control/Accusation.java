@@ -33,7 +33,6 @@ import cluedo.model.Card;
 import cluedo.model.CardRadioBtn;
 import cluedo.model.CharRadioBtn;
 import cluedo.model.CharacterToken;
-import cluedo.model.Position;
 import cluedo.model.RoomRadioBtn;
 import cluedo.model.WeapRadioBtn;
 
@@ -45,7 +44,7 @@ import cluedo.model.WeapRadioBtn;
  *
  */
 @SuppressWarnings("serial")
-public class Suggestion extends JDialog implements ActionListener {
+public class Accusation extends JDialog implements ActionListener {
 
 	// reference to main frame
 	protected CluedoFrame frame;
@@ -62,12 +61,9 @@ public class Suggestion extends JDialog implements ActionListener {
 	private boolean refuted;
 	public CharacterToken refuter;
 
-	public Suggestion(CluedoFrame parent) {
+	public Accusation(CluedoFrame parent) {
 		super(parent, "Suggestion", true);
         frame = parent;
-        
-        getRoom();
-        
 		initGUI();
 
 		// make the dialog blocking (always on top)
@@ -133,20 +129,9 @@ public class Suggestion extends JDialog implements ActionListener {
 				JOptionPane.showMessageDialog(this, "Select a room.",
 		                "Alert", JOptionPane.ERROR_MESSAGE);
 			}
+			// calls another class to handle refutations
 			else{
-				dispose();
-				// gets player to move suspect and weapons into crime room
-				frame.moveSuggestionItems(suspect, weapon, room);
-				// calls another class to handle refutations
-				CharacterToken currentRefuter = refuter;
-				while((refuter = nextRefuter())!= frame.player){
-					Refutation refutation = new Refutation(refuter, frame, this, getSuggestion());
-					currentRefuter = refuter;
-					if(refuted()){
-						break;
-					}
-				}
-				result(currentRefuter);
+				//TODO: accusation
 			}
 		}
 	}
@@ -259,11 +244,6 @@ public class Suggestion extends JDialog implements ActionListener {
 	public String getPlayerSuggestion(){
 		return "You accused " + suspect + " of committing\nthe crime with the " +
 				weapon + "\nin the " + room;
-	}
-	
-	private void getRoom(){
-		Position p = frame.player.pos();
-		room = frame.getBoard().tileAt(p).getName();
 	}
 	
 	/**
@@ -523,7 +503,7 @@ public class Suggestion extends JDialog implements ActionListener {
 		// Creating a button group for the radio buttons
 		ButtonGroup bg = new ButtonGroup();
 		// Creating a button for each room in the game
-		RoomRadioBtn kitchen = new RoomRadioBtn("Kitchen");;
+		RoomRadioBtn kitchen = new RoomRadioBtn("Kitchen");
 		RoomRadioBtn ballroom = new RoomRadioBtn("Ball Room");
 		RoomRadioBtn conservatory = new RoomRadioBtn("Conservatory");
 		RoomRadioBtn billiardRoom = new RoomRadioBtn("Billiard Room");
@@ -533,38 +513,28 @@ public class Suggestion extends JDialog implements ActionListener {
 		RoomRadioBtn lounge = new RoomRadioBtn("Lounge");
 		RoomRadioBtn diningRoom = new RoomRadioBtn("Dining Room");
 
-//		// Adding action commands to the buttons
-//		kitchen.setActionCommand("KITCHEN");
-//		ballroom.setActionCommand("BALL ROOM");
-//		conservatory.setActionCommand("CONSERVATORY");
-//		billiardRoom.setActionCommand("BILLIARD ROOM");
-//		library.setActionCommand("LIBRARY");
-//		study.setActionCommand("STUDY");
-//		hall.setActionCommand("HALL");
-//		lounge.setActionCommand("LOUNGE");
-//		diningRoom.setActionCommand("DINING ROOM");
-//
-//		// Adding Action listeners
-//		kitchen.addActionListener(this);
-//		ballroom.addActionListener(this);
-//		conservatory.addActionListener(this);
-//		billiardRoom.addActionListener(this);
-//		library.addActionListener(this);
-//		study.addActionListener(this);
-//		hall.addActionListener(this);
-//		lounge.addActionListener(this);
-//		diningRoom.addActionListener(this);
+		// Adding action commands to the buttons
+		kitchen.setActionCommand("KITCHEN");
+		ballroom.setActionCommand("BALL ROOM");
+		conservatory.setActionCommand("CONSERVATORY");
+		billiardRoom.setActionCommand("BILLIARD ROOM");
+		library.setActionCommand("LIBRARY");
+		study.setActionCommand("STUDY");
+		hall.setActionCommand("HALL");
+		lounge.setActionCommand("LOUNGE");
+		diningRoom.setActionCommand("DINING ROOM");
 
-		kitchen.setEnabled(false);
-		ballroom.setEnabled(false);
-		conservatory.setEnabled(false);
-		billiardRoom.setEnabled(false);
-		library.setEnabled(false);
-		study.setEnabled(false);
-		hall.setEnabled(false);
-		lounge.setEnabled(false);
-		diningRoom.setEnabled(false);
-		
+		// Adding Action listeners
+		kitchen.addActionListener(this);
+		ballroom.addActionListener(this);
+		conservatory.addActionListener(this);
+		billiardRoom.addActionListener(this);
+		library.addActionListener(this);
+		study.addActionListener(this);
+		hall.addActionListener(this);
+		lounge.addActionListener(this);
+		diningRoom.addActionListener(this);
+
 		// adding the room radio buttons the the button group
 		bg.add(kitchen);
 		bg.add(ballroom);
@@ -599,7 +569,7 @@ public class Suggestion extends JDialog implements ActionListener {
 		roomPnl.add(hall);
 		roomPnl.add(lounge);
 		roomPnl.add(diningRoom);
-		
+
 		// return the panel
 		return roomPnl;
 	}

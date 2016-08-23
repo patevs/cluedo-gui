@@ -243,6 +243,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		suggestBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				// check if player can suggest
 				suggest();
 			}});
 
@@ -298,6 +299,9 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 //		repaint();
 	}
 
+	/*-------------------------------------
+	 *   Suggestion/accusation methods
+	 -------------------------------------*/
 	/**
 	 * Displays a suggestion dialogue.
 	 */
@@ -305,9 +309,32 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		//TODO: suggestion and accusation
 		Suggestion suggestion = new Suggestion(this);
 		setText(suggestion.getPlayerSuggestion() + "\n" + suggestion.getResult());
-		suggestion.dispose();
+//		suggestion.dispose();
+	}
+	
+	/**
+	 * Gets character to move the suspect and weapon into the suspected crime scene.
+	 * @param suspect
+	 * @param weapon
+	 * @param room
+	 */
+	public void moveSuggestionItems(String suspect, String weapon, String room){
+		CharacterToken suspectToken = getSuspectToken(suspect);
 	}
 
+	/**
+	 * Returns the character token associated with this character name.
+	 * @param suspect
+	 * @return
+	 */
+	private CharacterToken getSuspectToken(String suspect){
+		for(CharacterToken t: getPlayers()){
+			if(t.getCharacter().toString().equals(suspect))
+				return t;
+		}
+		return null;
+	}
+	
 	/**
 	 * Creates the game text area to display messages to the player.
 	 * @param msg
@@ -551,22 +578,19 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		int result = JOptionPane.showConfirmDialog(this, msg,
 		        "Alert", JOptionPane.OK_CANCEL_OPTION);
 	}
-	/*
-	 * Setter methods
-	 */
+	/*--------------------------
+	 *  Getter/setter methods
+	 -------------------------*/
 
 	/**
 	 * Sets the reference to the CluedoGame.
-	 * 	FIXME: is this used?
+	 * 	FIXME: is this used? Yep in main class
 	 * @param game
 	 */
 	public void setGame(CluedoGame game){
 		this.game = game;
 	}
 
-	/*
-	 * Getter methods
-	 */
 	/**
 	 * Returns the main panel.
 	 * @return

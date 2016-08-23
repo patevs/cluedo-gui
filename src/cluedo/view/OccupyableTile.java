@@ -11,6 +11,10 @@ public abstract class OccupyableTile extends Tile {
 	// field to store the weapon occupying this tile or null if none
 	private CluedoGame.Weapon weapon = null;
 
+	/**
+	 * Creates an instance of a tile that can store one weapon or character at a time.
+	 * @param symbol
+	 */
 	public OccupyableTile(char symbol) {
 		super(symbol);
 	}
@@ -26,6 +30,11 @@ public abstract class OccupyableTile extends Tile {
 	/*
 	 * Getter and Setter Methods
 	 */
+	/**
+	 * Stores a character in this tile.
+	 * @param newChar
+	 * @return
+	 */
 	public boolean setCharacter(CharacterToken newChar){
 		if(isOccupied()) return false; // tile already occupuied
 		if(newChar == null){
@@ -38,8 +47,18 @@ public abstract class OccupyableTile extends Tile {
 		}
 		return false;
 	}
+	
+	/**
+	 * Returns the character stored in this tile.
+	 * @return
+	 */
 	public CharacterToken getCharacter(){ return character; }
 
+	/**
+	 * Stores a weapon in this tile.
+	 * @param newWeap
+	 * @return
+	 */
 	public boolean setWeapon(CluedoGame.Weapon newWeap){
 		if(isOccupied()) return false; // tile already occupuied
 		if(weapon == null){
@@ -48,5 +67,10 @@ public abstract class OccupyableTile extends Tile {
 		}
 		return false;
 	}
+	
+	/**
+	 * Returns the weapon stored in this tile.
+	 * @return
+	 */
 	public CluedoGame.Weapon getWeapon(){ return weapon; }
 }
