@@ -5,10 +5,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.KeyEventDispatcher;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
@@ -49,7 +49,7 @@ import cluedo.view.Tile;
  *
  */
 @SuppressWarnings("serial")
-public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
+public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispatcher {
 
 	private static final String IMAGE_PATH = "images/";
 
@@ -59,8 +59,6 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	private CluedoBoard board;
 	// Stores the game
 	private CluedoGame game;
-	// Stores a class to handle movement
-	private Movement movement;
 	
 	// Player UI panel
 	private JPanel playerControls;
@@ -113,8 +111,6 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
                 confirmExit();
             }
         });
-		// set move
-		movement = new Movement(this, board);
 	}
 	
 	/*---------------------------
@@ -133,11 +129,15 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	 * Creates the menu bar for the game
 	 */
 	private void initMenu() {
+		//Creating the menu bar
 		JMenuBar menuBar = new JMenuBar();
+		
+		// Creating icons
 		ImageIcon iconExit = new ImageIcon(IMAGE_PATH + "exit.png");
 		ImageIcon iconNew = new ImageIcon(IMAGE_PATH + "new.png");
 		ImageIcon iconHelp = new ImageIcon(IMAGE_PATH + "help.png");
-		// creating game and help menus
+		
+		// creating menu and help menus
 		JMenu menu = new JMenu("Menu");
 		menu.setMnemonic(KeyEvent.VK_M);
 		JMenu help = new JMenu("Help");
@@ -161,6 +161,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		nMenuItem.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				// confirms user wants to start a new ga,e
 				startNewGame();
 			}
 		});
@@ -170,6 +171,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		eMenuItem.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				// Confirms user wants to exit
 				confirmExit();
 			}
 		});
@@ -310,7 +312,6 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		gameOptionsPnl.add(endTurnBtn);
 		gameOptionsPnl.add(quitBtn);
 
-
 		// adding the roll panel to the player controls panel
 		playerControls.add(rollPnl, BorderLayout.WEST);
 		// adding the game info panel to the player controls panel
@@ -319,7 +320,6 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		playerControls.add(gameOptionsPnl, BorderLayout.EAST);
 		// adding the player controls UI to the bottom of the window
 		add(playerControls, BorderLayout.SOUTH); // adds playerUI to frame
-//		repaint();
 	}
 
 	/*-------------------------------------
@@ -406,7 +406,6 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	/*-----------------------
 	 * Game text area methods
 	 -----------------------*/
-	
 	/**
 	 * Creates the game text area to display messages to the player.
 	 * @param msg
@@ -417,9 +416,8 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		gameTextArea.setEditable(false);
 		gameTextArea.setBorder(
 				   BorderFactory.createCompoundBorder(
-						      BorderFactory.createTitledBorder(new LineBorder(Color.BLACK,1),
-						    		  "<html><b><u>GAME INFO</u></b></html>"), // using html tags to underline text
-						      BorderFactory.createEmptyBorder(4,4,2,2)
+						   BorderFactory.createLineBorder(Color.BLACK),
+						   BorderFactory.createEmptyBorder(4,4,2,2)
 						   )
 						);
 		return gameTextArea;
@@ -435,10 +433,12 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 				msg = "Roll the dice then either use the arrow keys to move\nor click on the tile you want to move to.\n";
 			}
 			else if(newPlayer){
-				msg = player.getName() + "\nRoll the dice to move or select another option.";
+				msg = player.getName() + " : " + player.getCharacter().toString() + 
+						"\nRoll the dice to move or select another option.";
 			}
 			else{
-				msg = player.getName() + ": " + player.getStepsRemaining() + " moves left.\n" +
+				msg = player.getName() + " : " + player.getCharacter().toString() +  
+						": " + player.getStepsRemaining() + " moves left.\n" +
 						"Use arrow keys to move or click on the board.";
 			}
 		}
@@ -590,7 +590,6 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	/*------------------
 	 * Game over methods
 	 -----------------*/
-	
 	/**
 	 * Returns true if there are still active players.
 	 */
@@ -633,32 +632,8 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		newGame();
 	}
 	
-	/**
-	 * Asks players if they want to start another game.
-	 */
-	private void newGame(){
-		String msg = "Would You Like To Start Again?" ;
-		int result = JOptionPane.showConfirmDialog(this, msg,
-		        "Alert", JOptionPane.YES_NO_OPTION);
-		// restart game
-		if(result==0){
-			startNewGame();
-		}
-		// end game
-		else{
-			System.exit(0);
-			dispose();
-		}
-	}
-	
-	private void startNewGame(){
-		String[] file = {"boardFile.txt"};
-		Main.main(file);
-		dispose();
-	}
-	
 	/*---------------------
-	 * Help and exit methods
+	 * Help and exit and new game methods
 	 ---------------------*/
 	/**
 	 * Displays dialog asking if user wants to exit the game
@@ -672,7 +647,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 			dispose();
 		}
 	}
-
+	
 	/**
 	 * Displays a help dialog message to the player
 	 */
@@ -684,31 +659,87 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
                 "Cluedo Game Guide", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
+	/**
+	 * Asks players if they want to start another game.
+	 */
+	private void newGame(){
+		String msg = "Would You Like To Start Again?" ;
+		int result = JOptionPane.showConfirmDialog(this, msg,
+		        "Alert", JOptionPane.YES_NO_OPTION);
+		// restart game
+		if(result==0){
+			startNewGame();
+		}
+	}
+	/**
+	 * Starts a new Cluedo game.
+	 */
+	private void startNewGame(){
+		String[] file = {"boardFile.txt"};
+		Main.main(file);
+		dispose();
+	}
+	
 	/*-------------
-	 * Move methods
+	 * Methods handeling player movement throught 
+	 * 	keyboard and mouse events.
 	 ------------*/
-
 	@Override
-	public void keyPressed(KeyEvent e) {
-		if(player.getStepsRemaining()>0){
-			if(e.getKeyCode() == KeyEvent.VK_UP)
-				movement.moveNorth(player);
-			else if(e.getKeyCode() == KeyEvent.VK_DOWN)
-				movement.moveSouth(player);
-			else if(e.getKeyCode() == KeyEvent.VK_LEFT)
-				movement.moveWest(player);
-			else if(e.getKeyCode() == KeyEvent.VK_RIGHT)
-				movement.moveEast(player);
+	public boolean dispatchKeyEvent(KeyEvent e) {
+		// Checking player isnt null
+		if(player == null) return false;
+		if (e.getID() == KeyEvent.KEY_PRESSED) {
+			// Player must have steps remaining to move
+			if(player!=null && player.getStepsRemaining()>0){
+				// Switch on the key code of the pressed key
+				switch(e.getKeyCode()){
+					// Player attempting to move left (west)
+					case KeyEvent.VK_A:
+					case KeyEvent.VK_LEFT:
+						if(board.canMoveWest(player)){
+							board.moveWest(player);
+							this.setText("");
+							return true;
+						}
+						break;
+					// Player attempting to move up (north)
+					case KeyEvent.VK_W:
+					case KeyEvent.VK_UP:
+						if(board.canMoveNorth(player)){
+							board.moveNorth(player);
+							this.setText("");
+							return true;
+						}
+						break;
+					// Player attempting to move right (east)
+					case KeyEvent.VK_D:
+					case KeyEvent.VK_RIGHT:
+						if(board.canMoveEast(player)){
+							board.moveEast(player);
+							this.setText("");
+							return true;
+						}
+						break;
+					// Player attempting to move down (south)
+					case KeyEvent.VK_S:
+					case KeyEvent.VK_DOWN:
+						if(board.canMoveSouth(player)){
+							board.moveSouth(player);
+							this.setText("");
+							return true;
+						}
+						break;
+				} // end of switch
+			}
 		}
-		else{
-			setText("Please roll the dice.");
-		}
+		return false;
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// Check player isnt null
 		if(player == null) return;
+		
 		// Checking click source
 		Object source = e.getSource();
 		if(source instanceof Tile){
@@ -752,9 +783,11 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 				}
 			}
 		}
-//		invalidMoveDialog();
 	}
 	
+	/*
+	 * Unused mouse event methods
+	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {}
 	@Override
@@ -763,16 +796,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	public void mouseEntered(MouseEvent e) {}
 	@Override
 	public void mouseExited(MouseEvent e) {}
-	@Override
-	public void keyTyped(KeyEvent e) {}
-	@Override
-	public void keyReleased(KeyEvent e) {}
 
-	public void invalidMoveDialog(){
-		String msg = "Cannot move to that tile." ;
-		int result = JOptionPane.showConfirmDialog(this, msg,
-		        "Alert", JOptionPane.OK_CANCEL_OPTION);
-	}
 	/*--------------------------
 	 *  Getter/setter methods
 	 -------------------------*/

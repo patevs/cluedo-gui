@@ -1,5 +1,6 @@
 package cluedo.control;
 import java.awt.EventQueue;
+import java.awt.KeyboardFocusManager;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,11 +66,9 @@ public class Main {
 		// Setting up the game board
 		CluedoBoard board = frame.getBoard();
 		board.initPlayers(players);
-		board.initWeapons();
 		board.redraw();
 		
-		CluedoGame game = new CluedoGame(board, players);
-		return game;
+		return new CluedoGame(board, players);
 	}
 
 	/**
@@ -81,11 +80,19 @@ public class Main {
 		EventQueue.invokeLater(new Runnable(){
 			@Override
 			public void run() {
+				// Creates the cluedo frame
 				CluedoFrame frame = new CluedoFrame(args[0]);
 				frame.setVisible(true);
+				
+				// Setting up the game
 				CluedoGame game = initGame(frame);
 				frame.setGame(game);
-				frame.player = game.getActivePlayers().get(0); // first player
+				
+				// Adding a key event manager to the cluedo frame
+				KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+		        manager.addKeyEventDispatcher(frame);
+				
+		        frame.player = game.getActivePlayers().get(0); // first player
 			}
 		});
 	}

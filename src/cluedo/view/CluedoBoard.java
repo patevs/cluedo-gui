@@ -29,6 +29,7 @@ import cluedo.model.WeaponToken;
  */
 public class CluedoBoard {
 
+	// Path to the images used on the board
 	private static final String IMAGE_PATH = "images/";
 	
 	// Stores the height and width of the board
@@ -41,6 +42,7 @@ public class CluedoBoard {
 	private JPanel board;
 	// field to stores the player starting tiles
 	private List<HallwayTile> startTiles = new ArrayList<HallwayTile>();
+	// field to store the weapon tokens in the game
 	private List<WeaponToken> weaponTokens = new ArrayList<WeaponToken>();
 	// reference to the gui
 	private CluedoFrame parent;
@@ -56,6 +58,8 @@ public class CluedoBoard {
 		initSquares(boardFile);
 		// initialise the board
 		initBoard();
+		// initialise the weapon tokens
+		initWeapons();
 	}
 
 	/**
@@ -112,14 +116,13 @@ public class CluedoBoard {
         // Adding all the board squares to the board
         for (int ii = 0; ii < HEIGHT; ii++) {
             for(int jj = 0; jj < WIDTH; jj++) {
+            	// Added a mouse listener and setting position
+            	// 	before adding to the board
             	boardSquares[jj][ii].addMouseListener(parent);
             	boardSquares[jj][ii].setPos(new Position(jj,ii));
             	board.add(boardSquares[jj][ii]);
             }
         }
-        
-        //board.addMouseListener(frame);
-		//board.addKeyListener(frame);
 	}
 
 	/**

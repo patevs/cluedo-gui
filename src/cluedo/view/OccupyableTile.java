@@ -3,7 +3,6 @@ package cluedo.view;
 import javax.swing.ImageIcon;
 
 import cluedo.model.CharacterToken;
-import cluedo.model.CluedoGame;
 import cluedo.model.WeaponToken;
 
 @SuppressWarnings("serial")
@@ -76,10 +75,7 @@ public abstract class OccupyableTile extends Tile {
 //	public CluedoGame.Weapon getWeapon(){ return weapon; }
 	public WeaponToken getWeapon(){ return weapon; }
 	
-	
-	public abstract void reset();
-	
-	/**
+	/** FIXME
 	 * Sets the image of this character and text to display.
 	 */
 	public void setFancy(){
@@ -95,9 +91,11 @@ public abstract class OccupyableTile extends Tile {
 			setupBtn();
 		}
 	}
-	
 	/**
 	 * Sets the image and hover text.
 	 */
 	protected void setupBtn(){}
+	
+	// resets the tile to its initial state
+	public abstract void reset();
 }
