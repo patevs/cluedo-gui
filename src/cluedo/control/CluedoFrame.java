@@ -40,6 +40,8 @@ import cluedo.model.CharacterToken;
 import cluedo.model.CluedoGame;
 import cluedo.model.Position;
 import cluedo.view.CluedoBoard;
+import cluedo.view.RoomTile;
+import cluedo.view.Tile;
 
 /**
  * Interacts with the players and handles actions.
@@ -109,6 +111,18 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		// set move
 		movement = new Movement(this, board);
 	}
+	
+	/*---------------------------
+	 *  Initialising gui methods
+	 --------------------------*/
+	/**
+	 * Initialises the game board
+	 * @param boardFile
+	 */
+	private void initBoard(String boardFile) {
+		board = new CluedoBoard(boardFile, this);
+		add(gui);
+	}
 
 	/**
 	 * Creates the menu bar for the game
@@ -164,15 +178,6 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		menuBar.add(help);
 		// set the menu bar
 		setJMenuBar(menuBar);
-	}
-
-	/**
-	 * Initialises the game board
-	 * @param boardFile
-	 */
-	private void initBoard(String boardFile) {
-		board = new CluedoBoard(boardFile, this);
-		add(gui);
 	}
 
 	/**
@@ -243,8 +248,25 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		suggestBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// check if player can suggest
-				suggest();
+				String msg = "Do You Want To Suggest or Accuse?" ;
+				String[] options = {"Suggest", "Accuse"};
+				int result = JOptionPane.showOptionDialog(gui, msg, "Alert", 0,
+						JOptionPane.INFORMATION_MESSAGE,null,options,null);
+				if(result==0){
+					// check if player can suggest
+					System.out.println(player.pos().getX() + ", " + player.pos().getY());
+					Tile t = board.tileAt(player.pos());
+					if(t instanceof RoomTile)
+						suggest();
+					else{
+						msg = "You Must be in a Room to Suggest" ;
+						JOptionPane.showMessageDialog(gui, msg);
+					}
+				}
+				//TODO:
+//				else{
+//					accuse();
+//				}
 			}});
 
 		// Starts next player's turn
@@ -335,6 +357,10 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		return null;
 	}
 	
+	/*-----------------------
+	 * Game text area methods
+	 -----------------------*/
+	
 	/**
 	 * Creates the game text area to display messages to the player.
 	 * @param msg
@@ -377,6 +403,9 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		gameTextArea.append("\n" + msg);
 	}
 
+	/*-------------------
+	 * Roll dice methods
+	 -------------------*/
 	/**
 	 * Creates the roll panel with the dice and the roll button.
 	 * @param player
@@ -419,34 +448,6 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	}
 
 	/**
-	 * Creates panel for all the player's cards
-	 */
-	private JScrollPane initHandPnl(){
-		JScrollPane hand = new JScrollPane();
-		JPanel handPnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		hand.setAutoscrolls(true);
-		hand.setViewportView(handPnl);
-		hand.setPreferredSize(new Dimension(300, 100));
-//		List<BufferedImage> cards = new ArrayList<BufferedImage>();
-//		try {
-//			cards.add(ImageIO.read(new File(IMAGE_PATH + "scarlett-card.png")));
-//			cards.add(ImageIO.read(new File(IMAGE_PATH + "scarlett-card.png")));
-//			cards.add(ImageIO.read(new File(IMAGE_PATH + "scarlett-card.png")));
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		for(BufferedImage img: cards){
-//			JLabel picLabel = new JLabel(new ImageIcon(img));
-//			handPnl.add(picLabel);
-//		}
-		for(Card c: player.getHand()){
-			JLabel picLabel = new JLabel(new ImageIcon(c.getImage()));
-			handPnl.add(picLabel);
-		}
-		return hand;
-	}
-
-	/**
 	 * Rolls the dice and sets the player's initial amount of steps.
 	 * @param player
 	 */
@@ -482,6 +483,9 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		return null;
 	}
 	
+	/*---------------------
+	 * Help and exit methods
+	 ---------------------*/
 	/**
 	 * Displays dialog asking if user wants to exit the game
 	 */
@@ -504,6 +508,26 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		JPanel pnl = (JPanel) helpPanel.getContentPane();
 		JOptionPane.showMessageDialog(pnl, msg,
                 "Cluedo Game Guide", JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	/*---------------
+	 * Redraw methods
+	 --------------*/
+
+	/**
+	 * Creates panel for all the player's cards
+	 */
+	private JScrollPane initHandPnl(){
+		JScrollPane hand = new JScrollPane();
+		JPanel handPnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		hand.setAutoscrolls(true);
+		hand.setViewportView(handPnl);
+		hand.setPreferredSize(new Dimension(300, 100));
+		for(Card c: player.getHand()){
+			JLabel picLabel = new JLabel(new ImageIcon(c.getImage()));
+			handPnl.add(picLabel);
+		}
+		return hand;
 	}
 
 	/**
