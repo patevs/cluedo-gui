@@ -221,7 +221,7 @@ public class CluedoBoard {
 	 * @return
 	 */
 	public Tile tileAt(Position p){
-		if(p.getX() < 0 || p.getX() >= 24 || p.getY() < 0 || p.getY() >= 24)
+		if(p.getX() < 0 || p.getX() >= 22 || p.getY() < 0 || p.getY() >= 22)
 			return null;
 		return (Tile) boardSquares[p.getY()][p.getX()];
 	}

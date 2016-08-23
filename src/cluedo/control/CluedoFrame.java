@@ -40,6 +40,7 @@ import cluedo.model.CharacterToken;
 import cluedo.model.CluedoGame;
 import cluedo.model.Position;
 import cluedo.view.CluedoBoard;
+import cluedo.view.Tile;
 
 /**
  * Interacts with the players and handles actions.
@@ -540,6 +541,12 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		
+		Tile tile = board.tileAt(new Position(e.getX(),e.getY()));
+		if(tile != null){
+			tile.setBackground(Color.BLACK);
+			System.out.println(tile.getName() + "GOT HERE");
+		}
 		if(!movement.move(player, new Position(e.getX()/24, e.getY()/24)))
 			invalidMoveDialog();
 	}
