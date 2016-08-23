@@ -492,10 +492,13 @@ public class CluedoBoard {
 				if(t instanceof RoomTile){
 					RoomTile newTile = (RoomTile)t;
 					if(newTile.name()==opp){
+						
 						// Resetting the old tile
 						player.getTile().reset();
 						player.getTile().setCharacter(null);
-						initCharacterTile((RoomTile)t, player.getCharacter().toString(), player.getName());
+						
+						// Stores player in tile
+						initCharacterTile(newTile, player.getCharacter().toString(), player.getName());
 						newTile.setCharacter(player);
 						
 						// Moving the player to the new tile
