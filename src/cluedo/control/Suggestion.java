@@ -59,6 +59,9 @@ public class Suggestion extends JDialog implements ActionListener {
 	public Suggestion(CluedoFrame parent) {
 		super(parent, "Suggestion", true);
         frame = parent;
+        room = frame.player.getTile().getName();
+        if(room==null)
+        	System.out.println("can't find room");
         
 		initGUI();
 
@@ -126,8 +129,8 @@ public class Suggestion extends JDialog implements ActionListener {
 			}
 			else{
 				dispose();
-				// gets player to move suspect and weapons into crime room
-//				frame.moveSuggestionItems(suspect, weapon, room);
+				// gets player to move suspect
+				frame.moveSuggestionItems(suspect, weapon, room);
 				// calls another class to handle refutations
 				CharacterToken currentRefuter = refuter;
 				while((refuter = nextRefuter())!= frame.player){
@@ -331,10 +334,11 @@ public class Suggestion extends JDialog implements ActionListener {
 	 * Displays dialog asking if user wants to exit the game
 	 */
 	protected void confirmExit() {
-		String msg = "Are You Sure You Want to Cancel Your Suggestion?" ;
+		String msg = "Are You Sure You Want to Exit the Game?" ;
 		int result = JOptionPane.showConfirmDialog(this, msg,
 		        "Alert", JOptionPane.OK_CANCEL_OPTION);
 		if(result==0){
+			System.exit(0);
 			dispose();
 		}
 	}
