@@ -55,4 +55,13 @@ public class HallwayTile extends OccupyableTile {
 	public CluedoGame.Character getStartCharacter(){
 		return startChar;
 	}
+
+	@Override
+	public void reset() {
+		this.setIcon(null);
+		this.setBackground(Color.decode("#525564"));
+		this.setBorder(BorderFactory.createLineBorder(Color.decode("#BEB9B5").darker(), 1));
+		this.setMargin(new Insets(10,10,10,10));
+		this.setToolTipText(null);
+	}
 }

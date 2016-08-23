@@ -13,4 +13,12 @@ public class DoorwayTile extends OccupyableTile {
 		this.setToolTipText("A DOORWAY");
 	}
 
+	@Override
+	public void reset() {
+		this.setIcon(null);
+		this.setBackground(new Color(85,60,45).brighter());
+		this.setBorder(new EmptyBorder(0,0,0,0));
+		this.setToolTipText("A DOORWAY");
+	}
+
 }

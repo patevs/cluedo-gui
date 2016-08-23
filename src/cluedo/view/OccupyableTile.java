@@ -35,17 +35,15 @@ public abstract class OccupyableTile extends Tile {
 	 * @param newChar
 	 * @return
 	 */
-	public boolean setCharacter(CharacterToken newChar){
-		if(isOccupied()) return false; // tile already occupuied
+	public void setCharacter(CharacterToken newChar){
 		if(newChar == null){
 			character = null;
-			return true;
+			return;
 		}
 		if(character == null){
 			character = newChar;
-			return true;
+			return;
 		}
-		return false;
 	}
 	
 	/**
@@ -73,4 +71,6 @@ public abstract class OccupyableTile extends Tile {
 	 * @return
 	 */
 	public CluedoGame.Weapon getWeapon(){ return weapon; }
+	
+	public abstract void reset();
 }

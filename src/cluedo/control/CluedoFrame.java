@@ -38,6 +38,7 @@ import javax.swing.border.LineBorder;
 import cluedo.model.Card;
 import cluedo.model.CharacterToken;
 import cluedo.model.CluedoGame;
+import cluedo.model.Position;
 import cluedo.view.CluedoBoard;
 import cluedo.view.RoomTile;
 import cluedo.view.Tile;
@@ -713,9 +714,30 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		Object source = e.getSource();
 		if(source instanceof Tile){
 			if(player != null && player.getStepsRemaining() > 0){
-				System.out.println(board.canMoveSouth(player));
+				
+				// Getting the player position
+				Position pPos = player.pos();
+				// Getting the clicked tiles position
+				Position tPos = ((Tile) source).pos();
+				
+				// Player attempting to move north
+				if((pPos.getY()-1 == tPos.getY())&&(pPos.getX() == tPos.getX())){
+					if(board.canMoveNorth(player)){
+						board.moveNorth(player);
+						this.setText("");
+						return;
+					}
+				}
+				
+				// Player attempting to move south
+				if((pPos.getY()+1 == tPos.getY())&&(pPos.getX() == tPos.getX())){
+					if(board.canMoveSouth(player)){
+						board.moveSouth(player);
+						this.setText("");
+						return;
+					}
+				}
 			}
-			//((Tile) source).setBackground(Color.BLACK);
 		}
 
 //		if(!movement.move(player, new Position(e.getX()/24, e.getY()/24)))

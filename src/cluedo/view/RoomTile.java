@@ -71,4 +71,12 @@ public class RoomTile extends OccupyableTile {
 
 	}
 
+	@Override
+	public void reset() {
+		this.setIcon(null);
+		this.setBorder(new EmptyBorder(0,0,0,0));
+		// setup the button tile
+		setupBtn(this.getSymbol());
+	}
+
 }
