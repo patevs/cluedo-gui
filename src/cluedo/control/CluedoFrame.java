@@ -65,6 +65,8 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	private JPanel playerControls;
 	// Game information text area
 	private JTextArea gameTextArea;
+	// Tabbed gameinfo/hand pane
+	private JTabbedPane gameInfoPnl;
 	
 	// Stores the current dice roll
 	private int firstDie;
@@ -199,8 +201,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		JPanel rollPnl = initRollPnl();
 
 		// Creating a panel to display game information
-//		JPanel gameInfoPnl = new JPanel();
-		JTabbedPane gameInfoPnl = new JTabbedPane(); // two panes - game info and cards
+		gameInfoPnl = new JTabbedPane(); // two panes - game info and cards
 		gameInfoPnl.setPreferredSize(null);
 		
 		// Creating a text area to display game information to the user
@@ -208,7 +209,6 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		setText("");
 
 		// Adding the text area to the panel
-//		gameInfoPnl.add(gameTextArea, BorderLayout.CENTER);
 		gameInfoPnl.add("Game Info",gameTextArea);
 
 		if(player!=null){
@@ -262,6 +262,8 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 					if(t instanceof RoomTile){
 						//2. if haven't suggested this turn
 						if(!player.suggested){
+							// hide suggester's cards from other players
+				            gameInfoPnl.setSelectedIndex(0);
 							suggest();
 							player.suggested = true;
 						}
@@ -271,7 +273,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 						JOptionPane.showMessageDialog(gui, msg);
 					}
 				}
-				else{
+				else if(result==1){
 					accuse();
 				}
 			}});
@@ -295,6 +297,8 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		// Adding buttons to panel and enabling the relevant ones
 		if(player!=null){
 			beginBtn.setEnabled(false);
+			if(!player.active)
+				suggestBtn.setEnabled(false);
 		}
 		else{
 			gameOptionsPnl.add(beginBtn);
@@ -355,7 +359,6 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		setText(accusation.getPlayerAccusation());
 		List<String> guess = accusation.getAccusation();
 		Card[]solution = game.getSolution();
-//		System.out.println(solution[0].toString()+","+solution[2].toString()+","+solution[1].toString());
 		// if player was correct
 		if(solution[0].toString().equalsIgnoreCase(guess.get(0))&&
 				solution[1].toString().equalsIgnoreCase(guess.get(2))&&
@@ -469,7 +472,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 
 		// Adding dice and roll button to the roll panel
 		JButton rollBtn = new JButton("Roll.");
-		if(!newPlayer)
+		if(!newPlayer||!player.active)
 			rollBtn.setEnabled(false);
 		else
 			rollBtn.setEnabled(true);
@@ -562,15 +565,25 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	private void nextPlayer(){
 		// allows player to suggest next turn
 		player.suggested = false;
+		getNext();
+		while(!player.active){
+			getNext();
+		}
+		newPlayer = true;
+		redrawPlayerControls();
+	}
+	
+	/**
+	 * Gets the next player
+	 */
+	private void getNext(){
 		// get next player
 		if(player.getUid()<game.getActivePlayers().size()){
-			player = game.getActivePlayers().get(player.getUid() + 1); // player's uid is 1-6
+			player = game.getActivePlayers().get(player.getUid()); // player's uid is 1-6
 		}
 		else{
 			player = game.getActivePlayers().get(0);
 		}
-		newPlayer = true;
-		redrawPlayerControls();
 	}
 	
 	/*------------------
@@ -595,6 +608,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		String msg = "You Did Not Solve the Crime...\n" +
 				answer();
 		JOptionPane.showMessageDialog(this, msg);
+		redrawPlayerControls();
 	}
 	
 	/**

@@ -68,14 +68,6 @@ public class Accusation extends JDialog implements ActionListener {
         this.setTitle("Enter Accusation");
 		// set close operation
         this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        // set position
-        this.setLocationRelativeTo(getParent());
-        // handles the user closing the window dialog
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent evt){
-                confirmExit();
-            }
-        });
 	}
 
 	/**
@@ -90,6 +82,12 @@ public class Accusation extends JDialog implements ActionListener {
 		pack();
 		this.setMinimumSize(this.getSize());
         this.setLocationRelativeTo(getParent());
+        // handles the user closing the window dialog
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent evt){
+                confirmExit();
+            }
+        });
         // make visible
 		this.setVisible(true);
 	}
