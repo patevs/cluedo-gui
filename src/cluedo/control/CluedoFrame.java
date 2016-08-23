@@ -40,7 +40,6 @@ import cluedo.model.CharacterToken;
 import cluedo.model.CluedoGame;
 import cluedo.model.Position;
 import cluedo.view.CluedoBoard;
-import cluedo.view.RoomTile;
 import cluedo.view.Tile;
 
 /**
@@ -269,14 +268,11 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 							suggest();
 							player.suggested = true;
 						}
-					}
-					else{
+					} else {
 						msg = "You Must be in a Room to Suggest" ;
 						JOptionPane.showMessageDialog(gui, msg);
 					}
-				}
-				else if(result==1){
-					// FIXME
+				} else if(result==1) {
 					accuse();
 				}
 			}});

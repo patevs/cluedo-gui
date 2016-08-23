@@ -27,7 +27,6 @@ import javax.swing.border.TitledBorder;
 import cluedo.model.Card;
 import cluedo.model.CharRadioBtn;
 import cluedo.model.CharacterToken;
-import cluedo.model.Position;
 import cluedo.model.RoomRadioBtn;
 import cluedo.model.WeapRadioBtn;
 
