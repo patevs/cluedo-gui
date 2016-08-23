@@ -29,6 +29,7 @@ import cluedo.model.CharRadioBtn;
 import cluedo.model.CharacterToken;
 import cluedo.model.RoomRadioBtn;
 import cluedo.model.WeapRadioBtn;
+import cluedo.view.RoomTile;
 
 /**
  * This class creates a custom JDialog which gets
@@ -58,9 +59,6 @@ public class Suggestion extends JDialog implements ActionListener {
 	public Suggestion(CluedoFrame parent) {
 		super(parent, "Suggestion", true);
         frame = parent;
-        room = frame.player.getTile().getName();
-        if(room==null)
-        	System.out.println("can't find room");
         
 		initGUI();
 
@@ -123,6 +121,7 @@ public class Suggestion extends JDialog implements ActionListener {
 		                "Alert", JOptionPane.ERROR_MESSAGE);
 			}
 			else if(room == null||room.length()<1){
+				System.out.println(room);
 				JOptionPane.showMessageDialog(this, "Select a room.",
 		                "Alert", JOptionPane.ERROR_MESSAGE);
 			}
@@ -259,7 +258,7 @@ public class Suggestion extends JDialog implements ActionListener {
 	 * Sets the name of the room.
 	 */
 	private void getRoom(){
-		room = frame.player.getTile().getName();
+        room = ((RoomTile)frame.player.getTile()).name().toString();
 	}
 	
 	/**
