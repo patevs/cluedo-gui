@@ -20,6 +20,7 @@ public class CharacterToken extends Token {
 	private List<Card> hand;
 	// stores how many moves the player can make
 	private int stepsRemaining;
+	
 	public boolean suggested;
 	public boolean active;
 

@@ -27,6 +27,10 @@ import cluedo.model.Position;
 public class CluedoBoard {
 
 	private static final String IMAGE_PATH = "images/";
+	
+	// Stores the height and width of the board
+	private int HEIGHT = 0;
+	private int WIDTH = 0;
 
 	// The board is made up of a 2D array of Jbuttons
 	private Tile[][] boardSquares = new Tile[22][22];
@@ -56,12 +60,12 @@ public class CluedoBoard {
 		try{
 			// Creating the scanner on the board file
 			scanner = new Scanner(new File(boardFile));
-			for(int height=0; scanner.hasNextLine(); height++){
+			for(HEIGHT=0; scanner.hasNextLine(); HEIGHT++){
 				// reading a line of text
 				char[] line = scanner.nextLine().toCharArray();
-				for(int width = 0; width < line.length; width++){
+				for(WIDTH=0; WIDTH < line.length; WIDTH++){
 					// read the text character
-					char c = line[width];
+					char c = line[WIDTH];
 					Tile b;
 					// If character is a digit, then make tile a player starting location
 					if(Character.isDigit(c)){
@@ -75,7 +79,7 @@ public class CluedoBoard {
 						b = (Tile) getTile(c);
 					}
 					// set the tile on the board
-					boardSquares[width][height] = b;
+					boardSquares[WIDTH][HEIGHT] = b;
 				}
 			}
 		} catch(IOException e){
@@ -98,10 +102,10 @@ public class CluedoBoard {
         // Adding the board to the frame
         parent.getGui().add(board);
         // Adding all the board squares to the board
-        for (int ii = 0; ii < boardSquares.length; ii++) {
-            for(int jj = 0; jj < boardSquares[ii].length; jj++) {
+        for (int ii = 0; ii < HEIGHT; ii++) {
+            for(int jj = 0; jj < WIDTH; jj++) {
             	boardSquares[jj][ii].addMouseListener(parent);
-            	boardSquares[jj][ii].setPos(new Position(ii,jj));
+            	boardSquares[jj][ii].setPos(new Position(jj,ii));
             	board.add(boardSquares[jj][ii]);
             }
         }
@@ -217,8 +221,25 @@ public class CluedoBoard {
 	}
 	
 	public boolean canMoveSouth(CharacterToken player){
+		// check parameter
+		if(player==null) return false;	
+		// already in south most square
+		if(player.y() + 1 >= HEIGHT){
+			return false;
+		}
 		
+		// cannot move if south is a room, invalid tile, or entrance which is not south
+		int xpos = player.x();
+		int ypos = player.y();
 		
+		// Getting the tile
+		Tile tile = boardSquares[xpos][ypos+1];
+		// Checking if the player can move to the tile
+		if(tile instanceof OccupyableTile){
+			if(!((OccupyableTile) tile).isOccupied()){
+				return true;
+			}
+		}
 		return false;
 	}
 

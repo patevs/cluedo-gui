@@ -38,7 +38,6 @@ import javax.swing.border.LineBorder;
 import cluedo.model.Card;
 import cluedo.model.CharacterToken;
 import cluedo.model.CluedoGame;
-import cluedo.model.Position;
 import cluedo.view.CluedoBoard;
 import cluedo.view.RoomTile;
 import cluedo.view.Tile;
@@ -258,6 +257,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 				if(result==0){
 					// check if player can suggest
 					// 1. if in a room
+					//FIXME Test if this works
 					Tile t = board.tileAt(player.pos());
 					if(t instanceof RoomTile){
 						//2. if haven't suggested this turn
@@ -562,16 +562,14 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	private void nextPlayer(){
 		// allows player to suggest next turn
 		player.suggested = false;
-		while(!player.active){
-			// get next player
-			if(player.getUid()<game.getActivePlayers().size()){
-				player = game.getActivePlayers().get(player.getUid()); // player's uid is 1-6
-			}
-			else{
-				player = game.getActivePlayers().get(0);
-			}
-			newPlayer = true;
+		// get next player
+		if(player.getUid()<game.getActivePlayers().size()){
+			player = game.getActivePlayers().get(player.getUid() + 1); // player's uid is 1-6
 		}
+		else{
+			player = game.getActivePlayers().get(0);
+		}
+		newPlayer = true;
 		redrawPlayerControls();
 	}
 	
@@ -695,24 +693,23 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	@Override
 	public void mousePressed(MouseEvent e) {
 		
+		// Check player
+		if(player == null) return;
+		
 		Object source = e.getSource();
 		if(source instanceof Tile){
+			if(player != null && player.getStepsRemaining() > 0){
+				System.out.println(board.canMoveSouth(player));
+			}
 			//((Tile) source).setBackground(Color.BLACK);
 		}
 
-		if(!movement.move(player, new Position(e.getX()/24, e.getY()/24)))
-			invalidMoveDialog();
+//		if(!movement.move(player, new Position(e.getX()/24, e.getY()/24)))
+//			invalidMoveDialog();
 	}
 	
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		/*
-		boolean moved = movement.move(player, new Position(e.getX(), e.getY()));
-		if(!moved){
-			invalidMoveDialog();
-		}
-		*/
-	}
+	public void mouseClicked(MouseEvent e) {}
 	@Override
 	public void mouseReleased(MouseEvent e) {}
 	@Override
