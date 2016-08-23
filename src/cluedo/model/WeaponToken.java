@@ -69,17 +69,17 @@ public class WeaponToken extends Token {
 		try{
 			switch(name){
 				case "CANDLESTICK":
-					image = ImageIO.read(new File(IMAGE_PATH + "scarlett-card.png"));
+					image = ImageIO.read(new File(IMAGE_PATH + "candlestick.png"));
 				case "KNIFE":
-					image = ImageIO.read(new File(IMAGE_PATH + "mustard-card.png"));
+					image = ImageIO.read(new File(IMAGE_PATH + "knife.png"));
 				case "LEAD_PIPE":
-					image = ImageIO.read(new File(IMAGE_PATH + "white-card.png"));
+					image = ImageIO.read(new File(IMAGE_PATH + "pipe.png"));
 				case "REVOLVER":
-					image = ImageIO.read(new File(IMAGE_PATH + "green-card.png"));
+					image = ImageIO.read(new File(IMAGE_PATH + "revolver.png"));
 				case "ROPE":
-					image = ImageIO.read(new File(IMAGE_PATH + "peacock-card.png"));
+					image = ImageIO.read(new File(IMAGE_PATH + "rope.png"));
 				case "WRENCH":
-					image = ImageIO.read(new File(IMAGE_PATH + "plum-card.png"));
+					image = ImageIO.read(new File(IMAGE_PATH + "wrench.png"));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

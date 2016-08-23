@@ -65,6 +65,7 @@ public class Main {
 		// Setting up the game board
 		CluedoBoard board = frame.getBoard();
 		board.initPlayers(players);
+		board.initWeapons();
 		board.redraw();
 		
 		CluedoGame game = new CluedoGame(board, players);
