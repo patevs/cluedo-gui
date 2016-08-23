@@ -227,6 +227,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 		// Creating buttons for the options
 		JButton beginBtn = new JButton("Begin.");
 		JButton suggestBtn = new JButton("Suggest / Accuse.");
+		JButton stairsBtn = new JButton("Use Stairs.");
 		JButton endTurnBtn = new JButton("End Turn.");
 		JButton quitBtn = new JButton("Quit.");
 
@@ -278,6 +279,19 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 					accuse();
 				}
 			}});
+		
+		stairsBtn.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(board.oppositeRoom(player.getTile())==null){
+					String msg = "You Must be in a Corner Room to Use Stairs" ;
+					JOptionPane.showMessageDialog(gui, msg);
+				}
+				else{
+					board.useStairs(player);
+				}
+			}
+		});
 
 		// Starts next player's turn
 		endTurnBtn.addActionListener(new ActionListener(){
@@ -303,9 +317,11 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 		} else {
 			gameOptionsPnl.add(beginBtn);
 			suggestBtn.setEnabled(false);
+			stairsBtn.setEnabled(false);
 			endTurnBtn.setEnabled(false);
 		}
 		gameOptionsPnl.add(suggestBtn);
+		gameOptionsPnl.add(stairsBtn);
 		gameOptionsPnl.add(endTurnBtn);
 		gameOptionsPnl.add(quitBtn);
 
@@ -665,7 +681,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 	}
 	
 	/*-------------
-	 * Methods handeling player movement throught 
+	 * Methods handling player movement through 
 	 * 	keyboard and mouse events.
 	 ------------*/
 	@Override
@@ -721,7 +737,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// Check player isnt null
+		// Check player isn't null
 		if(player == null) return;
 		
 		// Checking click source

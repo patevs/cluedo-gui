@@ -478,15 +478,60 @@ public class CluedoBoard {
 		player.setTile((OccupyableTile) newTile);
 	}
 
-	/** THIS DOESNT WORK
-	 * TODO Fix or remove
-	 * Returns the tile at a given position.
-	 * @param p
+	/**
+	 * Moves the player to the opposite room.
+	 * @param player
+	 */
+	public void useStairs(CharacterToken player){
+		boolean moved = false;
+		RoomTile room = ((RoomTile)player.getTile());
+		Room opp = oppositeRoom(room);
+		for(int i = 0; i < WIDTH; i++){
+			for(int j = 0; j < HEIGHT; j++){
+				Tile t = boardSquares[i][j];
+				if(t instanceof RoomTile){
+					RoomTile newTile = (RoomTile)t;
+					if(newTile.name()==opp){
+						// Resetting the old tile
+						player.getTile().reset();
+						player.getTile().setCharacter(null);
+						initCharacterTile((RoomTile)t, player.getCharacter().toString(), player.getName());
+						newTile.setCharacter(player);
+						
+						// Moving the player to the new tile
+						player.setStepsRemaining(player.getStepsRemaining() - 1);
+						player.setPos(new Position(i, j));
+						player.setTile(newTile);
+						moved = true;
+						break;
+					}
+						
+				}
+			}
+			if(moved)
+				break;
+		}
+	}
+	
+	/**
+	 * Returns the opposite room to this one.
+	 * @param room
 	 * @return
 	 */
-	public Tile tileAt(Position p){
-		if(p.getX() <= 0 || p.getX() >= 22 || p.getY() <= 0 || p.getY() >= 22)
+	public Room oppositeRoom(Tile room){
+		if(room == null || !(room instanceof RoomTile))
 			return null;
-		return (Tile) boardSquares[p.getY()][p.getX()];
+		RoomTile rTile = (RoomTile)room;
+		switch(rTile.name()){
+			case LOUNGE:
+				return Room.CONSERVATORY;
+			case CONSERVATORY:
+				return Room.LOUNGE;
+			case KITCHEN:
+				return Room.STUDY;
+			case STUDY:
+				return Room.KITCHEN;
+		}
+		return null;
 	}
 }
