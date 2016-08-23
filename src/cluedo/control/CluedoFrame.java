@@ -62,7 +62,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	// Player UI panel
 	private JPanel playerControls;
 	
-	// Game infomation text area
+	// Game information text area
 	private JTextArea gameTextArea;
 	
 	// Stores the current dice roll
@@ -299,6 +299,16 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 	}
 
 	/**
+	 * Displays a suggestion dialogue.
+	 */
+	private void suggest(){
+		//TODO: suggestion and accusation
+		Suggestion suggestion = new Suggestion(this);
+		setText(suggestion.getPlayerSuggestion() + "\n" + suggestion.getResult());
+		suggestion.dispose();
+	}
+
+	/**
 	 * Creates the game text area to display messages to the player.
 	 * @param msg
 	 * @return
@@ -334,6 +344,10 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 			}
 		}
 		gameTextArea.setText(msg);
+	}
+	
+	private void appendText(String msg){
+		gameTextArea.append("\n" + msg);
 	}
 
 	/**
@@ -440,17 +454,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		} catch (IOException e1) { e1.printStackTrace(); }
 		return null;
 	}
-
-	/**
-	 * Displays a suggestion dialogue.
-	 */
-	private void suggest(){
-		//TODO: suggestion and accusation
-		Suggestion suggestion = new Suggestion(this);
-		
-
-	}
-
+	
 	/**
 	 * Displays dialog asking if user wants to exit the game
 	 */

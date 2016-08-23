@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -45,7 +47,7 @@ import cluedo.model.WeapRadioBtn;
 public class Suggestion extends JDialog implements ActionListener {
 
 	// reference to main frame
-	private CluedoFrame frame;
+	protected CluedoFrame frame;
 	// a field for the selected crime evidence
 	public String suspect;
 	public String weapon;
@@ -55,12 +57,13 @@ public class Suggestion extends JDialog implements ActionListener {
 	private WeapRadioBtn[] weaponBtns;
 	private RoomRadioBtn[] roomBtns;
 	// selected refute
-	private Card refutedCard = null;
+	public Card refutedCard = null;
+	private boolean refuted;
+	public CharacterToken refuter;
 
 	public Suggestion(CluedoFrame parent) {
 		super(parent, "Suggestion", true);
         frame = parent;
-
 		initGUI();
 
 		// make the dialog blocking (always on top)
@@ -126,17 +129,17 @@ public class Suggestion extends JDialog implements ActionListener {
 				JOptionPane.showMessageDialog(this, "Select a room.",
 		                "Alert", JOptionPane.ERROR_MESSAGE);
 			}
+			// calls another class to handle refutations
 			else{
-				System.out.println("You accuse " + suspect + " of committing the crime with the " + weapon + " in the " + room);
-
-				for(CharacterToken othPlayer: frame.getPlayers()){
-					System.out.println("Player: " + othPlayer.getUid());
-					if(frame.player!=othPlayer){
-						// Creating a panel for suggestion selection
-						refute(othPlayer);
+				CharacterToken currentRefuter = refuter;
+				while((refuter = nextRefuter())!= frame.player){
+					Refutation refutation = new Refutation(refuter, frame, this, getSuggestion());
+					currentRefuter = refuter;
+					if(refuted()){
+						break;
 					}
 				}
-				dispose();
+				result(currentRefuter);
 			}
 		}
 	}
@@ -153,7 +156,7 @@ public class Suggestion extends JDialog implements ActionListener {
 
 		// Creating player and info message labels
 		// using html tags to underline text
-		JLabel playerMsg = new JLabel("<html><b><u>Player.</u></b></html>");
+		JLabel playerMsg = new JLabel("<html><b><u>" + frame.player.getName() + "</u></b></html>");
 		JLabel infoMsg = new JLabel("Make Your Suggestion.");
 
 		// Setting labels font, border, and alignments
@@ -231,6 +234,94 @@ public class Suggestion extends JDialog implements ActionListener {
 	}
 
 	/**
+	 * Returns a list of the player's suggestion.
+	 * @return
+	 */
+	public List<String> getSuggestion(){
+		List<String> suggestion = new ArrayList<String>();
+		suggestion.add(suspect);
+		suggestion.add(weapon);
+		suggestion.add(room);
+		return suggestion;
+	}
+	
+	/**
+	 * Returns a string representation of player's suggestion
+	 * @return
+	 */
+	public String getPlayerSuggestion(){
+		return "You accused " + suspect + " of committing\nthe crime with the " +
+				weapon + "\nin the " + room;
+	}
+	
+	/**
+	 * Returns string representation of refutation result
+	 * @return
+	 */
+	public String getResult(){
+		if(refuted){
+			return "Your suggestion was refuted by " + refuter.getName() + "\nwho had " + refutedCard;
+		}
+		return "Your suggestion could not be refuted";
+	}
+	
+	/**
+	 * Returns true if another player refuted the suggestion.
+	 * @param refuter
+	 * @return
+	 */
+	private boolean refuted(){
+		if(refutedCard==null){
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Communicates results to suggester.
+	 * @param refuter
+	 */
+	private void result(CharacterToken refuter){
+		if(refutedCard==null){
+			String msg = "No one could refute your suggestion!" ;
+			JOptionPane.showMessageDialog(this, msg);
+			refuted = false;
+			dispose();
+		}
+		else{
+			String msg = refuter.getName() + " refuted your suggestion with the " + refutedCard.toString();
+			JOptionPane.showMessageDialog(this, msg);
+			refuted = true;
+			dispose();
+		}
+	}
+	
+	/**
+	 * Gets the next player to refute
+	 */
+	private CharacterToken nextRefuter(){
+		if(refuter==null){
+			// gets the player after current player
+			if(frame.player.getUid()<frame.getPlayers().size()){
+				refuter = frame.getPlayers().get(frame.player.getUid());
+			}
+			else{
+				refuter = frame.getPlayers().get(0);
+			}
+		}
+		else{
+			// otherwise get next refuter
+			if(refuter.getUid()<frame.getPlayers().size()){
+				refuter = frame.getPlayers().get(refuter.getUid());
+			}
+			else{
+				refuter = frame.getPlayers().get(0);
+			}
+		}
+		return refuter;
+	}
+	
+	/**
 	 * Displays dialog asking if user wants to exit the game
 	 */
 	protected void confirmExit() {
@@ -242,9 +333,9 @@ public class Suggestion extends JDialog implements ActionListener {
 		}
 	}
 
-	/*
+	/*---------------------------------------------------
 	 * Buttons for suspect, weapon, crime scene selection
-	 */
+	 --------------------------------------------------*/
 
 	/**
 	 * Creates and returns a panel containing the
@@ -279,12 +370,12 @@ public class Suggestion extends JDialog implements ActionListener {
 		CharRadioBtn plum = new CharRadioBtn("Professor Plum");
 
 		// Adding action commands to the buttons
-		scarlett.setActionCommand("Miss Scarlett");
-		mustard.setActionCommand("Colonel Mustard");
-		white.setActionCommand("Mrs White");
-		green.setActionCommand("The Reverend Green");
-		peacock.setActionCommand("Mrs Peacock");
-		plum.setActionCommand("Professor Plum");
+		scarlett.setActionCommand("MISS SCARLETT");
+		mustard.setActionCommand("COLONEL MUSTARD");
+		white.setActionCommand("MRS WHITE");
+		green.setActionCommand("THE REVEREND GREEN");
+		peacock.setActionCommand("MRS PEACOCK");
+		plum.setActionCommand("PROFESSOR PLUM");
 
 		// Adding Action listeners
 		scarlett.addActionListener(this);
@@ -351,12 +442,12 @@ public class Suggestion extends JDialog implements ActionListener {
 		WeapRadioBtn wrench = new WeapRadioBtn("Wrench");
 
 		// Adding action commands to the buttons
-		candlestick.setActionCommand("Candlestick");
-		knife.setActionCommand("Knife");
-		pipe.setActionCommand("Lead Pipe");
-		revolver.setActionCommand("Revolver");
-		rope.setActionCommand("Rope");
-		wrench.setActionCommand("Wrench");
+		candlestick.setActionCommand("CANDLESTICK");
+		knife.setActionCommand("KNIFE");
+		pipe.setActionCommand("LEAD PIPE");
+		revolver.setActionCommand("REVOLER");
+		rope.setActionCommand("ROPE");
+		wrench.setActionCommand("WRENCH");
 
 		// Adding Action listeners
 		candlestick.addActionListener(this);
@@ -431,15 +522,15 @@ public class Suggestion extends JDialog implements ActionListener {
 		RoomRadioBtn diningRoom = new RoomRadioBtn("Dining Room");
 
 		// Adding action commands to the buttons
-		kitchen.setActionCommand("Kitchen");
-		ballroom.setActionCommand("Ball Room");
-		conservatory.setActionCommand("Conservatory");
-		billiardRoom.setActionCommand("Billiard Room");
-		library.setActionCommand("Library");
-		study.setActionCommand("Study");
-		hall.setActionCommand("Hall");
-		lounge.setActionCommand("Lounge");
-		diningRoom.setActionCommand("Dining Room");
+		kitchen.setActionCommand("KITCHEN");
+		ballroom.setActionCommand("BALL ROOM");
+		conservatory.setActionCommand("CONSERVATORY");
+		billiardRoom.setActionCommand("BILLIARD ROOM");
+		library.setActionCommand("LIBRARY");
+		study.setActionCommand("STUDY");
+		hall.setActionCommand("HALL");
+		lounge.setActionCommand("LOUNGE");
+		diningRoom.setActionCommand("DINING ROOM");
 
 		// Adding Action listeners
 		kitchen.addActionListener(this);
@@ -489,91 +580,5 @@ public class Suggestion extends JDialog implements ActionListener {
 
 		// return the panel
 		return roomPnl;
-	}
-
-
-	/**
-	 * Gets other player to refute the suggestion.
-	 * @param otherPlayer
-	 */
-	private void refute(CharacterToken otherPlayer){
-		JDialog refution = new JDialog();
-		// Creating the content panel to contain the player setup UI
-		JPanel content = new JPanel();
-		// setting the content layout and border
-		content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
-		content.setBorder(new EmptyBorder(5,5,5,5));
-		// Creating a panel for suggestion selection
-		JPanel hand = selectCard(otherPlayer);
-		content.add(hand);
-
-		// display the content center window
-		refution.add(content, BorderLayout.CENTER);
-		refution.add(content);
-		// Creating a panel for the footer
-		JPanel footer = new JPanel();
-		// Setting the layout and border of the panel
-		footer.setLayout(new BoxLayout(footer, BoxLayout.LINE_AXIS));
-		footer.setBorder(new EmptyBorder(5,5,5,5));
-
-		// Creating cancel option
-		JButton cancelBtn = new JButton("Cannot refute.");
-		cancelBtn.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		});
-
-		// Creating an ok button
-		JButton OKbtn = new JButton("Refute");
-		// Adding an action listener to the button
-		OKbtn.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(refutedCard.toString().equalsIgnoreCase(suspect)||refutedCard.toString().equalsIgnoreCase(weapon)||
-						refutedCard.toString().equalsIgnoreCase(room)){
-					// return card to suggester
-				}
-				else{
-					String msg = "Cannot move to that tile." ;
-					int result = JOptionPane.showConfirmDialog(refution, msg,
-					        "Alert", JOptionPane.OK_CANCEL_OPTION);
-				}
-			}
-		});
-
-		// Adding the button to the right side of the panel
-		footer.add(Box.createHorizontalGlue());
-		footer.add(cancelBtn);
-		footer.add(OKbtn);
-
-		// Display the footer south in the window
-		refution.add(footer, BorderLayout.SOUTH);
-		refution.pack();
-		refution.setTitle("Refute player's suggestion");
-	}
-
-	/**
-	 * Displays other player's cards to refute.
-	 * @param otherPlayer
-	 * @return
-	 */
-	private JPanel selectCard(CharacterToken otherPlayer){
-		JPanel handPnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		for(Card c: otherPlayer.getHand()){
-//			JLabel picLabel = new JLabel(new ImageIcon(c.getImage()));
-//			handPnl.add(picLabel);
-			CardRadioBtn button = new CardRadioBtn(c);
-			button.addActionListener(new ActionListener(){
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					refutedCard = button.card();
-				}
-			});
-			handPnl.add(button);
-		}
-		return handPnl;
 	}
 }
