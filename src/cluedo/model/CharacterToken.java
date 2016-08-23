@@ -20,6 +20,8 @@ public class CharacterToken extends Token {
 	private List<Card> hand;
 	// stores how many moves the player can make
 	private int stepsRemaining;
+	public boolean suggested;
+	public boolean active;
 
 	/**
 	 * Creates a character token representing a player on the board.
@@ -29,10 +31,12 @@ public class CharacterToken extends Token {
 	 */
 	public CharacterToken(String name, int playerUID, String characterStr) {
 		super(name);
-		this.Uid = playerUID;
+		Uid = playerUID;
 		character = null;
 		setChar(characterStr);
-		this.hand = new ArrayList<Card>();
+		hand = new ArrayList<Card>();
+		suggested = false;
+		active = true;
 	}
 
 	/**

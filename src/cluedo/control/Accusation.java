@@ -38,7 +38,7 @@ import cluedo.model.WeapRadioBtn;
 
 /**
  * This class creates a custom JDialog which gets
- * 	the player's suggestion.
+ * 	the player's accusation.
  *
  * @author Patrick and Maria
  *
@@ -56,13 +56,9 @@ public class Accusation extends JDialog implements ActionListener {
 	private CharRadioBtn[] characterBtns;
 	private WeapRadioBtn[] weaponBtns;
 	private RoomRadioBtn[] roomBtns;
-	// selected refute
-	public Card refutedCard = null;
-	private boolean refuted;
-	public CharacterToken refuter;
 
 	public Accusation(CluedoFrame parent) {
-		super(parent, "Suggestion", true);
+		super(parent, "Accusation", true);
         frame = parent;
 		initGUI();
 
@@ -70,7 +66,7 @@ public class Accusation extends JDialog implements ActionListener {
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		//TODO: have option to suggest or accuse
 		// set window title
-        this.setTitle("Enter Suggestion");
+        this.setTitle("Enter Accusation");
 		// set close operation
         this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         // set position
@@ -114,7 +110,7 @@ public class Accusation extends JDialog implements ActionListener {
 			room = e.getActionCommand();
 		}
 
-		// get player's suggestion
+		// get player's accusation
 		if(e.getSource() instanceof JButton){
 			// check all elements selected
 			if(suspect == null||suspect.length()<1){
@@ -131,7 +127,8 @@ public class Accusation extends JDialog implements ActionListener {
 			}
 			// calls another class to handle refutations
 			else{
-				//TODO: accusation
+				frame.result(this);
+				dispose();
 			}
 		}
 	}
@@ -149,7 +146,7 @@ public class Accusation extends JDialog implements ActionListener {
 		// Creating player and info message labels
 		// using html tags to underline text
 		JLabel playerMsg = new JLabel("<html><b><u>" + frame.player.getName() + "</u></b></html>");
-		JLabel infoMsg = new JLabel("Make Your Suggestion.");
+		JLabel infoMsg = new JLabel("Make Your Accusation.");
 
 		// Setting labels font, border, and alignments
 		playerMsg.setFont(new Font("Serif", Font.BOLD, 22));
@@ -166,7 +163,7 @@ public class Accusation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method creates the suggestion buttons.
+	 * This method creates the accusation buttons.
 	 */
 	private void createPlayerGUI() {
 
@@ -176,7 +173,7 @@ public class Accusation extends JDialog implements ActionListener {
 		content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
 		content.setBorder(new EmptyBorder(5,5,5,5));
 
-		// Creating a panel for suggestion selection
+		// Creating a panel for accusation selection
 		JPanel charPnl = createCharacterBtnsPnl();
 		JPanel weapPnl = createWeaponBtnsPnl();
 		JPanel roomPnl = createRoomBtnsPnl();
@@ -226,98 +223,31 @@ public class Accusation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * Returns a list of the player's suggestion.
+	 * Returns a list of the player's accusation.
 	 * @return
 	 */
-	public List<String> getSuggestion(){
-		List<String> suggestion = new ArrayList<String>();
-		suggestion.add(suspect);
-		suggestion.add(weapon);
-		suggestion.add(room);
-		return suggestion;
+	public List<String> getAccusation(){
+		List<String> accusation = new ArrayList<String>();
+		accusation.add(suspect);
+		accusation.add(weapon);
+		accusation.add(room);
+		return accusation;
 	}
 	
 	/**
-	 * Returns a string representation of player's suggestion
+	 * Returns a string representation of player's accusation
 	 * @return
 	 */
-	public String getPlayerSuggestion(){
+	public String getPlayerAccusation(){
 		return "You accused " + suspect + " of committing\nthe crime with the " +
 				weapon + "\nin the " + room;
-	}
-	
-	/**
-	 * Returns string representation of refutation result
-	 * @return
-	 */
-	public String getResult(){
-		if(refuted){
-			return "Your suggestion was refuted by " + refuter.getName() + "\nwho had " + refutedCard;
-		}
-		return "Your suggestion could not be refuted";
-	}
-	
-	/**
-	 * Returns true if another player refuted the suggestion.
-	 * @param refuter
-	 * @return
-	 */
-	private boolean refuted(){
-		if(refutedCard==null){
-			return false;
-		}
-		return true;
-	}
-	
-	/**
-	 * Communicates results to suggester.
-	 * @param refuter
-	 */
-	private void result(CharacterToken refuter){
-		if(refutedCard==null){
-			String msg = "No one could refute your suggestion!" ;
-			JOptionPane.showMessageDialog(this, msg);
-			refuted = false;
-			dispose();
-		}
-		else{
-			String msg = refuter.getName() + " refuted your suggestion with the " + refutedCard.toString();
-			JOptionPane.showMessageDialog(this, msg);
-			refuted = true;
-			dispose();
-		}
-	}
-	
-	/**
-	 * Gets the next player to refute
-	 */
-	private CharacterToken nextRefuter(){
-		if(refuter==null){
-			// gets the player after current player
-			if(frame.player.getUid()<frame.getPlayers().size()){
-				refuter = frame.getPlayers().get(frame.player.getUid());
-			}
-			else{
-				refuter = frame.getPlayers().get(0);
-			}
-		}
-		else{
-			// otherwise get next refuter
-			if(refuter.getUid()<frame.getPlayers().size()){
-				refuter = frame.getPlayers().get(refuter.getUid());
-			}
-			else{
-				refuter = frame.getPlayers().get(0);
-			}
-		}
-		return refuter;
 	}
 	
 	/**
 	 * Displays dialog asking if user wants to exit the game
 	 */
 	protected void confirmExit() {
-		String msg = "Are You Sure You Want to Cancel Your Suggestion?" ;
+		String msg = "Are You Sure You Want to Cancel Your Accusation?" ;
 		int result = JOptionPane.showConfirmDialog(this, msg,
 		        "Alert", JOptionPane.OK_CANCEL_OPTION);
 		if(result==0){

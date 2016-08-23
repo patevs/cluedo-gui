@@ -15,8 +15,6 @@ import cluedo.view.CluedoBoard;
  */
 public class Main {
 
-	private static boolean gameOver; // checks if the game is over
-
 	/**
 	 * Method used for checking the program arguments
 	 * @param args
@@ -86,13 +84,7 @@ public class Main {
 				frame.setVisible(true);
 				CluedoGame game = initGame(frame);
 				frame.setGame(game);
-//				frame.repaint();
-				// TODO something with the players
-				
 				frame.player = game.getActivePlayers().get(0); // first player
-				if(!gameOver){
-					// play game
-				}
 			}
 		});
 	}

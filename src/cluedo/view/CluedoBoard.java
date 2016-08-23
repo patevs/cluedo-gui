@@ -160,6 +160,7 @@ public class CluedoBoard {
 						initCharacterTile(t, p.getCharacter().toString(), p.getName());
 						//t.setCharacter(p);
 						p.setTile(t);
+						p.setPos(t.pos());
 					}
 				}
 			}
