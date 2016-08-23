@@ -8,6 +8,11 @@ public class DoorwayTile extends OccupyableTile {
 
 	public DoorwayTile(char symbol) {
 		super(symbol);
+		setupBtn();
+	}
+
+	@Override
+	protected void setupBtn(){
 		this.setBackground(new Color(85,60,45).brighter());
 		this.setBorder(new EmptyBorder(0,0,0,0));
 		this.setToolTipText("A DOORWAY");
@@ -20,5 +25,4 @@ public class DoorwayTile extends OccupyableTile {
 		this.setBorder(new EmptyBorder(0,0,0,0));
 		this.setToolTipText("A DOORWAY");
 	}
-
 }

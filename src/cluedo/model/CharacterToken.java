@@ -1,7 +1,12 @@
 package cluedo.model;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import cluedo.model.CluedoGame.Character;
 
@@ -11,6 +16,7 @@ import cluedo.model.CluedoGame.Character;
  *
  */
 public class CharacterToken extends Token {
+	private static final String IMAGE_PATH = "images/";
 
 	// field for the players unique ID
 	private final int Uid;
@@ -20,6 +26,8 @@ public class CharacterToken extends Token {
 	private List<Card> hand;
 	// stores how many moves the player can make
 	private int stepsRemaining;
+	// stores basic image associated with this character token
+	private BufferedImage image;
 	
 	public boolean suggested;
 	public boolean active;
@@ -47,27 +55,37 @@ public class CharacterToken extends Token {
 	 */
 	private void setChar(String str) {
 		Character res = null;
-		switch(str.toUpperCase()){
-			case "MISS SCARLETT":
-				res = Character.MISS_SCARLETT;
-				break;
-			case "COLONEL MUSTARD":
-				res = Character.COLONEL_MUSTARD;
-				break;
-			case "MRS WHITE":
-				res = Character.MRS_WHITE;
-				break;
-			case "MRS PEACOCK":
-				res = Character.MRS_PEACOCK;
-				break;
-			case "THE REVEREND GREEN":
-				res = Character.THE_REVEREND_GREEN;
-				break;
-			case "PROFESSOR PLUM":
-				res = Character.PROFESSOR_PLUM;
-				break;
+		try{
+			switch(str.toUpperCase()){
+				case "MISS SCARLETT":
+					res = Character.MISS_SCARLETT;	
+					image = ImageIO.read(new File(IMAGE_PATH + "scarlett.png"));
+					break;
+				case "COLONEL MUSTARD":
+					res = Character.COLONEL_MUSTARD;
+					image = ImageIO.read(new File(IMAGE_PATH + "mustard.png"));
+					break;
+				case "MRS WHITE":
+					res = Character.MRS_WHITE;
+					image = ImageIO.read(new File(IMAGE_PATH + "white.png"));
+					break;
+				case "MRS PEACOCK":
+					res = Character.MRS_PEACOCK;
+					image = ImageIO.read(new File(IMAGE_PATH + "peacock.png"));
+					break;
+				case "THE REVEREND GREEN":
+					res = Character.THE_REVEREND_GREEN;
+					image = ImageIO.read(new File(IMAGE_PATH + "green.png"));
+					break;
+				case "PROFESSOR PLUM":
+					res = Character.PROFESSOR_PLUM;
+					image = ImageIO.read(new File(IMAGE_PATH + "plum.png"));
+					break;
+			}
+			character = res;
+		} catch(IOException e){
+			e.printStackTrace();
 		}
-		character = res;
 	}
 
 	/**
@@ -111,4 +129,9 @@ public class CharacterToken extends Token {
 	 * @return
 	 */
 	public int getStepsRemaining(){ return stepsRemaining; }
+	/**
+	 * Returns the image associated with this character token.
+	 * @return
+	 */
+	public BufferedImage image(){ return image; }
 }

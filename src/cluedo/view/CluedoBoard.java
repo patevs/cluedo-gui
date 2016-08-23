@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,10 +18,13 @@ import javax.swing.border.LineBorder;
 
 import cluedo.control.CluedoFrame;
 import cluedo.model.CharacterToken;
+import cluedo.model.CluedoGame;
+import cluedo.model.CluedoGame.Room;
 import cluedo.model.Position;
+import cluedo.model.WeaponToken;
 
 /**
- * This class represents the cluedo board for the the game
+ * This class represents the cluedo board for the game
  * @author Patrick
  *
  */
@@ -38,16 +42,21 @@ public class CluedoBoard {
 	private JPanel board;
 	// field to stores the player starting tiles
 	private List<HallwayTile> startTiles = new ArrayList<HallwayTile>();
-
+	private List<WeaponToken> weaponTokens = new ArrayList<WeaponToken>();
+	// reference to the gui
 	private CluedoFrame parent;
 
+	/**
+	 * Creates the board from a file and a reference to the gui.
+	 * @param boardFile
+	 * @param frame
+	 */
 	public CluedoBoard(String boardFile, CluedoFrame frame) {
+		this.parent = frame;
 		// initialise the board squares from file
 		initSquares(boardFile);
 		// initialise the board
-		initBoard(frame);
-
-		this.parent = frame;
+		initBoard();
 	}
 
 	/**
@@ -93,7 +102,7 @@ public class CluedoBoard {
 	 * 	the parent board frame
 	 * @param frame
 	 */
-	private void initBoard(CluedoFrame parent) {
+	private void initBoard() {
 		// Setting the parent frame border
 		parent.getGui().setBorder(new EmptyBorder(6, 12, 6, 12));
 		// Setting up the board
@@ -114,6 +123,73 @@ public class CluedoBoard {
 		//board.addKeyListener(frame);
 	}
 
+	/**
+	 * Initialises the players onto the board.
+	 * @param list of players
+	 */
+	public void initPlayers(List<CharacterToken> players) {
+		for(HallwayTile t: startTiles){
+			for(CharacterToken p: players){
+				if(t.getStartCharacter() != null){
+					if(p.getCharacter().toString().equalsIgnoreCase(
+							t.getStartCharacter().toString())){
+						initCharacterTile(t, p.getCharacter().toString(), p.getName());
+						//t.setCharacter(p);
+						p.setTile(t);
+						p.setPos(t.pos());
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Add weapons to the board.
+	 */
+	public void initWeapons(){
+		weaponTokens.add(new WeaponToken("CANDLESTICK"));
+		weaponTokens.add(new WeaponToken("KNIFE"));
+		weaponTokens.add(new WeaponToken("LEAD_PIPE"));
+		weaponTokens.add(new WeaponToken("REVOLVER"));
+		weaponTokens.add(new WeaponToken("ROPE"));
+		weaponTokens.add(new WeaponToken("WRENCH"));
+		placeWeapons();
+	}
+	
+	/**
+	 * Puts all the weapons in random rooms
+	 */
+	private void placeWeapons(){
+		boolean finishedAll = false;
+		List<Room> rooms = new ArrayList<Room>(Arrays.asList(
+				Room.BALL_ROOM, Room.BILLIARD_ROOM, Room.CONSERVATORY,
+				Room.DINING_ROOM, Room.HALL, Room.KITCHEN,
+				Room.LIBRARY, Room.LOUNGE, Room.STUDY));
+		WeaponToken weapon = weaponTokens.get(0);
+		for(int i = 0; i < HEIGHT; i++){
+			for(int j = 0; j < WIDTH; j++){
+				if(boardSquares[i][j] instanceof RoomTile){
+					RoomTile rTile = (RoomTile)boardSquares[i][j];
+					if(rooms.contains(rTile.name())){
+						rTile.setWeapon(weapon);
+						weapon.setTile(rTile);
+						rTile.setFancy();
+						rooms.remove(rTile.name());
+						int index = weaponTokens.indexOf(weapon);
+						if(index < weaponTokens.size()-1)
+							weapon = weaponTokens.get(index+1);
+						else{
+							finishedAll = true;
+							break;
+						}
+					}
+				}
+			}
+			if(finishedAll)
+				break;
+		}
+	}
+	
 	/**
 	 * Gets a board tile from a character
 	 * @param c
@@ -150,29 +226,9 @@ public class CluedoBoard {
 		b.setPreferredSize(new Dimension(24, 24));
 		return b;
 	}
-
-	/**
-	 * Initlises the players onto the board.
-	 * @param list of players
-	 */
-	public void initPlayers(List<CharacterToken> players) {
-		for(HallwayTile t: startTiles){
-			for(CharacterToken p: players){
-				if(t.getStartCharacter() != null){
-					if(p.getCharacter().toString().equalsIgnoreCase(
-							t.getStartCharacter().toString())){
-						initCharacterTile(t, p.getCharacter().toString(), p.getName());
-						//t.setCharacter(p);
-						p.setTile(t);
-						p.setPos(t.pos());
-					}
-				}
-			}
-		}
-	}
 	
 	/**
-	 * This method redraws the cludoBoard on the parent
+	 * This method redraws the cluedoBoard on the parent
 	 * 	CluedoFrame.
 	 */
 	public void redraw(){

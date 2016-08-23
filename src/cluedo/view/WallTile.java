@@ -13,5 +13,4 @@ public class WallTile extends Tile {
 		this.setBackground(Color.decode("#BEB9B5").darker());
 		this.setBorder(new EmptyBorder(0,0,0,0));
 	}
-
 }
