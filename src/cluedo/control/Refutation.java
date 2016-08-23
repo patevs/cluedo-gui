@@ -57,7 +57,6 @@ public class Refutation extends JDialog implements ActionListener {
 	// current refute
 	public CharacterToken refuter;
 	private JPanel handPnl;
-	private boolean showHand;
 	
 	public Refutation(CharacterToken refuter, CluedoFrame parent, Suggestion suggestFrame, List<String> suggestion) {
 		super(parent, "Refutation", true);
@@ -65,7 +64,6 @@ public class Refutation extends JDialog implements ActionListener {
         this.suggestFrame = suggestFrame;
         this.suggestion = suggestion;
         this.refuter = refuter;
-        showHand = false;
         
 		initGUI();
 
@@ -158,7 +156,6 @@ public class Refutation extends JDialog implements ActionListener {
 	private boolean canRefute(){
 		for(Card c: refuter.getHand()){
 			if(suggestion.contains(c.toString())){
-				System.out.println(c.toString());
 				return true;
 			}
 		}
@@ -263,28 +260,11 @@ public class Refutation extends JDialog implements ActionListener {
 				      BorderFactory.createEmptyBorder(4, 2, 4, 1)
 				   )
 				);
-		// adds a showHand button to hide hand
-		JToggleButton showCard = new JToggleButton("Show Hand");
-		ItemListener itemListener = new ItemListener() {
-		    public void itemStateChanged(ItemEvent itemEvent) {
-		        int state = itemEvent.getStateChange();
-		        if (state == ItemEvent.SELECTED) {
-		        	showHand = true;
-		        } else {
-		        	showHand = false;
-		        }
-	            redraw();
-		    }
-		};
-		showCard.addItemListener(itemListener);
-		handPnl.add(showCard);
+
 		// draws hand 
-		System.out.println(showHand);
-//		if(showHand){
-//			System.out.println("Show hand");
-			JPanel hand = hand();
-			handPnl.add(hand);
-//		}
+		JPanel hand = hand();
+		handPnl.add(hand);
+		
 		return handPnl;
 	}
 	

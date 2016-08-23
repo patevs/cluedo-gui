@@ -121,7 +121,6 @@ public class Suggestion extends JDialog implements ActionListener {
 		                "Alert", JOptionPane.ERROR_MESSAGE);
 			}
 			else if(room == null||room.length()<1){
-				System.out.println(room);
 				JOptionPane.showMessageDialog(this, "Select a room.",
 		                "Alert", JOptionPane.ERROR_MESSAGE);
 			}

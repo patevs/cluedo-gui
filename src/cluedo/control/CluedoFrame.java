@@ -237,9 +237,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 		beginBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(game.getActivePlayers()==null)
-					System.out.println("no players");
-				else{
+				if(game.getActivePlayers()!=null){
 					suggestBtn.setEnabled(true);
 					endTurnBtn.setEnabled(true);
 					player = game.getActivePlayers().get(0);
@@ -386,20 +384,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 	private String answer(){
 		Card[] solution = game.getSolution();
 		return solution[0].toString() + " committed the crime with the " +
-				solution[2].toString() + " in the " + solution[1].toString();
-	}
-	
-	/**
-	 * Returns the character token associated with this character name.
-	 * @param suspect
-	 * @return
-	 */
-	private CharacterToken getSuspectToken(String suspect){
-		for(CharacterToken t: getPlayers()){
-			if(t.getCharacter().toString().equals(suspect))
-				return t;
-		}
-		return null;
+				solution[2].toString() + " in the " + solution[1].toString() +".";
 	}
 	
 	/*-----------------------
@@ -429,7 +414,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 	private void setText(String msg){
 		if(msg.equals("")){
 			if(player==null){
-				msg = "Roll the dice then either use the arrow keys to move\n+"
+				msg = "Roll the dice then either use the arrow keys to move\n"
 						+ "or click to a neighbouring tile.";
 			}
 			else if(newPlayer){
@@ -443,10 +428,6 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 			}
 		}
 		gameTextArea.setText(msg);
-	}
-	
-	private void appendText(String msg){
-		gameTextArea.append("\n" + msg);
 	}
 
 	/*-------------------
@@ -652,7 +633,10 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 	 * Displays a help dialog message to the player
 	 */
 	protected void displayHelp() {
-		String msg = "-- Cluedo Game Help -- \n" + "Select New Game to restart the game." ;
+		String msg = "-- Cluedo Game Help -- \n" + "Select New Game to restart the game.\n" +
+					"Solve the crime by moving into rooms and making a suggestion\n"+
+					"to discover who committed the crime!\n"+
+					"When you've figured it out, make the accusation!";
 		JFrame helpPanel = new JFrame();
 		JPanel pnl = (JPanel) helpPanel.getContentPane();
 		JOptionPane.showMessageDialog(pnl, msg,
