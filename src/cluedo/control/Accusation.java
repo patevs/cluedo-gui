@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -24,7 +25,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
+import cluedo.model.Card;
 import cluedo.model.CharRadioBtn;
+import cluedo.model.CluedoGame;
 import cluedo.model.RoomRadioBtn;
 import cluedo.model.WeapRadioBtn;
 
@@ -48,6 +51,8 @@ public class Accusation extends JDialog implements ActionListener {
 	private CharRadioBtn[] characterBtns;
 	private WeapRadioBtn[] weaponBtns;
 	private RoomRadioBtn[] roomBtns;
+	
+	private List<Card> result = new ArrayList<Card>();
 
 	public Accusation(CluedoFrame parent) {
 		super(parent, "Accusation", true);
@@ -60,19 +65,28 @@ public class Accusation extends JDialog implements ActionListener {
         this.setTitle("Enter Accusation");
 		// set close operation
         this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        // set display position
-        this.setLocationRelativeTo(getParent());
         // ensures the frame is the minimum size it needs to be
         // in order display the components within it
 		this.pack();
         // ensures the minimum size is enforced.
 		this.setMinimumSize(this.getSize());
+		// set display position
+        this.setLocationRelativeTo(getParent());
         // handles the user closing the window dialog
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent evt){
                 confirmExit();
             }
         });
+	}
+	
+	/**
+	 * Displays the dialog and returns the result
+	 * @return number of players
+	 */
+	public List<Card> showDialog(){
+		this.setVisible(true);
+		return result;
 	}
 
 	/**
@@ -103,21 +117,28 @@ public class Accusation extends JDialog implements ActionListener {
 		// get player's accusation
 		if(e.getSource() instanceof JButton){
 			// check all elements selected
-			if(suspect == null||suspect.length()<1){
+			if(suspect == null||suspect.length()==0){
 				JOptionPane.showMessageDialog(this, "Select a suspect.",
 		                "Alert", JOptionPane.ERROR_MESSAGE);
-			}
-			else if(weapon == null||weapon.length()<1){
+			
+			} else if(weapon == null||weapon.length()==0){
 				JOptionPane.showMessageDialog(this, "Select a weapon.",
 		                "Alert", JOptionPane.ERROR_MESSAGE);
-			}
-			else if(room == null||room.length()<1){
+			
+			} else if(room == null||room.length()==0){
 				JOptionPane.showMessageDialog(this, "Select a room.",
 		                "Alert", JOptionPane.ERROR_MESSAGE);
-			}
-			// calls another class to handle refutations
-			else{
-				frame.result(this);
+				
+			} else if (suspect!=null && weapon!=null && room!=null) {
+				List<Card> allCards = new ArrayList<Card>();
+				allCards.addAll(Arrays.asList(CluedoGame.Character.values()));
+				allCards.addAll(Arrays.asList(CluedoGame.Weapon.values()));
+				allCards.addAll(Arrays.asList(CluedoGame.Room.values()));
+				for(Card c: allCards){
+					if(suspect.equalsIgnoreCase(c.toString())){ result.add(c); }
+					if(weapon.equalsIgnoreCase(c.toString())){ result.add(c); }
+					if(room.equalsIgnoreCase(c.toString())){ result.add(c); }
+				}
 				dispose();
 			}
 		}
@@ -135,7 +156,8 @@ public class Accusation extends JDialog implements ActionListener {
 
 		// Creating player and info message labels
 		// using html tags to underline text
-		JLabel playerMsg = new JLabel("<html><b><u>" + frame.player.getName() + "</u></b></html>");
+		JLabel playerMsg = new JLabel("<html><b><u>" + frame.player.getCharacter().toString() + 
+				": " + frame.player.getName() + "</u></b></html>");
 		JLabel infoMsg = new JLabel("Make Your Accusation.");
 
 		// Setting labels font, border, and alignments
@@ -211,27 +233,6 @@ public class Accusation extends JDialog implements ActionListener {
 		// Display the footer south in the window
 		add(footer, BorderLayout.SOUTH);
 	}
-
-	/**
-	 * Returns a list of the player's accusation.
-	 * @return
-	 */
-	public List<String> getAccusation(){
-		List<String> accusation = new ArrayList<String>();
-		accusation.add(suspect);
-		accusation.add(weapon);
-		accusation.add(room);
-		return accusation;
-	}
-	
-	/**
-	 * Returns a string representation of player's accusation
-	 * @return
-	 */
-	public String getPlayerAccusation(){
-		return "You accused " + suspect + " of committing\nthe crime with the " +
-				weapon + "\nin the " + room;
-	}
 	
 	/**
 	 * Displays dialog asking if user wants to exit the game
@@ -249,7 +250,6 @@ public class Accusation extends JDialog implements ActionListener {
 	/*---------------------------------------------------
 	 * Buttons for suspect, weapon, crime scene selection
 	 --------------------------------------------------*/
-
 	/**
 	 * Creates and returns a panel containing the
 	 * 	character radio buttons for the user to select.

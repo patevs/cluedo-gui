@@ -348,38 +348,49 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 	 * Gets player to accuse a suspect, weapon, room.
 	 */
 	private void accuse(){
-		Accusation accuse = new Accusation(this);
-	}
-	
-	/**
-	 * Tells player whether they succeeded in accusation.
-	 * @param accusation
-	 */
-	public void result(Accusation accusation){
-		setText(accusation.getPlayerAccusation());
-		List<String> guess = accusation.getAccusation();
+		// stores if accusation is correct
+		boolean suspect = false;
+		boolean room = false;
+		boolean weapon = false;
+		
+		// get player accusation
+		Accusation accusation = new Accusation(this);
+		List<Card> result = accusation.showDialog();
+		
+		// get game solution
 		Card[]solution = game.getSolution();
-		// if player was correct
-		if(solution[0].toString().equalsIgnoreCase(guess.get(0))&&
-				solution[1].toString().equalsIgnoreCase(guess.get(2))&&
-				solution[2].toString().equalsIgnoreCase(guess.get(1))){
-			// display message and end game
+		
+		// check player accusation
+		for(Card c: result){
+			if(c.toString().equalsIgnoreCase(solution[0].toString())){
+				suspect = true;
+			}
+			if(c.toString().equalsIgnoreCase(solution[1].toString())){
+				room = true;
+			}
+			if(c.toString().equalsIgnoreCase(solution[2].toString())){
+				weapon = true;
+			}
+		}
+		
+		// Checks if player has won the game
+		if(suspect && room && weapon){
 			gameWon(player);
 			gameOver = true;
-		}
-		// otherwise player lost
-		else{
+		} else {
 			// set text to show losing message
 			player.active = false;
 			// if there are no more active players, display losing message and end game
-			if(!active())
-				gameLost();
+			if(!active()){ gameLost(); }
 			// otherwise just displaying losing message to this player
-			else
-				playerLost();
+			else { 
+				playerLost(); 
+				player.getTile().reset();
+				nextPlayer();
+			}
 		}
 	}
-	
+
 	/**
 	 * Returns the answer as a message;
 	 * @return
@@ -389,6 +400,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyEventDispat
 		return solution[0].toString() + " committed the crime with the " +
 				solution[2].toString() + " in the " + solution[1].toString();
 	}
+	
 	/**
 	 * Returns the character token associated with this character name.
 	 * @param suspect

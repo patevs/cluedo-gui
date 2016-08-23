@@ -1,8 +1,6 @@
 package cluedo.control;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -16,21 +14,17 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import cluedo.model.Card;
-import cluedo.model.CardRadioBtn;
 import cluedo.model.CharRadioBtn;
 import cluedo.model.CharacterToken;
 import cluedo.model.Position;
@@ -163,7 +157,7 @@ public class Suggestion extends JDialog implements ActionListener {
 		// Creating player and info message labels
 		// using html tags to underline text
 		JLabel playerMsg = new JLabel("<html><b><u>" + frame.player.getCharacter().toString() + 
-				frame.player.getName() + "</u></b></html>");
+				": " + frame.player.getName() + "</u></b></html>");
 		JLabel infoMsg = new JLabel("Make Your Suggestion.");
 
 		// Setting labels font, border, and alignments
