@@ -16,11 +16,15 @@ public class HallwayTile extends OccupyableTile {
 
 	public HallwayTile(char c){
 		super(c);
+		setupBtn();
+	}
+
+	@Override
+	protected void setupBtn(){
 		this.setBackground(Color.decode("#525564"));
 		this.setBorder(BorderFactory.createLineBorder(Color.decode("#BEB9B5").darker(), 1));
 		this.setMargin(new Insets(10,10,10,10));
 	}
-
 	/**
 	 * Sets this tile as a player starting tile
 	 * @param charID

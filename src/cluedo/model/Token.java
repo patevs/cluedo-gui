@@ -24,6 +24,7 @@ public abstract class Token {
 
 	public void setTile(OccupyableTile tile) {
 		this.tile = tile;
+		this.pos = tile.pos();
 	}
 	/**
 	 * Returns the name of this token.
