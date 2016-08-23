@@ -72,7 +72,6 @@ public class Suggestion extends JDialog implements ActionListener {
 
 		// make the dialog blocking (always on top)
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
-		//TODO: have option to suggest or accuse
 		// set window title
         this.setTitle("Enter Suggestion");
 		// set close operation

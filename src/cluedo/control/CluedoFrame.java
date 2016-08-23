@@ -159,7 +159,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		nMenuItem.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO close current game; start new game
+				startNewGame();
 			}
 		});
 		JMenuItem eMenuItem = new JMenuItem("Exit", iconExit);
@@ -214,7 +214,7 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 
 		if(player!=null){
 			// Adding hand to panel
-			JScrollPane handPnl = initHandPnl(); //FIXME: cards too wide
+			JScrollPane handPnl = initHandPnl();
 			gameInfoPnl.addTab("Hand", handPnl);
 		}
 
@@ -399,71 +399,6 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 		return null;
 	}
 	
-	/*------------------
-	 * Game over methods
-	 -----------------*/
-	
-	/**
-	 * Returns true if there are still active players.
-	 */
-	private boolean active(){
-		for(CharacterToken t: getPlayers()){
-			if(t.active)
-				return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * Displays losing message to accuser.
-	 */
-	private void playerLost(){
-		String msg = "You Did Not Solve the Crime...\n" +
-				answer();
-		JOptionPane.showMessageDialog(this, msg);
-	}
-	
-	/**
-	 * Displays winning message.
-	 * @param player
-	 */
-	private void gameWon(CharacterToken player){
-		String msg = "CONGRATULATIONS YOU WON THE GAME!\n" +
-					answer();
-		JOptionPane.showMessageDialog(this, msg);
-		newGame();
-	}
-	
-	/**
-	 * Displays losing message.
-	 */
-	private void gameLost(){
-		String msg = "NO ONE SOLVED THE CRIME...\n" +
-				answer();
-		JOptionPane.showMessageDialog(this, msg);
-		newGame();
-	}
-	
-	/**
-	 * Asks players if they want to start another game.
-	 */
-	private void newGame(){
-		String msg = "Would You Like To Start Again?" ;
-		int result = JOptionPane.showConfirmDialog(this, msg,
-		        "Alert", JOptionPane.YES_NO_OPTION);
-		// restart game
-		if(result==0){
-			String[] file = {"boardFile.txt"};
-			Main.main(file);
-			dispose();
-		}
-		// end game
-		else{
-			System.exit(0);
-			dispose();
-		}
-	}
-	
 	/*-----------------------
 	 * Game text area methods
 	 -----------------------*/
@@ -638,6 +573,75 @@ public class CluedoFrame extends JFrame implements MouseListener, KeyListener{
 			newPlayer = true;
 		}
 		redrawPlayerControls();
+	}
+	
+	/*------------------
+	 * Game over methods
+	 -----------------*/
+	
+	/**
+	 * Returns true if there are still active players.
+	 */
+	private boolean active(){
+		for(CharacterToken t: getPlayers()){
+			if(t.active)
+				return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Displays losing message to accuser.
+	 */
+	private void playerLost(){
+		String msg = "You Did Not Solve the Crime...\n" +
+				answer();
+		JOptionPane.showMessageDialog(this, msg);
+	}
+	
+	/**
+	 * Displays winning message.
+	 * @param player
+	 */
+	private void gameWon(CharacterToken player){
+		String msg = "CONGRATULATIONS YOU WON THE GAME!\n" +
+					answer();
+		JOptionPane.showMessageDialog(this, msg);
+		newGame();
+	}
+	
+	/**
+	 * Displays losing message.
+	 */
+	private void gameLost(){
+		String msg = "NO ONE SOLVED THE CRIME...\n" +
+				answer();
+		JOptionPane.showMessageDialog(this, msg);
+		newGame();
+	}
+	
+	/**
+	 * Asks players if they want to start another game.
+	 */
+	private void newGame(){
+		String msg = "Would You Like To Start Again?" ;
+		int result = JOptionPane.showConfirmDialog(this, msg,
+		        "Alert", JOptionPane.YES_NO_OPTION);
+		// restart game
+		if(result==0){
+			startNewGame();
+		}
+		// end game
+		else{
+			System.exit(0);
+			dispose();
+		}
+	}
+	
+	private void startNewGame(){
+		String[] file = {"boardFile.txt"};
+		Main.main(file);
+		dispose();
 	}
 	
 	/*---------------------
